@@ -32,7 +32,31 @@ module Sonamp
         raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
       end
       cmd = ":P#{zone}#{state ? 1 : 0}"
-      expected = "P#{zone}#{state ? 1 : 0}"
+      expected = cmd[1...cmd.length]
+      dispatch_assert(cmd, expected)
+    end
+
+    def zone_volume(zone, volume)
+      if zone < 1 || zone > 4
+        raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+      end
+      if volume < 0 || volume > 100
+        raise ArgumentError, "Volume must be between 0 and 100: #{volume}"
+      end
+      cmd = ":V#{zone}#{volume}"
+      expected = cmd[1...cmd.length]
+      dispatch_assert(cmd, expected)
+    end
+
+    def channel_volume(channel, volume)
+      if channel < 1 || channel > 8
+        raise ArgumentError, "Channel must be between 1 and 4: #{channel}"
+      end
+      if volume < 0 || volume > 100
+        raise ArgumentError, "Volume must be between 0 and 100: #{volume}"
+      end
+      cmd = ":VC#{channel}#{volume}"
+      expected = cmd[1...cmd.length]
       dispatch_assert(cmd, expected)
     end
 

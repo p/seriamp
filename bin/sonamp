@@ -41,7 +41,15 @@ case cmd
 when 'power'
   zone = ARGV.shift.to_i
   state = parse_on_off(ARGV.shift)
-  p client.power(zone, state)
+  client.power(zone, state)
+when 'zvol'
+  zone = ARGV.shift.to_i
+  volume = ARGV.shift.to_i
+  client.zone_volume(zone, volume)
+when 'cvol'
+  channel = ARGV.shift.to_i
+  volume = ARGV.shift.to_i
+  client.channel_volume(channel, volume)
 else
   raise ArgumentError, "Unknown command: #{cmd}"
 end
