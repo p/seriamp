@@ -27,6 +27,19 @@ module Sonamp
     attr_reader :device
     attr_accessor :logger
 
+    def get_power(zone = nil)
+      if zone
+        if zone < 1 || zone > 4
+          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+        end
+        dispatch(":P#{zone}?")
+      else
+        dispatch(":PG?", 4).map do |resp|
+          resp[2] == '1' ? true : false
+        end
+      end
+    end
+
     def power(zone, state)
       if zone < 1 || zone > 4
         raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
@@ -34,6 +47,19 @@ module Sonamp
       cmd = ":P#{zone}#{state ? 1 : 0}"
       expected = cmd[1...cmd.length]
       dispatch_assert(cmd, expected)
+    end
+
+    def get_zone_volume(zone = nil)
+      if zone
+        if zone < 1 || zone > 4
+          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+        end
+        dispatch(":V#{zone}?")
+      else
+        dispatch(":VG?", 4).map do |resp|
+          resp[2...].to_i
+        end
+      end
     end
 
     def zone_volume(zone, volume)
@@ -66,9 +92,9 @@ module Sonamp
       #open_device do
         p dispatch(':VER?')
         p dispatch(':TP?')
-        p dispatch(':PG?', 4)
+        p get_power
         p dispatch(':FPG?', 4)
-        p dispatch(':VG?', 4)
+        p get_zone_volume
         p dispatch(':VCG?', 8)
         p dispatch(':ATIG?', 4)
         sleep 0.1
