@@ -2,6 +2,7 @@ module Sonamp
   VERSION = '0.0.1'.freeze
 
   class Error < StandardError; end
+  class InvalidCommand < Error; end
   class NotApplicable < Error; end
   class UnexpectedResponse < Error; end
 
@@ -41,7 +42,7 @@ module Sonamp
       File.open(device, 'r+') do |f|
         f << "#{cmd}\n"
         resp = 1.upto(resp_lines_count).map do
-          read_line(f)
+          read_line(f, cmd)
         end
         if resp_lines_count == 1
           resp.first
@@ -58,9 +59,11 @@ module Sonamp
       end
     end
 
-    def read_line(f)
+    def read_line(f, cmd)
       f.readline.strip.tap do |resp|
-        if resp == 'N/A'
+        if resp == 'ERR'
+          raise InvalidCommand, "Invalid command: #{cmd}"
+        elsif resp == 'N/A'
           raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
         end
       end
