@@ -60,13 +60,46 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
+    def status
+      # Reusing the opened device file makes :VTIG? fail even with a delay
+      # in front.
+      #open_device do
+        p dispatch(':VER?')
+        p dispatch(':TP?')
+        p dispatch(':FPG?', 4)
+        p dispatch(':VG?', 4)
+        p dispatch(':VCG?', 8)
+        p dispatch(':ATIG?', 4)
+        sleep 0.1
+        p dispatch(':VTIG?', 4)
+        p dispatch(':TVLG?', 8)
+        p dispatch(':MG?', 4)
+        p dispatch(':MCG?', 8)
+        p dispatch(':BPG?', 4)
+        p dispatch(':BBG?', 4)
+      #end
+    end
+
     private
 
+    def open_device
+      if @f
+        yield
+      else
+        File.open(device, 'r+') do |f|
+          @f = f
+          yield.tap do
+            @f = nil
+          end
+        end
+      end
+    end
+
     def dispatch(cmd, resp_lines_count = 1)
-      File.open(device, 'r+') do |f|
-        f << "#{cmd}\n"
+      open_device do
+        @f << "#{cmd}\x0d"
         resp = 1.upto(resp_lines_count).map do
-          read_line(f, cmd)
+          read_line(@f, cmd)
         end
         if resp_lines_count == 1
           resp.first

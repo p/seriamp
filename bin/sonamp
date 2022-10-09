@@ -50,6 +50,8 @@ when 'cvol'
   channel = ARGV.shift.to_i
   volume = ARGV.shift.to_i
   client.channel_volume(channel, volume)
+when 'status'
+  client.status
 else
   raise ArgumentError, "Unknown command: #{cmd}"
 end
