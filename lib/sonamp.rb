@@ -3,6 +3,7 @@ module Sonamp
 
   class Error < StandardError; end
   class NotApplicable < Error; end
+  class UnexpectedResponse < Error; end
 
   class Client
     def initialize(device = nil, logger: nil)
@@ -30,7 +31,8 @@ module Sonamp
         raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
       end
       cmd = ":P#{zone}#{state ? 1 : 0}"
-      dispatch(cmd)
+      expected = "P#{zone}#{state ? 1 : 0}"
+      dispatch_assert(cmd, expected)
     end
 
     private
@@ -38,9 +40,21 @@ module Sonamp
     def dispatch(cmd, resp_lines_count = 1)
       File.open(device, 'r+') do |f|
         f << "#{cmd}\n"
-        1.upto(resp_lines_count).map do
+        resp = 1.upto(resp_lines_count).map do
           read_line(f)
         end
+        if resp_lines_count == 1
+          resp.first
+        else
+          resp
+        end
+      end
+    end
+
+    def dispatch_assert(cmd, expected)
+      resp = dispatch(cmd)
+      if resp != expected
+        raise UnexpectedResponse, "Expected #{expected}, got #{resp}"
       end
     end
 
