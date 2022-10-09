@@ -66,6 +66,7 @@ module Sonamp
       #open_device do
         p dispatch(':VER?')
         p dispatch(':TP?')
+        p dispatch(':PG?', 4)
         p dispatch(':FPG?', 4)
         p dispatch(':VG?', 4)
         p dispatch(':VCG?', 8)
