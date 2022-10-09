@@ -20,3 +20,28 @@ end.parse!
 
 logger = Logger.new(STDERR)
 client = Sonamp::Client.new(options[:device], logger: logger)
+
+cmd = ARGV.shift
+unless cmd
+  raise ArgumentError, "No command given"
+end
+
+def parse_on_off(value)
+  case value&.downcase
+  when '1', 'on', 'yes', 'true'
+    true
+  when '0', 'off', 'no', 'value'
+    false
+  else
+    raise ArgumentError, "Invalid on/off value: #{value}"
+  end
+end
+
+case cmd
+when 'power'
+  zone = ARGV.shift.to_i
+  state = parse_on_off(ARGV.shift)
+  p client.power(zone, state)
+else
+  raise ArgumentError, "Unknown command: #{cmd}"
+end
