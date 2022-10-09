@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'sonamp'
+rescue LoadError
+  $: << File.join(File.dirname(__FILE__), '../lib')
+  require 'sonamp'
+end
+require 'optparse'
+require 'logger'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: sonamp [-d device] command arg..."
+
+  opts.on("-d", "--device DEVICE", "TTY to use (default autodetect)") do |v|
+    options[:device] = v
+  end
+end.parse!
+
+logger = Logger.new(STDERR)
+client = Sonamp::Client.new(options[:device], logger: logger)
