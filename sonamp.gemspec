@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['code@olegp.name']
   spec.summary       = %q{Sonance Sonamp Amplifier Serial Control Interface}
   spec.description   = %q{Library for controlling Sonance Sonamp 875D & 875D MkII amplifiers via the serial port}
-  spec.homepage      = "https://github.com/p/sonamp"
+  spec.homepage      = "https://github.com/p/sonamp-ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
