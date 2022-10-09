@@ -28,16 +28,7 @@ module Sonamp
     attr_accessor :logger
 
     def get_power(zone = nil)
-      if zone
-        if zone < 1 || zone > 4
-          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
-        end
-        dispatch(":P#{zone}?")
-      else
-        dispatch(":PG?", 4).map do |resp|
-          resp[2] == '1' ? true : false
-        end
-      end
+      get_zone_state('P', zone)
     end
 
     def power(zone, state)
@@ -86,6 +77,30 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
+    def get_zone_mute(zone = nil)
+      get_zone_state('M', zone)
+    end
+
+    def get_bbe(zone = nil)
+      get_zone_state('BP', zone)
+    end
+
+    def get_bbe_high_boost(zone = nil)
+      get_zone_state('BH', zone)
+    end
+
+    def get_bbe_low_boost(zone = nil)
+      get_zone_state('BL', zone)
+    end
+
+    def get_auto_trigger_input(zone = nil)
+      get_zone_state('ATI', zone)
+    end
+
+    def get_voltage_trigger_input(zone = nil)
+      get_zone_state('VTI', zone)
+    end
+
     def status
       # Reusing the opened device file makes :VTIG? fail even with a delay
       # in front.
@@ -96,14 +111,15 @@ module Sonamp
         p dispatch(':FPG?', 4)
         p get_zone_volume
         p dispatch(':VCG?', 8)
-        p dispatch(':ATIG?', 4)
+        p get_auto_trigger_input
         sleep 0.1
-        p dispatch(':VTIG?', 4)
+        p get_voltage_trigger_input
         p dispatch(':TVLG?', 8)
-        p dispatch(':MG?', 4)
+        p get_zone_mute
         p dispatch(':MCG?', 8)
-        p dispatch(':BPG?', 4)
-        p dispatch(':BBG?', 4)
+        p get_bbe
+        p get_bbe_high_boost
+        p get_bbe_low_boost
       #end
     end
 
@@ -149,6 +165,19 @@ module Sonamp
           raise InvalidCommand, "Invalid command: #{cmd}"
         elsif resp == 'N/A'
           raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+        end
+      end
+    end
+
+    def get_zone_state(cmd_prefix, zone)
+      if zone
+        if zone < 1 || zone > 4
+          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+        end
+        dispatch(":#{cmd_prefix}#{zone}?")
+      else
+        dispatch(":#{cmd_prefix}G?", 4).map do |resp|
+          resp[cmd_prefix.length + 1] == '1' ? true : false
         end
       end
     end
