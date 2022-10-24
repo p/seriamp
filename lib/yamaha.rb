@@ -223,6 +223,9 @@ module Yamaha
       if data.length != length
         raise BadStatus, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
       end
+      unless data.start_with?('@E01900')
+        raise BadStatus, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
+      end
       puts data
       p payload
       @status_string = data
