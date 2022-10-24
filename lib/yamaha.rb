@@ -65,7 +65,7 @@ module Yamaha
     end
 
     def set_zone2_volume(volume)
-      dispatch("#{STX}23144#{ETX}")
+      dispatch("#{STX}231#{'%02x' % volume}#{ETX}")
     end
 
     def zone2_volume_up
@@ -208,7 +208,7 @@ module Yamaha
       loop do
         resp = dispatch(STATUS_REQ)
         again = false
-        while IO.select([@f], nil, nil, 0)
+        while @f && IO.select([@f], nil, nil, 0)
           logger&.warn("Serial device readable after completely reading status response - concurrent access?")
           read_response
           again = true
@@ -231,12 +231,17 @@ module Yamaha
       @status_string = data
       @status = {
         # RX-V1500: model R0177
-        # Volume values:
+        # Volume values (0.5 dB increment):
         # mute: 0
         # -80.0 dB (min): 39
         # 0 dB: 199
         # +14.5 dB (max): 228
+        # Zone2 volume values (1 dB increment):
+        # mute: 0
+        # -33 dB (min): 39
+        # 0 dB (max): 72
         volume: data[15..16].to_i(16),
+        zone2_volume: data[17..18].to_i(16),
         pure_direct: data[28] == '1',
       }
     end
