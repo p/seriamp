@@ -6,6 +6,7 @@ module Yamaha
 
   class Error < StandardError; end
   class BadDevice < Error; end
+  class BadStatus < Error; end
   class InvalidCommand < Error; end
   class NotApplicable < Error; end
   class UnexpectedResponse < Error; end
@@ -40,7 +41,7 @@ module Yamaha
     end
 
     def last_status_string
-      unless @status
+      unless @status_string
         open_device do
         end
       end
@@ -130,6 +131,8 @@ module Yamaha
 
     STATUS_REQ = -"#{DC1}001#{ETX}"
 
+    ZERO_ORD = '0'.ord
+
     def open_device
       if @f
         yield
@@ -197,9 +200,20 @@ module Yamaha
 
     def do_status
       resp = dispatch(STATUS_REQ)
+      p resp
       payload = resp[1...-1]
+      p payload
+      @model_code = payload[0..4]
+      @version = payload[5]
+      length = (payload[6].ord - ZERO_ORD) * 16 + payload[7].ord - ZERO_ORD
+      p length
+      p @model_code
       data = payload[8...-2]
+      if data.length != length
+        raise BadStatus, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
+      end
       puts data
+      p payload
       @status_string = data
       @status = {
         # RX-V1500: model R0177
