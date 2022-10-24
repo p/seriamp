@@ -252,19 +252,39 @@ module Yamaha
         # mute: 0
         # -33 dB (min): 39
         # 0 dB (max): 72
-        volume: data[15..16].to_i(16),
-        zone2_volume: data[17..18].to_i(16),
+        volume: volume = data[15..16].to_i(16),
+        volume_db: int_to_half_db(volume),
+        zone2_volume: zone2_volume = data[17..18].to_i(16),
+        zone2_volume_db: int_to_full_db(zone2_volume),
+        zone3_volume: zone3_volume = data[129..130].to_i(16),
+        zone3_volume_db: int_to_full_db(zone3_volume),
         pure_direct: data[28] == '1',
       }
     end
 
     def remote_command(cmd)
-      dispatch("#{STX}\x00#{cmd}#{ETX}")
+      dispatch("#{STX}0#{cmd}#{ETX}")
     end
 
     def extract_text(resp)
       # TODO: assert resp[0] == DC1, resp[-1] == ETX
       resp[1...-1]
+    end
+
+    def int_to_half_db(value)
+      if value == 0
+        :mute
+      else
+        (value - 39) / 2.0 - 80
+      end
+    end
+
+    def int_to_full_db(value)
+      if value == 0
+        :mute
+      else
+        (value - 39) - 33
+      end
     end
   end
 end
