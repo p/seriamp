@@ -231,6 +231,12 @@ module Yamaha
       @status_string = data
       @status = {
         # RX-V1500: model R0177
+        # Volume values:
+        # mute: 0
+        # -80.0 dB (min): 39
+        # 0 dB: 199
+        # +14.5 dB (max): 228
+        volume: data[15..16].to_i(16),
         pure_direct: data[28] == '1',
       }
     end
