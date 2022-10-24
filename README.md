@@ -36,6 +36,9 @@ dB increments from -33 dB to 0 dB, giving the integer range of 39-72.
 While testing with Python, I ran into [this issue](https://bugs.python.org/issue20074) -
 to open a TTY in Python, buffering must be disabled.
 
+See [here](https://www.avsforum.com/threads/enhancing-yamaha-avrs-via-rs-232.1066484/)
+for more Yamaha-related software.
+
 ## Other Libraries
 
 Yamaha RS232/serial protocol:
