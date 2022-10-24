@@ -83,6 +83,10 @@ module Yamaha
       extract_text(dispatch("#{STX}22005#{ETX}"))[3...]
     end
 
+    def set_pure_direct(state)
+      dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
+    end
+
     private
 
     class IntPtr < FFI::Struct
@@ -189,6 +193,8 @@ module Yamaha
       data = payload[8...-2]
       puts data
       @status = {
+        # RX-V1500: model R0177
+        pure_direct: data[28] == '1',
       }
     end
 
