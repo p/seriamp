@@ -143,6 +143,11 @@ module Yamaha
           end
           @f = f
           set_rts
+
+          if IO.select([f], nil, nil, 0)
+            logger&.warn("Serial device readable without having been written to - concurrent access?")
+          end
+
           tries = 0
           begin
             do_status
@@ -199,15 +204,21 @@ module Yamaha
     end
 
     def do_status
-      resp = dispatch(STATUS_REQ)
-      p resp
+      resp = nil
+      loop do
+        resp = dispatch(STATUS_REQ)
+        again = false
+        while IO.select([@f], nil, nil, 0)
+          logger&.warn("Serial device readable after completely reading status response - concurrent access?")
+          read_response
+          again = true
+        end
+        break unless again
+      end
       payload = resp[1...-1]
-      p payload
       @model_code = payload[0..4]
       @version = payload[5]
-      length = (payload[6].ord - ZERO_ORD) * 16 + payload[7].ord - ZERO_ORD
-      p length
-      p @model_code
+      length = payload[6..7].to_i(16)
       data = payload[8...-2]
       if data.length != length
         raise BadStatus, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
