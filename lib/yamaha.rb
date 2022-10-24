@@ -54,11 +54,15 @@ module Yamaha
     end
 
     def set_power(state)
-      dispatch("#{STX}07A1#{state ? 'D' : 'E'}#{ETX}")
+      remote_command("7A1#{state ? 'D' : 'E'}")
     end
 
     def set_zone2_power(state)
-      dispatch("#{STX}07EB#{state ? 'A' : 'B'}#{ETX}")
+      remote_command("7EB#{state ? 'A' : 'B'}")
+    end
+
+    def set_zone3_power(state)
+      remote_command("7AE#{state ? 'D' : 'E'}")
     end
 
     def set_volume(volume)
@@ -69,15 +73,23 @@ module Yamaha
     end
 
     def zone2_volume_up
-      dispatch("#{STX}07ADA#{ETX}")
+      remote_command('7ADA')
     end
 
     def zone2_volume_down
-      dispatch("#{STX}07ADB#{ETX}")
+      remote_command('7ADB')
     end
 
     def set_zone3_volume(volume)
-      dispatch("#{STX}23444#{ETX}")
+      dispatch("#{STX}234#{'%02x' % volume}#{ETX}")
+    end
+
+    def zone3_volume_up
+      remote_command('7AFD')
+    end
+
+    def zone3_volume_down
+      remote_command('7AFE')
     end
 
     def set_subwoofer_level(level)
