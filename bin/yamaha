@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'yamaha'
+rescue LoadError
+  $: << File.join(File.dirname(__FILE__), '../lib')
+  require 'yamaha'
+end
+require 'optparse'
+require 'logger'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: yamaha [-d device] command arg..."
+
+  opts.on("-d", "--device DEVICE", "TTY to use (default autodetect)") do |v|
+    options[:device] = v
+  end
+end.parse!
+
+logger = Logger.new(STDERR)
+client = Yamaha::Client.new(options[:device], logger: logger)
+
+cmd = ARGV.shift
+unless cmd
+  raise ArgumentError, "No command given"
+end
+
+def parse_on_off(value)
+  case value&.downcase
+  when '1', 'on', 'yes', 'true'
+    true
+  when '0', 'off', 'no', 'value'
+    false
+  else
+    raise ArgumentError, "Invalid on/off value: #{value}"
+  end
+end
+
+case cmd
+when 'power'
+  state = parse_on_off(ARGV.shift)
+  client.set_power(state)
+when 'vol'
+  volume = ARGV.shift.to_i
+  p client.set_zone2_volume(volume)
+  p client.set_subwoofer_level(volume)
+  p client.get_zone2_volume_text
+  p client.get_zone3_volume_text
+when 'status'
+  p client.last_status
+when 'test'
+else
+  raise ArgumentError, "Unknown command: #{cmd}"
+end
