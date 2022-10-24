@@ -39,6 +39,14 @@ module Yamaha
       @status.dup
     end
 
+    def last_status_string
+      unless @status
+        open_device do
+        end
+      end
+      @status_string.dup
+    end
+
     def status
       do_status
       last_status
@@ -192,6 +200,7 @@ module Yamaha
       payload = resp[1...-1]
       data = payload[8...-2]
       puts data
+      @status_string = data
       @status = {
         # RX-V1500: model R0177
         pure_direct: data[28] == '1',

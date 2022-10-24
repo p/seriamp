@@ -8,6 +8,7 @@ rescue LoadError
 end
 require 'optparse'
 require 'logger'
+require 'pp'
 
 options = {}
 OptionParser.new do |opts|
@@ -48,7 +49,9 @@ when 'vol'
   p client.get_zone2_volume_text
   p client.get_zone3_volume_text
 when 'status'
-  p client.last_status
+  pp client.last_status
+when 'status_string'
+  puts client.last_status_string
 when 'test'
 else
   raise ArgumentError, "Unknown command: #{cmd}"
