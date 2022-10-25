@@ -8,6 +8,7 @@ rescue LoadError
 end
 require 'optparse'
 require 'logger'
+require 'sonamp/utils'
 
 options = {}
 OptionParser.new do |opts|
@@ -26,16 +27,7 @@ unless cmd
   raise ArgumentError, "No command given"
 end
 
-def parse_on_off(value)
-  case value&.downcase
-  when '1', 'on', 'yes', 'true'
-    true
-  when '0', 'off', 'no', 'value'
-    false
-  else
-    raise ArgumentError, "Invalid on/off value: #{value}"
-  end
-end
+include Sonamp::Utils
 
 case cmd
 when 'power'
