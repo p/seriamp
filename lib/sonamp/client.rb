@@ -43,7 +43,8 @@ module Sonamp
         if zone < 1 || zone > 4
           raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
         end
-        dispatch(":V#{zone}?")
+        resp = dispatch(":V#{zone}?")
+        resp[2...].to_i
       else
         dispatch(":VG?", 4).map do |resp|
           resp[2...].to_i
