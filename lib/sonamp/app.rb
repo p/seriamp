@@ -7,6 +7,7 @@ module Sonamp
 
     set :device, nil
     set :logger, nil
+    set :client, nil
 
     get '/power' do
       render_json(client.get_zone_power)
@@ -36,7 +37,9 @@ module Sonamp
     private
 
     def client
-      @client ||= Sonamp::Client.new(settings.device, logger: settings.logger)
+      settings.client || begin
+        @client ||= Sonamp::Client.new(settings.device, logger: settings.logger)
+      end
     end
 
     def render_json(data)

@@ -23,8 +23,9 @@ end.parse!
 
 logger = Logger.new(STDERR)
 
-Sonamp::App.set :device, options[:device]
-Sonamp::App.set :logger, logger
+#Sonamp::App.set :device, options[:device]
+#Sonamp::App.set :logger, logger
+Sonamp::App.set :client, Sonamp::Client.new(options[:device], logger: logger)
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Sonamp::App))
