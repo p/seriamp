@@ -22,7 +22,9 @@ OptionParser.new do |opts|
 end.parse!
 
 logger = Logger.new(STDERR)
-client = Sonamp::Client.new(options[:device], logger: logger)
+
+Sonamp::App.set :device, options[:device]
+Sonamp::App.set :logger, logger
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Sonamp::App))

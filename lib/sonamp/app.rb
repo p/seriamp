@@ -5,12 +5,20 @@ require 'sonamp/client'
 module Sonamp
   class App < Sinatra::Base
 
+    set :device, nil
+    set :logger, nil
+
+    get '/power' do
+      render_json(client.get_zone_power)
+    end
+
     get '/zone/:zone/power' do |zone|
+      render_json(client.get_zone_power(zone.to_i))
     end
 
     put '/zone/:zone/power' do |zone|
       state = Utils.parse_on_off(request.body)
-      client.power(zone.to_i, state)
+      client.set_zone_power(zone.to_i, state)
     end
 
     get '/zone/:zone/volume' do |zone|
@@ -23,6 +31,16 @@ module Sonamp
     end
 
     put '/channel/:channel/volume' do |channel|
+    end
+
+    private
+
+    def client
+      @client ||= Sonamp::Client.new(settings.device, logger: settings.logger)
+    end
+
+    def render_json(data)
+      data.to_json
     end
   end
 end

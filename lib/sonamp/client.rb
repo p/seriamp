@@ -25,11 +25,11 @@ module Sonamp
     attr_reader :device
     attr_accessor :logger
 
-    def get_power(zone = nil)
+    def get_zone_power(zone = nil)
       get_zone_state('P', zone)
     end
 
-    def power(zone, state)
+    def set_zone_power(zone, state)
       if zone < 1 || zone > 4
         raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
       end
@@ -51,7 +51,7 @@ module Sonamp
       end
     end
 
-    def zone_volume(zone, volume)
+    def set_zone_volume(zone, volume)
       if zone < 1 || zone > 4
         raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
       end
@@ -63,7 +63,7 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
-    def channel_volume(channel, volume)
+    def set_channel_volume(channel, volume)
       if channel < 1 || channel > 8
         raise ArgumentError, "Channel must be between 1 and 4: #{channel}"
       end
