@@ -18,20 +18,26 @@ module Sonamp
     end
 
     put '/zone/:zone/power' do |zone|
-      state = Utils.parse_on_off(request.body)
+      state = Utils.parse_on_off(request.body.read)
       client.set_zone_power(zone.to_i, state)
     end
 
     get '/zone/:zone/volume' do |zone|
+      render_json(client.get_zone_volume(zone.to_i))
     end
 
     put '/zone/:zone/volume' do |zone|
+      volume = request.body.read.to_i
+      client.set_zone_volume(zone.to_i, volume)
     end
 
     get '/channel/:channel/volume' do |channel|
+      render_json(client.get_channel_volume(channel.to_i))
     end
 
     put '/channel/:channel/volume' do |channel|
+      volume = request.body.read.to_i
+      client.set_channel_volume(channel.to_i, volume)
     end
 
     private
