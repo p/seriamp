@@ -33,15 +33,15 @@ case cmd
 when 'power'
   zone = ARGV.shift.to_i
   state = parse_on_off(ARGV.shift)
-  client.power(zone, state)
+  client.set_zone_power(zone, state)
 when 'zvol'
   zone = ARGV.shift.to_i
   volume = ARGV.shift.to_i
-  client.zone_volume(zone, volume)
+  client.set_zone_volume(zone, volume)
 when 'cvol'
   channel = ARGV.shift.to_i
   volume = ARGV.shift.to_i
-  client.channel_volume(channel, volume)
+  client.set_channel_volume(channel, volume)
 when 'status'
   client.status
 else
