@@ -30,6 +30,11 @@ end
 include Sonamp::Utils
 
 case cmd
+when 'off'
+  client.set_zone_power(1, false)
+  client.set_zone_power(2, false)
+  client.set_zone_power(3, false)
+  client.set_zone_power(4, false)
 when 'power'
   zone = ARGV.shift.to_i
   state = parse_on_off(ARGV.shift)
