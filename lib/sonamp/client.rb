@@ -115,11 +115,11 @@ module Sonamp
       get_zone_state('VTI', zone)
     end
 
-    def firmware_version
+    def get_firmware_version
       global_query('VER')
     end
 
-    def temperature
+    def get_temperature
       Integer(global_query('TP'))
     end
 
@@ -129,8 +129,8 @@ module Sonamp
       #open_device do
       #end
       {
-        firmware_version: firmware_version,
-        temperature: temperature,
+        firmware_version: get_firmware_version,
+        temperature: get_temperature,
         zone_power: get_zone_power,
         zone_fault: get_zone_fault,
         zone_volume: get_zone_volume,
