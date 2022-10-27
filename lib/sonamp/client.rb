@@ -100,13 +100,18 @@ module Sonamp
       get_zone_state('VTI', zone)
     end
 
+    def firmware_version
+      global_query('VER')
+    end
+
+    def temperature
+      Integer(global_query('TP'))
+    end
+
     def status
       # Reusing the opened device file makes :VTIG? fail even with a delay
       # in front.
       #open_device do
-        p dispatch(':VER?')
-        p dispatch(':TP?')
-        p get_zone_power
         p dispatch(':FPG?', 4)
         p get_zone_volume
         p dispatch(':VCG?', 8)
@@ -120,6 +125,11 @@ module Sonamp
         p get_bbe_high_boost
         p get_bbe_low_boost
       #end
+      {
+        firmware_version: firmware_version,
+        temperature: temperature,
+        zone_power: get_zone_power,
+      }
     end
 
     private
@@ -156,6 +166,18 @@ module Sonamp
       if resp != expected
         raise UnexpectedResponse, "Expected #{expected}, got #{resp}"
       end
+    end
+
+    def dispatch_extract_suffix(cmd, expected_prefix)
+      resp = dispatch(cmd)
+      unless resp[0..expected_prefix.length-1] == expected_prefix
+        raise "Unexpected response: expected #{expected_prefix}..., actual #{resp}"
+      end
+      resp[expected_prefix.length..]
+    end
+
+    def global_query(cmd)
+      dispatch_extract_suffix(":#{cmd}?", cmd)
     end
 
     def read_line(f, cmd)

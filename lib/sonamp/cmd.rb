@@ -50,7 +50,7 @@ module Sonamp
         volume = args.shift.to_i
         client.set_channel_volume(channel, volume)
       when 'status'
-        client.status
+        pp client.status
       else
         raise ArgumentError, "Unknown command: #{cmd}"
       end
