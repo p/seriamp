@@ -43,11 +43,10 @@ module Sonamp
         if zone < 1 || zone > 4
           raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
         end
-        resp = dispatch(":V#{zone}?")
-        resp[2...].to_i
+        Integer(dispatch_extract_suffix(":V#{zone}?", 'V'))
       else
         dispatch(":VG?", 4).map do |resp|
-          resp[2...].to_i
+          Integer(extract_suffix(resp, 'V'))
         end
       end
     end
@@ -64,6 +63,10 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
+    def get_channel_volume(channel = nil)
+      get_channel_value('VC', channel)
+    end
+
     def set_channel_volume(channel, volume)
       if channel < 1 || channel > 8
         raise ArgumentError, "Channel must be between 1 and 4: #{channel}"
@@ -78,6 +81,14 @@ module Sonamp
 
     def get_zone_mute(zone = nil)
       get_zone_state('M', zone)
+    end
+
+    def get_channel_mute(channel = nil)
+      get_channel_value('MC', channel)
+    end
+
+    def get_channel_front_panel_level(channel = nil)
+      get_channel_value('TVL', channel)
     end
 
     def get_zone_fault(zone = nil)
@@ -116,10 +127,6 @@ module Sonamp
       # Reusing the opened device file makes :VTIG? fail even with a delay
       # in front.
       #open_device do
-        p dispatch(':VCG?', 8)
-        sleep 0.1
-        p dispatch(':TVLG?', 8)
-        p dispatch(':MCG?', 8)
       #end
       {
         firmware_version: firmware_version,
@@ -127,12 +134,15 @@ module Sonamp
         zone_power: get_zone_power,
         zone_fault: get_zone_fault,
         zone_volume: get_zone_volume,
-        mute: get_zone_mute,
+        channel_volume: get_channel_volume,
+        zone_mute: get_zone_mute,
+        channel_mute: get_channel_mute,
         bbe: get_bbe,
         bbe_high_boost: get_bbe_high_boost,
         bbe_low_boost: get_bbe_low_boost,
         auto_trigger_input: get_auto_trigger_input,
         voltage_trigger_input: get_voltage_trigger_input,
+        channel_front_panel_level: get_channel_front_panel_level,
       }
     end
 
@@ -172,12 +182,16 @@ module Sonamp
       end
     end
 
-    def dispatch_extract_suffix(cmd, expected_prefix)
-      resp = dispatch(cmd)
+    def extract_suffix(resp, expected_prefix)
       unless resp[0..expected_prefix.length-1] == expected_prefix
         raise "Unexpected response: expected #{expected_prefix}..., actual #{resp}"
       end
       resp[expected_prefix.length..]
+    end
+
+    def dispatch_extract_suffix(cmd, expected_prefix)
+      resp = dispatch(cmd)
+      extract_suffix(resp, expected_prefix)
     end
 
     def global_query(cmd)
@@ -204,6 +218,22 @@ module Sonamp
       else
         dispatch(":#{cmd_prefix}G?", 4).map do |resp|
           resp[cmd_prefix.length + 1] == '1' ? true : false
+        end
+      end
+    end
+
+    def get_channel_value(cmd_prefix, channel)
+      if channel
+        if channel < 1 || channel > 8
+          raise ArgumentError, "Channel must be between 1 and 8: #{channel}"
+        end
+        Integer(dispatch_extract_suffix(":#{cmd_prefix}#{channel}?", "#{cmd_prefix}#{channel}"))
+      else
+        index = 1
+        dispatch(":#{cmd_prefix}G?", 8).map do |resp|
+          Integer(extract_suffix(resp, "#{cmd_prefix}#{index}")).tap do
+            index += 1
+          end
         end
       end
     end
