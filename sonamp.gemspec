@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "sonamp"
-  spec.version       = '0.0.4'
+  spec.version       = '0.0.5'
   spec.authors       = ['Oleg Pudeyev']
   spec.email         = ['code@olegp.name']
   spec.summary       = %q{Sonance Sonamp Amplifier Serial Control Interface}
