@@ -106,7 +106,7 @@ module Sonamp
       #open_device do
         p dispatch(':VER?')
         p dispatch(':TP?')
-        p get_power
+        p get_zone_power
         p dispatch(':FPG?', 4)
         p get_zone_volume
         p dispatch(':VCG?', 8)
