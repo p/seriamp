@@ -80,6 +80,10 @@ module Sonamp
       get_zone_state('M', zone)
     end
 
+    def get_zone_fault(zone = nil)
+      get_zone_state('FP', zone)
+    end
+
     def get_bbe(zone = nil)
       get_zone_state('BP', zone)
     end
@@ -112,23 +116,23 @@ module Sonamp
       # Reusing the opened device file makes :VTIG? fail even with a delay
       # in front.
       #open_device do
-        p dispatch(':FPG?', 4)
-        p get_zone_volume
         p dispatch(':VCG?', 8)
-        p get_auto_trigger_input
         sleep 0.1
-        p get_voltage_trigger_input
         p dispatch(':TVLG?', 8)
-        p get_zone_mute
         p dispatch(':MCG?', 8)
-        p get_bbe
-        p get_bbe_high_boost
-        p get_bbe_low_boost
       #end
       {
         firmware_version: firmware_version,
         temperature: temperature,
         zone_power: get_zone_power,
+        zone_fault: get_zone_fault,
+        zone_volume: get_zone_volume,
+        mute: get_zone_mute,
+        bbe: get_bbe,
+        bbe_high_boost: get_bbe_high_boost,
+        bbe_low_boost: get_bbe_low_boost,
+        auto_trigger_input: get_auto_trigger_input,
+        voltage_trigger_input: get_voltage_trigger_input,
       }
     end
 
