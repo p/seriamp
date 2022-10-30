@@ -150,7 +150,7 @@ module Yamaha
       if @f
         yield
       else
-        File.open(device, 'r+') do |f|
+        File.open(device, 'r+b') do |f|
           unless f.isatty
             raise BadDevice, "#{device} is not a TTY"
           end
