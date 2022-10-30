@@ -49,6 +49,14 @@ module Sonamp
         channel = args.shift.to_i
         volume = args.shift.to_i
         client.set_channel_volume(channel, volume)
+      when 'zmute'
+        zone = args.shift.to_i
+        mute = ARGV.shift.to_i
+        client.set_zone_mute(zone, mute)
+      when 'cmute'
+        channel = args.shift.to_i
+        mute = args.shift.to_i
+        client.set_channel_mute(channel, mute)
       when 'status'
         pp client.status
       else

@@ -52,15 +52,14 @@ module Sonamp
     end
 
     def set_zone_volume(zone, volume)
-      if zone < 1 || zone > 4
-        raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
-      end
       if volume < 0 || volume > 100
         raise ArgumentError, "Volume must be between 0 and 100: #{volume}"
       end
-      cmd = ":V#{zone}#{volume}"
-      expected = cmd[1...cmd.length]
-      dispatch_assert(cmd, expected)
+      set_zone_value('V', zone, volume)
+    end
+
+    def set_zone_mute(zone, state)
+      set_zone_value('M', zone, state ? 1 : 0)
     end
 
     def get_channel_volume(channel = nil)
@@ -77,6 +76,10 @@ module Sonamp
       cmd = ":VC#{channel}#{volume}"
       expected = cmd[1...cmd.length]
       dispatch_assert(cmd, expected)
+    end
+
+    def set_channel_mute(channel, state)
+      set_channel_value('MC', channel, state ? 1 : 0)
     end
 
     def get_zone_mute(zone = nil)
@@ -208,6 +211,15 @@ module Sonamp
       end
     end
 
+    def set_zone_value(cmd_prefix, zone, value)
+      if zone < 1 || zone > 4
+        raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+      end
+      cmd = ":#{cmd_prefix}#{zone}#{value}"
+      expected = cmd[1...cmd.length]
+      dispatch_assert(cmd, expected)
+    end
+
     def get_zone_state(cmd_prefix, zone)
       if zone
         if zone < 1 || zone > 4
@@ -220,6 +232,15 @@ module Sonamp
           resp[cmd_prefix.length + 1] == '1' ? true : false
         end
       end
+    end
+
+    def set_channel_value(cmd_prefix, channel, value)
+      if channel < 1 || channel > 8
+        raise ArgumentError, "Channel must be between 1 and 8: #{channel}"
+      end
+      cmd = ":#{cmd_prefix}#{channel}#{value}"
+      expected = cmd[1...cmd.length]
+      dispatch_assert(cmd, expected)
     end
 
     def get_channel_value(cmd_prefix, channel)
