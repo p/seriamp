@@ -39,16 +39,7 @@ module Sonamp
     end
 
     def get_zone_volume(zone = nil)
-      if zone
-        if zone < 1 || zone > 4
-          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
-        end
-        Integer(dispatch_extract_suffix(":V#{zone}?", 'V'))
-      else
-        dispatch(":VG?", 4).map do |resp|
-          Integer(extract_suffix(resp, 'V'))
-        end
-      end
+      get_zone_value('V', zone)
     end
 
     def set_zone_volume(zone, volume)
@@ -218,6 +209,23 @@ module Sonamp
       cmd = ":#{cmd_prefix}#{zone}#{value}"
       expected = cmd[1...cmd.length]
       dispatch_assert(cmd, expected)
+    end
+
+    def get_zone_value(cmd_prefix, zone)
+      if zone
+        if zone < 1 || zone > 4
+          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
+        end
+        resp = dispatch(":#{cmd_prefix}#{zone}?")
+        Integer(resp[cmd_prefix.length + 1..])
+      else
+        index = 1
+        dispatch(":#{cmd_prefix}G?", 4).map do |resp|
+          Integer(resp[cmd_prefix.length + 1..]).tap do
+            index += 1
+          end
+        end
+      end
     end
 
     def get_zone_state(cmd_prefix, zone)
