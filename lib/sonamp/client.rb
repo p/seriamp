@@ -87,7 +87,7 @@ module Sonamp
     end
 
     def get_channel_mute(channel = nil)
-      get_channel_value('MC', channel)
+      get_channel_state('MC', channel)
     end
 
     def get_channel_front_panel_level(channel = nil)
@@ -256,6 +256,15 @@ module Sonamp
             index += 1
           end
         end
+      end
+    end
+
+    def get_channel_state(cmd_prefix, channel)
+      result = get_channel_value(cmd_prefix, channel)
+      if Array === result
+        result.map { |v| v == 1 }
+      else
+        result == 1
       end
     end
   end
