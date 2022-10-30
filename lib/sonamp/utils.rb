@@ -5,7 +5,7 @@ module Sonamp
       case value&.downcase
       when '1', 'on', 'yes', 'true'
         true
-      when '0', 'off', 'no', 'value'
+      when '0', 'off', 'no', 'false'
         false
       else
         raise ArgumentError, "Invalid on/off value: #{value}"
