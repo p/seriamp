@@ -51,3 +51,7 @@ Serial port communication in Ruby:
 
 - [rubyserial](https://github.com/hybridgroup/rubyserial)
 - [Ruby/SerialPort](https://github.com/hparra/ruby-serialport)
+
+## Helpful Links
+
+- [Serial port programming in Ruby](https://www.thegeekdiary.com/serial-port-programming-reading-writing-status-of-control-lines-dtr-rts-cts-dsr/)
