@@ -195,7 +195,7 @@ module Yamaha
 
     def dispatch(cmd)
       open_device do
-        @f.write(cmd.encode('ascii'))
+        @f.syswrite(cmd.encode('ascii'))
         read_response
       end
     end
@@ -204,7 +204,7 @@ module Yamaha
       resp = +''
       Timeout.timeout(2) do
         loop do
-          ch = @f.read(1)
+          ch = @f.sysread(1)
           if ch
             resp << ch
             break if ch == ETX
