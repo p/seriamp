@@ -61,9 +61,23 @@ when 'power'
   end
   client.public_send(method, state)
 when 'vol'
-  volume = ARGV.shift.to_i
-  p client.set_zone2_volume(volume)
-  p client.set_subwoofer_level(volume)
+  which = ARGV.shift
+  if %w(main zone2 zone3).include?(which)
+    prefix = "set_#{which}"
+    value = ARGV.shift
+  else
+    prefix = 'set_main'
+    value = which
+  end
+  if %w(. -).include?(value)
+    method = "#{prefix}_mute"
+    value = true
+  else
+    method = "#{prefix}_volume_db"
+    value = Float(value)
+  end
+  client.public_send(method, value)
+  p client.get_main_volume_text
   p client.get_zone2_volume_text
   p client.get_zone3_volume_text
 when 'input'

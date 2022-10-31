@@ -95,11 +95,22 @@ module Yamaha
       remote_command("7AE#{state ? 'D' : 'E'}")
     end
 
-    def set_volume(volume)
+    def set_main_volume(value)
+      system_command("30#{'%02x' % value}")
     end
 
-    def set_zone2_volume(volume)
-      dispatch("#{STX}231#{'%02x' % volume}#{ETX}")
+    def set_main_volume_db(volume)
+      value = Integer((volume + 80) * 2 + 39)
+      set_main_volume(value)
+    end
+
+    def set_zone2_volume(value)
+      system_command("31#{'%02x' % value}")
+    end
+
+    def set_zone2_volume_db(volume)
+      value = Integer(volume + 33 + 39)
+      set_zone2_volume(value)
     end
 
     def zone2_volume_up
@@ -111,7 +122,7 @@ module Yamaha
     end
 
     def set_zone3_volume(volume)
-      dispatch("#{STX}234#{'%02x' % volume}#{ETX}")
+      remote_command("234#{'%02x' % value}")
     end
 
     def zone3_volume_up
@@ -123,7 +134,11 @@ module Yamaha
     end
 
     def set_subwoofer_level(level)
-      dispatch("#{STX}249ff#{ETX}")
+      dispatch("#{STX}249#{'%02x' % level}#{ETX}")
+    end
+
+    def get_main_volume_text
+      extract_text(dispatch("#{STX}22001#{ETX}"))[3...]
     end
 
     def get_zone2_volume_text
@@ -455,6 +470,10 @@ module Yamaha
 
     def remote_command(cmd)
       dispatch("#{STX}0#{cmd}#{ETX}")
+    end
+
+    def system_command(cmd)
+      dispatch("#{STX}2#{cmd}#{ETX}")
     end
 
     def extract_text(resp)
