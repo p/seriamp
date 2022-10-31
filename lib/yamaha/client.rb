@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'timeout'
-require 'ffi'
+require 'yamaha/backend/serial_port'
 
 module Yamaha
 
@@ -176,22 +176,10 @@ module Yamaha
 
     private
 
-    class IntPtr < FFI::Struct
-      layout :value, :int
-    end
-
-    module C
-      extend FFI::Library
-      ffi_lib 'c'
-
-      # Ruby's ioctl doesn't support all of C ioctl interface,
-      # in particular returning integer values that we need.
-      # See https://stackoverflow.com/questions/1446806/getting-essid-via-ioctl-in-ruby.
-      attach_function :ioctl, [:int, :int, :pointer], :int
-      class << self
-        alias :ioctl_p :ioctl
-      end
-      remove_method :ioctl
+    def open_device
+      @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
+      yield
+      @f.close
     end
 
     # ASCII table: https://www.asciitable.com/
@@ -201,78 +189,9 @@ module Yamaha
     STX = +?\x02
     DEL = +?\x7f
 
-    TIOCMGET = 0x5415
-    TIOCMSET = 0x5418
-    TIOCM_DTR = 0x002
-    TIOCM_RTS = 0x004
-    TIOCM_CTS = 0x020
-
     STATUS_REQ = -"#{DC1}001#{ETX}"
 
     ZERO_ORD = '0'.ord
-
-    def open_device
-      if @f
-        yield
-      else
-        logger&.debug("Opening device #{device}")
-        File.open(device, 'r+') do |f|
-          unless f.isatty
-            raise BadDevice, "#{device} is not a TTY"
-          end
-          @f = f
-          set_rts
-
-          if IO.select([f], nil, nil, 0)
-            logger&.warn("Serial device readable without having been written to - concurrent access?")
-          end
-
-          tries = 0
-          begin
-            do_status
-          rescue Timeout::Error
-            tries += 1
-            if tries < 5
-              logger&.warn("Timeout handshaking with the receiver - will retry")
-              retry
-            else
-              raise
-            end
-          end
-          yield.tap do
-            @f = nil
-          end
-        end
-      end
-    rescue IOError => e
-      if @f
-        logger&.warn("#{e.class}: #{e} while operating, closing the device")
-        @f.close
-        raise
-      end
-    end
-
-    def set_rts
-      ptr = IntPtr.new
-      C.ioctl_p(@f.fileno, TIOCMGET, ptr)
-      if logger&.level <= Logger::DEBUG
-        flags = []
-        %w(DTR RTS CTS).each do |bit|
-          if ptr[:value] & self.class.const_get("TIOCM_#{bit}") > 0
-            flags << bit
-          end
-        end
-        if flags.empty?
-          flags = ['(none)']
-        end
-        logger&.debug("Initial flags: #{flags.join(' ')}")
-      end
-      unless ptr[:value] & TIOCM_RTS
-        logger&.debug("Setting RTS on #{device}")
-        ptr[:value] |= TIOCM_RTS
-        C.ioctl_p(@f.fileno, TIOCMSET, ptr)
-      end
-    end
 
     def dispatch(cmd)
       open_device do
