@@ -138,6 +138,27 @@ module Yamaha
       dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
     end
 
+    MAIN_INPUTS_SET = {
+      'phono' => '14',
+      'cd' => '15',
+      'tuner' => '16',
+      'cd_r' => '19',
+      'md_tape' => '18',
+      'dvd' => 'C1',
+      'dtv' => '54',
+      'cbl_sat' => 'C0',
+      'vcr1' => '0F',
+      'dvr_vcr2' => '13',
+      'v_aux_dock' => '55',
+      'multi_ch' => '87',
+      'xm' => 'B4',
+    }.freeze
+
+    def set_main_input(source)
+      source_code = MAIN_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
     private
 
     class IntPtr < FFI::Struct
@@ -261,6 +282,24 @@ module Yamaha
       resp
     end
 
+    MAIN_INPUTS_GET = {
+      '0' => 'PHONO',
+      '1' => 'CD',
+      '2' => 'TUNER',
+      '3' => 'CD-R',
+      '4' => 'MD/TAPE',
+      '5' => 'DVD',
+      '6' => 'DTV',
+      '7' => 'CBL/SAT',
+      '8' => 'SAT',
+      '9' => 'VCR1',
+      'A' => 'DVR/VCR2',
+      'B' => 'VCR3/DVR',
+      'C' => 'V-AUX/DOCK',
+      'D' => 'NET/USB',
+      'E' => 'XM',
+    }.freeze
+
     def do_status
       resp = nil
       loop do
@@ -299,7 +338,8 @@ module Yamaha
       }
       if data.length > 9
         @status.update(
-          input: data[9..10],
+          input: MAIN_INPUTS_GET.fetch(data[9]),
+          multi_ch_input: data[10] == '1',
           # Volume values (0.5 dB increment):
           # mute: 0
           # -80.0 dB (min): 39

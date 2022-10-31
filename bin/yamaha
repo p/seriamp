@@ -66,6 +66,16 @@ when 'vol'
   p client.set_subwoofer_level(volume)
   p client.get_zone2_volume_text
   p client.get_zone3_volume_text
+when 'input'
+  which = ARGV.shift&.downcase
+  if %w(main zone2 zone3).include?(which)
+    method = "set_#{which}_input"
+    input = ARGV.shift
+  else
+    method = 'set_main_input'
+    input = which
+  end
+  client.public_send(method, input)
 when 'status'
   pp client.last_status
 when 'status_string'
