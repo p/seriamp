@@ -1,5 +1,22 @@
 # Yamaha Receiver Serial Control Ruby Library
 
+## Protocol Notes
+
+### RX-V1500 Power Values
+
+You might expect the power state to be a bit field, but it isn't - each
+combination appears to have been assigned an independent value:
+
+| Main zone | Zone 2 | Zone 3 | Value | Notes
+| On        | On     | On     | 1     | All on
+| On        | On     | Off    | 4     |
+| On        | Off    | On     | 5     |
+| On        | Off    | Off    | 2     |
+| Off       | On     | On     | 3     |
+| Off       | On     | Off    | 6     |
+| Off       | Off    | On     | 7     |
+| Off       | Off    | Off    | 0     | All off
+
 ## Implementation Notes
 
 In order for the receiver to respond, the RTS bit must be set on the wire.

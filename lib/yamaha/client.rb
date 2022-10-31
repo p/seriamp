@@ -83,6 +83,10 @@ module Yamaha
       remote_command("7A1#{state ? 'D' : 'E'}")
     end
 
+    def set_main_power(state)
+      remote_command("7E7#{state ? 'E' : 'F'}")
+    end
+
     def set_zone2_power(state)
       remote_command("7EB#{state ? 'A' : 'B'}")
     end
@@ -280,28 +284,41 @@ module Yamaha
       unless data.start_with?('@E01900')
         raise BadStatus, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
       end
-      puts data
+      puts data, data.length
       p payload
       @status_string = data
       @status = {
         # RX-V1500: model R0177
-        # Volume values (0.5 dB increment):
-        # mute: 0
-        # -80.0 dB (min): 39
-        # 0 dB: 199
-        # +14.5 dB (max): 228
-        # Zone2 volume values (1 dB increment):
-        # mute: 0
-        # -33 dB (min): 39
-        # 0 dB (max): 72
-        volume: volume = data[15..16].to_i(16),
-        volume_db: int_to_half_db(volume),
-        zone2_volume: zone2_volume = data[17..18].to_i(16),
-        zone2_volume_db: int_to_full_db(zone2_volume),
-        zone3_volume: zone3_volume = data[129..130].to_i(16),
-        zone3_volume_db: int_to_full_db(zone3_volume),
-        pure_direct: data[28] == '1',
+        model_code: @model_code,
+        firmware_version: @version,
+        system_status: data[7].ord - ZERO_ORD,
+        power: power = data[8].ord - ZERO_ORD,
+        main_power: [1, 4, 5, 2].include?(power),
+        zone2_power: [1, 4, 3, 6].include?(power),
+        zone3_power: [1, 5, 3, 7].include?(power),
       }
+      if data.length > 9
+        @status.update(
+          input: data[9..10],
+          # Volume values (0.5 dB increment):
+          # mute: 0
+          # -80.0 dB (min): 39
+          # 0 dB: 199
+          # +14.5 dB (max): 228
+          # Zone2 volume values (1 dB increment):
+          # mute: 0
+          # -33 dB (min): 39
+          # 0 dB (max): 72
+          main_volume: volume = data[15..16].to_i(16),
+          main_volume_db: int_to_half_db(volume),
+          zone2_volume: zone2_volume = data[17..18].to_i(16),
+          zone2_volume_db: int_to_full_db(zone2_volume),
+          zone3_volume: zone3_volume = data[129..130].to_i(16),
+          zone3_volume_db: int_to_full_db(zone3_volume),
+          pure_direct: data[28] == '1',
+        )
+      end
+      @status
     end
 
     def remote_command(cmd)
