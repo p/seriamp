@@ -300,6 +300,81 @@ module Yamaha
       'E' => 'XM',
     }.freeze
 
+    AUDIO_SELECT_GET = {
+      '0' => 'Auto', # Confirmed RX-V1500
+      '2' => 'DTS', # Confirmed RX-V1500
+      '3' => 'Coax / Opt', # Unconfirmed
+      '4' => 'Analog', # Confirmed RX-V1500
+      '5' => 'Analog Only', # Unconfirmed
+      '8' => 'HDMI', # Unconfirmed
+    }.freeze
+
+    NIGHT_GET = {
+      '0' => 'Off',
+      '1' => 'Cinema',
+      '2' => 'Music',
+    }.freeze
+
+    SLEEP_GET = {
+      '0' => 120,
+      '1' => 90,
+      '2' => 60,
+      '3' => 30,
+      '4' => nil,
+    }.freeze
+
+    PROGRAM_GET = {
+      '00' => 'Munich',
+      '01' => 'Hall B',
+      '02' => 'Hall C',
+      '04' => 'Hall D',
+      '05' => 'Vienna',
+      '06' => 'Live Concert',
+      '07' => 'Hall in Amsterdam',
+      '08' => 'Tokyo',
+      '09' => 'Freiburg',
+      '0A' => 'Royaumont',
+      '0B' => 'Chamber',
+      '0C' => 'Village Gate',
+      '0D' => 'Village Vanguard',
+      '0E' => 'The Bottom Line',
+      '0F' => 'Cellar Club',
+      '10' => 'The Roxy Theater',
+      '11' => 'Warehouse Loft',
+      '12' => 'Arena',
+      '14' => 'Disco',
+      '15' => 'Party',
+      '17' => '7ch Stereo',
+      '18' => 'Music Video',
+      '19' => 'DJ',
+      '1C' => 'Recital/Opera',
+      '1D' => 'Pavilion',
+      '1E' => 'Action Gamae',
+      '1F' => 'Role Playing Game',
+      '20' => 'Mono Movie',
+      '21' => 'Sports',
+      '24' => 'Spectacle',
+      '25' => 'Sci-Fi',
+      '28' => 'Adventure',
+      '29' => 'Drama',
+      '2C' => 'Surround Decode',
+      '2D' => 'Standard',
+      '30' => 'PLII Movie',
+      '31' => 'PLII Music',
+      '32' => 'Neo:6 Movie',
+      '33' => 'Neo:6 Music',
+      '34' => '2ch Stereo',
+      '35' => 'Direct Stereo',
+      '36' => 'THX Cinema',
+      '37' => 'THX Music',
+      '3C' => 'THX Game',
+      '40' => 'Enhancer 2ch Low',
+      '41' => 'Enhancer 2ch High',
+      '42' => 'Enhancer 7ch Low',
+      '43' => 'Enhancer 7ch Higgh',
+      '80' => 'Straight',
+    }.freeze
+
     def do_status
       resp = nil
       loop do
@@ -338,8 +413,12 @@ module Yamaha
       }
       if data.length > 9
         @status.update(
-          input: MAIN_INPUTS_GET.fetch(data[9]),
+          input: input = data[9],
+          input_name: MAIN_INPUTS_GET.fetch(input),
           multi_ch_input: data[10] == '1',
+          audio_select: audio_select = data[11],
+          audio_select_name: AUDIO_SELECT_GET.fetch(audio_select),
+          mute: data[12] == '1',
           # Volume values (0.5 dB increment):
           # mute: 0
           # -80.0 dB (min): 39
@@ -355,7 +434,20 @@ module Yamaha
           zone2_volume_db: int_to_full_db(zone2_volume),
           zone3_volume: zone3_volume = data[129..130].to_i(16),
           zone3_volume_db: int_to_full_db(zone3_volume),
+          program: program = data[19..20],
+          program_name: PROGRAM_GET.fetch(program),
+          # true: straight; false: effect
+          effect: data[21] == '1',
+          #extended_surround: data[22],
+          #short_message: data[23],
+          sleep: SLEEP_GET.fetch(data[24]),
+          night: night = data[27],
+          night_name: NIGHT_GET.fetch(night),
           pure_direct: data[28] == '1',
+          speaker_a: data[29] == '1',
+          speaker_b: data[30] == '1',
+          format: data[31..32],
+          sample_rate: data[33..34],
         )
       end
       @status
