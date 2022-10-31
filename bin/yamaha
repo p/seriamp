@@ -41,6 +41,15 @@ def parse_on_off(value)
 end
 
 case cmd
+when 'detect'
+  device = Yamaha::Client.detect_device(*ARGV, logger: logger)
+  if device
+    puts device
+    exit 0
+  else
+    STDERR.puts("Yamaha receiver not found")
+    exit 3
+  end
 when 'power'
   state = parse_on_off(ARGV.shift)
   client.set_power(state)

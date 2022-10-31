@@ -12,12 +12,37 @@ module Yamaha
   class NotApplicable < Error; end
   class UnexpectedResponse < Error; end
 
+  RS232_TIMEOUT = 9
+  DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
+
   class Client
+    def self.detect_device(*patterns, logger: nil)
+      if patterns.empty?
+        patterns = [DEFAULT_DEVICE_GLOB]
+      end
+      devices = patterns.map do |pattern|
+        Dir.glob(pattern)
+      end.flatten.uniq
+      found = nil
+      threads = devices.map do |device|
+        Thread.new do
+          Timeout.timeout(RS232_TIMEOUT) do
+            logger&.debug("Trying #{device}")
+            new(device, logger: logger).status
+            logger&.debug("Found receiver at #{device}")
+            found = device
+          end
+        end
+      end
+      threads.map(&:join)
+      found
+    end
+
     def initialize(device = nil, logger: nil)
       @logger = logger
 
       if device.nil?
-        device = Dir['/dev/ttyUSB*'].sort.first
+        device = Dir[DEFAULT_DEVICE_GLOB].sort.first
         if device
           logger&.info("Using #{device} as TTY device")
         end
@@ -150,7 +175,8 @@ module Yamaha
       if @f
         yield
       else
-        File.open(device, 'r+b') do |f|
+        logger&.debug("Opening device #{device}")
+        File.open(device, 'r+') do |f|
           unless f.isatty
             raise BadDevice, "#{device} is not a TTY"
           end
@@ -189,8 +215,23 @@ module Yamaha
     def set_rts
       ptr = IntPtr.new
       C.ioctl_p(@f.fileno, TIOCMGET, ptr)
-      ptr[:value] |= TIOCM_RTS
-      C.ioctl_p(@f.fileno, TIOCMSET, ptr)
+      if logger&.level <= Logger::DEBUG
+        flags = []
+        %w(DTR RTS CTS).each do |bit|
+          if ptr[:value] & self.class.const_get("TIOCM_#{bit}") > 0
+            flags << bit
+          end
+        end
+        if flags.empty?
+          flags = ['(none)']
+        end
+        logger&.debug("Initial flags: #{flags.join(' ')}")
+      end
+      unless ptr[:value] & TIOCM_RTS
+        logger&.debug("Setting RTS on #{device}")
+        ptr[:value] |= TIOCM_RTS
+        C.ioctl_p(@f.fileno, TIOCMSET, ptr)
+      end
     end
 
     def dispatch(cmd)
