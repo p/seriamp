@@ -11,6 +11,7 @@ module Yamaha
   class InvalidCommand < Error; end
   class NotApplicable < Error; end
   class UnexpectedResponse < Error; end
+  class CommunicationTimeout < Error; end
 
   RS232_TIMEOUT = 9
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
@@ -187,7 +188,20 @@ module Yamaha
 
     def open_device
       @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
-      do_status
+
+      tries = 0
+      begin
+        do_status
+      rescue CommunicationTimeout
+        tries += 1
+        if tries < 5
+          logger&.warn("Timeout handshaking with the receiver - will retry")
+          retry
+        else
+          raise
+        end
+      end
+
       yield
       @f.close
     end
@@ -216,7 +230,7 @@ module Yamaha
 
     def read_response
       resp = +''
-      Timeout.timeout(2) do
+      Timeout.timeout(2, CommunicationTimeout) do
         loop do
           ch = @f.sysread(1)
           if ch
