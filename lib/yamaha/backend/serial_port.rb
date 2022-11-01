@@ -15,7 +15,9 @@ module Yamaha
 
         attr_reader :device
 
-        def_delegators :@io, :close, :sysread, :syswrite
+        attr_reader :io
+
+        def_delegators :io, :close, :sysread, :syswrite
       end
     end
   end

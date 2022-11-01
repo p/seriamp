@@ -53,6 +53,15 @@ module Yamaha
       end
 
       @device = device
+
+      if block_given?
+        open_device
+        begin
+          yield self
+        ensure
+          close
+        end
+      end
     end
 
     attr_reader :device
@@ -178,6 +187,7 @@ module Yamaha
 
     def open_device
       @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
+      do_status
       yield
       @f.close
     end
@@ -195,9 +205,13 @@ module Yamaha
 
     def dispatch(cmd)
       open_device do
-        @f.syswrite(cmd.encode('ascii'))
-        read_response
+        do_dispatch(cmd)
       end
+    end
+
+    def do_dispatch(cmd)
+      @f.syswrite(cmd.encode('ascii'))
+      read_response
     end
 
     def read_response
@@ -312,9 +326,9 @@ module Yamaha
     def do_status
       resp = nil
       loop do
-        resp = dispatch(STATUS_REQ)
+        resp = do_dispatch(STATUS_REQ)
         again = false
-        while @f && IO.select([@f], nil, nil, 0)
+        while @f && IO.select([@f.io], nil, nil, 0)
           logger&.warn("Serial device readable after completely reading status response - concurrent access?")
           read_response
           again = true
