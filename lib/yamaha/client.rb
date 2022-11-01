@@ -353,6 +353,7 @@ module Yamaha
       @model_code = payload[0..4]
       @version = payload[5]
       length = payload[6..7].to_i(16)
+      p payload
       data = payload[8...-2]
       if data.length != length
         raise BadStatus, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
