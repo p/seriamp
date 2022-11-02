@@ -60,7 +60,7 @@ when 'power'
     state = parse_on_off(which)
   end
   client.public_send(method, state)
-when 'vol'
+when 'volume'
   which = ARGV.shift
   if %w(main zone2 zone3).include?(which)
     prefix = "set_#{which}"
@@ -74,6 +74,9 @@ when 'vol'
     value = true
   else
     method = "#{prefix}_volume_db"
+    if value[0] == ','
+      value = value[1..]
+    end
     value = Float(value)
   end
   client.public_send(method, value)
