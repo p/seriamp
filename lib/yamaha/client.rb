@@ -148,15 +148,15 @@ module Yamaha
     end
 
     def get_main_volume_text
-      extract_text(dispatch("#{STX}22001#{ETX}"))[3...]
+      extract_text(system_command("2001"))[3...].strip
     end
 
     def get_zone2_volume_text
-      extract_text(dispatch("#{STX}22002#{ETX}"))[3...]
+      extract_text(system_command("2002"))[3...].strip
     end
 
     def get_zone3_volume_text
-      extract_text(dispatch("#{STX}22005#{ETX}"))[3...]
+      extract_text(system_command("2005"))[3...].strip
     end
 
     def set_pure_direct(state)
@@ -279,8 +279,9 @@ module Yamaha
         end
       end
 
-      yield
-      @f.close
+      yield.tap do
+        @f.close
+      end
     end
 
     # ASCII table: https://www.asciitable.com/
@@ -503,7 +504,7 @@ module Yamaha
 
     def extract_text(resp)
       # TODO: assert resp[0] == DC1, resp[-1] == ETX
-      resp[1...-1]
+      resp[0...-1]
     end
 
     def int_to_half_db(value)
