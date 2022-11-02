@@ -163,6 +163,43 @@ module Yamaha
       dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
     end
 
+    PROGRAM_SET = {
+      'munich' => 'E1',
+      'vienna' => 'E5',
+      'amsterdam' => 'E6',
+      'freiburg' => 'E8',
+      'chamber' => 'AF',
+      'village_vanguard' => 'EB',
+      'warehouse_loft' => 'EE',
+      'cellar_club' => 'CD',
+      'the_bottom_line' => 'EC',
+      'the_roxy_theatre' => 'ED',
+      'disco' => 'F0',
+      'game' => 'F2',
+      '7ch_stereo' => 'FF',
+      '2ch_stereo' => 'C0',
+      'sports' => 'F8',
+      'action_game' => 'F2',
+      'roleplaying_game' => 'CE',
+      'music_video' => 'F3',
+      'recital_opera' => 'F5',
+      'standard' => 'FE',
+      'spectacle' => 'F9',
+      'sci-fi' => 'FA',
+      'adventure' => 'FB',
+      'drama' => 'FC',
+      'mono_movie' => 'F7',
+      'surround_decode' => 'FD',
+      'thx_cinema' => 'C2',
+      'thx_music' => 'C3',
+      'thx_game' => 'C8',
+    }.freeze
+
+    def set_program(value)
+      program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7E#{program_code}")
+    end
+
     MAIN_INPUTS_SET = {
       'phono' => '14',
       'cd' => '15',

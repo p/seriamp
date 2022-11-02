@@ -90,6 +90,9 @@ when 'input'
     input = which
   end
   client.public_send(method, input)
+when 'program'
+  value = ARGV.shift.downcase
+  client.set_program(value)
 when 'pure-direct'
   state = parse_on_off(ARGV.shift)
   client.set_pure_direct(state)
