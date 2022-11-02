@@ -221,6 +221,46 @@ module Yamaha
       remote_command("7A#{source_code}")
     end
 
+    ZONE2_INPUTS_SET = {
+      'phono' => 'D0',
+      'cd' => 'D1',
+      'tuner' => 'D2',
+      'cd_r' => 'D4',
+      'md_tape' => 'D3',
+      'dvd' => 'CD',
+      'dtv' => 'D9',
+      'cbl_sat' => 'CC',
+      'vcr1' => 'D6',
+      'dvr_vcr2' => 'D7',
+      'v_aux_dock' => 'D8',
+      'xm' => 'B8',
+    }.freeze
+
+    def set_zone2_input(source)
+      source_code = ZONE2_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
+    ZONE3_INPUTS_SET = {
+      'phono' => 'F1',
+      'cd' => 'F2',
+      'tuner' => 'F3',
+      'cd_r' => 'F5',
+      'md_tape' => 'F4',
+      'dvd' => 'FC',
+      'dtv' => 'F6',
+      'cbl_sat' => 'F7',
+      'vcr1' => 'F9',
+      'dvr_vcr2' => 'FA',
+      'v_aux_dock' => 'F0',
+      'xm' => 'B9',
+    }.freeze
+
+    def set_zone3_input(source)
+      source_code = ZONE3_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
     private
 
     def open_device
