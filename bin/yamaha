@@ -90,6 +90,9 @@ when 'input'
     input = which
   end
   client.public_send(method, input)
+when 'pure-direct'
+  state = parse_on_off(ARGV.shift)
+  client.set_pure_direct(state)
 when 'status'
   pp client.last_status
 when 'status_string'
