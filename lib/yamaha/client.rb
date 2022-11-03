@@ -382,7 +382,7 @@ module Yamaha
       '40' => 'Enhancer 2ch Low',
       '41' => 'Enhancer 2ch High',
       '42' => 'Enhancer 7ch Low',
-      '43' => 'Enhancer 7ch Higgh',
+      '43' => 'Enhancer 7ch High',
       '80' => 'Straight',
     }.freeze
 
