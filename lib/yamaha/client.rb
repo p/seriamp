@@ -193,6 +193,28 @@ module Yamaha
       dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
     end
 
+    def set_program(value)
+      program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7E#{program_code}")
+    end
+
+    def set_main_input(source)
+      source_code = MAIN_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
+    def set_zone2_input(source)
+      source_code = ZONE2_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
+    def set_zone3_input(source)
+      source_code = ZONE3_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+      remote_command("7A#{source_code}")
+    end
+
+    private
+
     PROGRAM_SET = {
       'munich' => 'E1',
       'vienna' => 'E5',
@@ -225,11 +247,6 @@ module Yamaha
       'thx_game' => 'C8',
     }.freeze
 
-    def set_program(value)
-      program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z]/, '_'))
-      remote_command("7E#{program_code}")
-    end
-
     MAIN_INPUTS_SET = {
       'phono' => '14',
       'cd' => '15',
@@ -246,11 +263,6 @@ module Yamaha
       'xm' => 'B4',
     }.freeze
 
-    def set_main_input(source)
-      source_code = MAIN_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-      remote_command("7A#{source_code}")
-    end
-
     ZONE2_INPUTS_SET = {
       'phono' => 'D0',
       'cd' => 'D1',
@@ -266,11 +278,6 @@ module Yamaha
       'xm' => 'B8',
     }.freeze
 
-    def set_zone2_input(source)
-      source_code = ZONE2_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-      remote_command("7A#{source_code}")
-    end
-
     ZONE3_INPUTS_SET = {
       'phono' => 'F1',
       'cd' => 'F2',
@@ -285,72 +292,6 @@ module Yamaha
       'v_aux_dock' => 'F0',
       'xm' => 'B9',
     }.freeze
-
-    def set_zone3_input(source)
-      source_code = ZONE3_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-      remote_command("7A#{source_code}")
-    end
-
-    private
-
-    def open_device
-      @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
-
-      tries = 0
-      begin
-        do_status
-      rescue CommunicationTimeout
-        tries += 1
-        if tries < 5
-          logger&.warn("Timeout handshaking with the receiver - will retry")
-          retry
-        else
-          raise
-        end
-      end
-
-      yield.tap do
-        @f.close
-      end
-    end
-
-    # ASCII table: https://www.asciitable.com/
-    DC1 = +?\x11
-    DC2 = +?\x12
-    ETX = +?\x03
-    STX = +?\x02
-    DEL = +?\x7f
-
-    STATUS_REQ = -"#{DC1}001#{ETX}"
-
-    ZERO_ORD = '0'.ord
-
-    def dispatch(cmd)
-      open_device do
-        do_dispatch(cmd)
-      end
-    end
-
-    def do_dispatch(cmd)
-      @f.syswrite(cmd.encode('ascii'))
-      read_response
-    end
-
-    def read_response
-      resp = +''
-      Timeout.timeout(2, CommunicationTimeout) do
-        loop do
-          ch = @f.sysread(1)
-          if ch
-            resp << ch
-            break if ch == ETX
-          else
-            sleep 0.1
-          end
-        end
-      end
-      resp
-    end
 
     MAIN_INPUTS_GET = {
       '0' => 'PHONO',
@@ -444,6 +385,65 @@ module Yamaha
       '43' => 'Enhancer 7ch Higgh',
       '80' => 'Straight',
     }.freeze
+
+    def open_device
+      @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
+
+      tries = 0
+      begin
+        do_status
+      rescue CommunicationTimeout
+        tries += 1
+        if tries < 5
+          logger&.warn("Timeout handshaking with the receiver - will retry")
+          retry
+        else
+          raise
+        end
+      end
+
+      yield.tap do
+        @f.close
+      end
+    end
+
+    # ASCII table: https://www.asciitable.com/
+    DC1 = +?\x11
+    DC2 = +?\x12
+    ETX = +?\x03
+    STX = +?\x02
+    DEL = +?\x7f
+
+    STATUS_REQ = -"#{DC1}001#{ETX}"
+
+    ZERO_ORD = '0'.ord
+
+    def dispatch(cmd)
+      open_device do
+        do_dispatch(cmd)
+      end
+    end
+
+    def do_dispatch(cmd)
+      @f.syswrite(cmd.encode('ascii'))
+      read_response
+    end
+
+    def read_response
+      resp = +''
+      Timeout.timeout(2, CommunicationTimeout) do
+        loop do
+          ch = @f.sysread(1)
+          if ch
+            resp << ch
+            break if ch == ETX
+          else
+            sleep 0.1
+          end
+        end
+      end
+      resp
+    end
 
     def do_status
       resp = nil
