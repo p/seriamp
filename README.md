@@ -63,7 +63,7 @@ Yamaha RS232/serial protocol:
 
 - [YRXV1500-MQTT](https://github.com/FireFrei/yrxv1500-mqtt)
 - [YamahaController](https://github.com/mrworf/yamahacontroller)
-- [Homie ESP8266 Yamaha RX-Vxxxx Control]https://github.com/memphi2/homie-yamaha-rs232)
+- [Homie ESP8266 Yamaha RX-Vxxxx Control](https://github.com/memphi2/homie-yamaha-rs232)
 
 Serial port communication in Ruby:
 
