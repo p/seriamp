@@ -157,23 +157,23 @@ module Sonamp
       # Reusing the opened device file makes :VTIG? fail even with a delay
       # in front.
       #open_device do
+        {
+          firmware_version: get_firmware_version,
+          temperature: get_temperature,
+          zone_power: get_zone_power,
+          zone_fault: get_zone_fault,
+          zone_volume: get_zone_volume,
+          channel_volume: get_channel_volume,
+          zone_mute: get_zone_mute,
+          channel_mute: get_channel_mute,
+          bbe: get_bbe,
+          bbe_high_boost: get_bbe_high_boost,
+          bbe_low_boost: get_bbe_low_boost,
+          auto_trigger_input: get_auto_trigger_input,
+          voltage_trigger_input: get_voltage_trigger_input,
+          channel_front_panel_level: get_channel_front_panel_level,
+        }
       #end
-      {
-        firmware_version: get_firmware_version,
-        temperature: get_temperature,
-        zone_power: get_zone_power,
-        zone_fault: get_zone_fault,
-        zone_volume: get_zone_volume,
-        channel_volume: get_channel_volume,
-        zone_mute: get_zone_mute,
-        channel_mute: get_channel_mute,
-        bbe: get_bbe,
-        bbe_high_boost: get_bbe_high_boost,
-        bbe_low_boost: get_bbe_low_boost,
-        auto_trigger_input: get_auto_trigger_input,
-        voltage_trigger_input: get_voltage_trigger_input,
-        channel_front_panel_level: get_channel_front_panel_level,
-      }
     end
 
     private
