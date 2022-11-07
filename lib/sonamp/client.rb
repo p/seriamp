@@ -26,8 +26,8 @@ module Sonamp
           logger&.debug("Found receiver at #{device}")
           queue << device
         end
-      rescue CommunicationTimeout
-        # silence
+      rescue CommunicationTimeout, IOError, SystemCallError => exc
+        logger&.debug("Failed on #{device}: #{exc.class}: #{exc}")
       end
     end
     wait_thread = Thread.new do
