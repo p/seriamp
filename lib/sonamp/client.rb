@@ -255,23 +255,23 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
-    def get_zone_value(cmd_prefix, zone)
+    def get_zone_value(cmd_prefix, zone, boolize: false)
       if zone
         if zone < 1 || zone > 4
           raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
         end
         resp = dispatch(":#{cmd_prefix}#{zone}?")
-        Integer(resp[cmd_prefix.length + 1..])
+        typecast_value(resp[cmd_prefix.length + 1..], boolize)
       else
         index = 1
-        hashize_query_result(dispatch(":#{cmd_prefix}G?", 4), cmd_prefix)
+        hashize_query_result(dispatch(":#{cmd_prefix}G?", 4), cmd_prefix, boolize)
       end
     end
 
-    def hashize_query_result(resp_lines, cmd_prefix)
+    def hashize_query_result(resp_lines, cmd_prefix, boolize)
       index = 1
       Hash[resp_lines.map do |resp|
-        value = Integer(extract_suffix(resp, "#{cmd_prefix}#{index}"))
+        value = typecast_value(extract_suffix(resp, "#{cmd_prefix}#{index}"), boolize)
         [index, value].tap do
           index += 1
         end
@@ -279,17 +279,7 @@ module Sonamp
     end
 
     def get_zone_state(cmd_prefix, zone)
-      if zone
-        if zone < 1 || zone > 4
-          raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
-        end
-        resp = dispatch(":#{cmd_prefix}#{zone}?")
-        resp[cmd_prefix.length + 1] == '1' ? true : false
-      else
-        dispatch(":#{cmd_prefix}G?", 4).map do |resp|
-          resp[cmd_prefix.length + 1] == '1' ? true : false
-        end
-      end
+      get_zone_value(cmd_prefix, zone, boolize: true)
     end
 
     def set_channel_value(cmd_prefix, channel, value)
@@ -301,25 +291,28 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
-    def get_channel_value(cmd_prefix, channel)
+    def get_channel_value(cmd_prefix, channel, boolize: false)
       if channel
         if channel < 1 || channel > 8
           raise ArgumentError, "Channel must be between 1 and 8: #{channel}"
         end
-        Integer(dispatch_extract_suffix(":#{cmd_prefix}#{channel}?", "#{cmd_prefix}#{channel}"))
+        typecast_value(dispatch_extract_suffix(":#{cmd_prefix}#{channel}?", "#{cmd_prefix}#{channel}"), boolize)
       else
         index = 1
-        hashize_query_result(dispatch(":#{cmd_prefix}G?", 8), cmd_prefix)
+        hashize_query_result(dispatch(":#{cmd_prefix}G?", 8), cmd_prefix, boolize)
       end
     end
 
     def get_channel_state(cmd_prefix, channel)
-      result = get_channel_value(cmd_prefix, channel)
-      if Array === result
-        result.map { |v| v == 1 }
-      else
-        result == 1
+      get_channel_value(cmd_prefix, channel, boolize: true)
+    end
+
+    def typecast_value(value, boolize)
+      value = Integer(value)
+      if boolize
+        value = value == 1
       end
+      value
     end
   end
 end
