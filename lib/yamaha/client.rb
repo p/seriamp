@@ -16,29 +16,29 @@ module Yamaha
   RS232_TIMEOUT = 9
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
-  class Client
-    def self.detect_device(*patterns, logger: nil)
-      if patterns.empty?
-        patterns = [DEFAULT_DEVICE_GLOB]
-      end
-      devices = patterns.map do |pattern|
-        Dir.glob(pattern)
-      end.flatten.uniq
-      found = nil
-      threads = devices.map do |device|
-        Thread.new do
-          Timeout.timeout(RS232_TIMEOUT) do
-            logger&.debug("Trying #{device}")
-            new(device, logger: logger).status
-            logger&.debug("Found receiver at #{device}")
-            found = device
-          end
+  module_function def detect_device(*patterns, logger: nil)
+    if patterns.empty?
+      patterns = [DEFAULT_DEVICE_GLOB]
+    end
+    devices = patterns.map do |pattern|
+      Dir.glob(pattern)
+    end.flatten.uniq
+    found = nil
+    threads = devices.map do |device|
+      Thread.new do
+        Timeout.timeout(RS232_TIMEOUT) do
+          logger&.debug("Trying #{device}")
+          Client.new(device, logger: logger).status
+          logger&.debug("Found receiver at #{device}")
+          found = device
         end
       end
-      threads.map(&:join)
-      found
     end
+    threads.map(&:join)
+    found
+  end
 
+  class Client
     def initialize(device = nil, logger: nil)
       @logger = logger
 
