@@ -216,7 +216,7 @@ module Sonamp
 
     def extract_suffix(resp, expected_prefix)
       unless resp[0..expected_prefix.length-1] == expected_prefix
-        raise "Unexpected response: expected #{expected_prefix}..., actual #{resp}"
+        raise UnexpectedResponse, "Unexpected response: expected #{expected_prefix}..., actual #{resp}"
       end
       resp[expected_prefix.length..]
     end
@@ -264,12 +264,18 @@ module Sonamp
         Integer(resp[cmd_prefix.length + 1..])
       else
         index = 1
-        dispatch(":#{cmd_prefix}G?", 4).map do |resp|
-          Integer(resp[cmd_prefix.length + 1..]).tap do
-            index += 1
-          end
-        end
+        hashize_query_result(dispatch(":#{cmd_prefix}G?", 4), cmd_prefix)
       end
+    end
+
+    def hashize_query_result(resp_lines, cmd_prefix)
+      index = 1
+      Hash[resp_lines.map do |resp|
+        value = Integer(extract_suffix(resp, "#{cmd_prefix}#{index}"))
+        [index, value].tap do
+          index += 1
+        end
+      end]
     end
 
     def get_zone_state(cmd_prefix, zone)
@@ -303,11 +309,7 @@ module Sonamp
         Integer(dispatch_extract_suffix(":#{cmd_prefix}#{channel}?", "#{cmd_prefix}#{channel}"))
       else
         index = 1
-        dispatch(":#{cmd_prefix}G?", 8).map do |resp|
-          Integer(extract_suffix(resp, "#{cmd_prefix}#{index}")).tap do
-            index += 1
-          end
-        end
+        hashize_query_result(dispatch(":#{cmd_prefix}G?", 8), cmd_prefix)
       end
     end
 
