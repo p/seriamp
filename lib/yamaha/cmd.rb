@@ -34,7 +34,7 @@ module Yamaha
 
       case cmd
       when 'detect'
-        device = Yamaha::Client.detect_device(*ARGV, logger: logger)
+        device = Yamaha::Client.detect_device(*args, logger: logger)
         if device
           puts device
           exit 0
