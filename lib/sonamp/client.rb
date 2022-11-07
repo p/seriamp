@@ -1,8 +1,11 @@
+require 'timeout'
+
 module Sonamp
   class Error < StandardError; end
   class InvalidCommand < Error; end
   class NotApplicable < Error; end
   class UnexpectedResponse < Error; end
+  class CommunicationTimeout < Error; end
 
   class Client
     def initialize(device = nil, logger: nil)
@@ -157,7 +160,9 @@ module Sonamp
 
     def dispatch(cmd, resp_lines_count = 1)
       open_device do
-        @f << "#{cmd}\x0d"
+        with_timeout do
+          @f.syswrite("#{cmd}\x0d")
+        end
         resp = 1.upto(resp_lines_count).map do
           read_line(@f, cmd)
         end
@@ -192,12 +197,18 @@ module Sonamp
       dispatch_extract_suffix(":#{cmd}?", cmd)
     end
 
+    def with_timeout(&block)
+      Timeout.timeout(3, CommunicationTimeout, &block)
+    end
+
     def read_line(f, cmd)
-      f.readline.strip.tap do |resp|
-        if resp == 'ERR'
-          raise InvalidCommand, "Invalid command: #{cmd}"
-        elsif resp == 'N/A'
-          raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+      with_timeout do
+        f.readline.strip.tap do |resp|
+          if resp == 'ERR'
+            raise InvalidCommand, "Invalid command: #{cmd}"
+          elsif resp == 'N/A'
+            raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+          end
         end
       end
     end
