@@ -7,7 +7,7 @@ module Sonamp
   class UnexpectedResponse < Error; end
   class CommunicationTimeout < Error; end
 
-  RS232_TIMEOUT = 9
+  RS232_TIMEOUT = 3
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
   module_function def detect_device(*patterns, logger: nil)
@@ -17,19 +17,27 @@ module Sonamp
     devices = patterns.map do |pattern|
       Dir.glob(pattern)
     end.flatten.uniq
-    found = nil
+    queue = Queue.new
     threads = devices.map do |device|
       Thread.new do
-        Timeout.timeout(RS232_TIMEOUT) do
+        Timeout.timeout(RS232_TIMEOUT * 2) do
           logger&.debug("Trying #{device}")
-          Client.new(device, logger: logger).status
+          Client.new(device, logger: logger).get_zone_power
           logger&.debug("Found receiver at #{device}")
-          found = device
+          queue << device
         end
+      rescue CommunicationTimeout
+        # silence
       end
     end
-    threads.map(&:join)
-    found
+    wait_thread = Thread.new do
+      threads.map(&:join)
+      queue << nil
+    end
+    queue.shift.tap do
+      threads.map(&:kill)
+      wait_thread.kill
+    end
   end
 
   class Client
