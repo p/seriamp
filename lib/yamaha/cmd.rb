@@ -25,6 +25,7 @@ module Yamaha
     end
 
     attr_reader :args
+    attr_reader :logger
 
     def run
       cmd = args.shift
