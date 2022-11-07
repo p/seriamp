@@ -45,7 +45,7 @@ module Sonamp
       @logger = logger
 
       if device.nil?
-        device = Dir['/dev/ttyUSB*'].sort.first
+        device = Sonamp.detect_device(logger: logger)
         if device
           logger&.info("Using #{device} as TTY device")
         end
