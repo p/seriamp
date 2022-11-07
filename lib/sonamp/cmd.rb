@@ -24,6 +24,7 @@ module Sonamp
     end
 
     attr_reader :args
+    attr_reader :logger
 
     def run
       cmd = args.shift
@@ -32,6 +33,15 @@ module Sonamp
       end
 
       case cmd
+      when 'detect'
+        device = Sonamp.detect_device(*args, logger: logger)
+        if device
+          puts device
+          exit 0
+        else
+          STDERR.puts("Sonamp amplifier not found")
+          exit 3
+        end
       when 'off'
         client.set_zone_power(1, false)
         client.set_zone_power(2, false)
