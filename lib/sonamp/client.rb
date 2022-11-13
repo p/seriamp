@@ -23,7 +23,7 @@ module Sonamp
         Timeout.timeout(RS232_TIMEOUT * 2) do
           logger&.debug("Trying #{device}")
           Client.new(device, logger: logger).get_zone_power
-          logger&.debug("Found receiver at #{device}")
+          logger&.debug("Found amplifier at #{device}")
           queue << device
         end
       rescue CommunicationTimeout, IOError, SystemCallError => exc
