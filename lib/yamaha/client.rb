@@ -13,7 +13,7 @@ module Yamaha
   class UnexpectedResponse < Error; end
   class CommunicationTimeout < Error; end
 
-  RS232_TIMEOUT = 9
+  RS232_TIMEOUT = 3
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
   module_function def detect_device(*patterns, logger: nil)
@@ -23,19 +23,27 @@ module Yamaha
     devices = patterns.map do |pattern|
       Dir.glob(pattern)
     end.flatten.uniq
-    found = nil
+    queue = Queue.new
     threads = devices.map do |device|
       Thread.new do
-        Timeout.timeout(RS232_TIMEOUT) do
+        Timeout.timeout(RS232_TIMEOUT * 3) do
           logger&.debug("Trying #{device}")
-          Client.new(device, logger: logger).status
+          Client.new(device, logger: logger).get_zone_power
           logger&.debug("Found receiver at #{device}")
-          found = device
+          queue << device
         end
+      rescue CommunicationTimeout, IOError, SystemCallError => exc
+        logger&.debug("Failed on #{device}: #{exc.class}: #{exc}")
       end
     end
-    threads.map(&:join)
-    found
+    wait_thread = Thread.new do
+      threads.map(&:join)
+      queue << nil
+    end
+    queue.shift.tap do
+      threads.map(&:kill)
+      wait_thread.kill
+    end
   end
 
   class Client
@@ -43,7 +51,7 @@ module Yamaha
       @logger = logger
 
       if device.nil?
-        device = Dir[DEFAULT_DEVICE_GLOB].sort.first
+        device = Yamaha.detect_device(logger: logger)
         if device
           logger&.info("Using #{device} as TTY device")
         end
