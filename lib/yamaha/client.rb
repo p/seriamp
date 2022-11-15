@@ -28,7 +28,7 @@ module Yamaha
       Thread.new do
         Timeout.timeout(RS232_TIMEOUT * 3) do
           logger&.debug("Trying #{device}")
-          Client.new(device, logger: logger).get_zone_power
+          Client.new(device, logger: logger).last_status
           logger&.debug("Found receiver at #{device}")
           queue << device
         end
