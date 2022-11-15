@@ -532,6 +532,34 @@ module Yamaha
       @status
     end
 
+    %i(
+      model_code firmware_version system_status power main_power zone2_power
+      zone3_power input input_name audio_select audio_select_name
+      main_volume main_volume_db zone2_volume zone2_volume_db
+      zone3_volume zone3_volume_db program program_name sleep night night_name
+      format sample_rate
+    ).each do |meth|
+      define_method(meth) do
+        status.fetch(meth)
+      end
+
+      define_method("last_#{meth}") do
+        last_status.fetch(meth)
+      end
+    end
+
+    %i(
+      multi_ch_input effect pure_direct speaker_a speaker_b
+    ).each do |meth|
+      define_method("#{meth}?") do
+        status.fetch(meth)
+      end
+
+      define_method("last_#{meth}?") do
+        last_status.fetch(meth)
+      end
+    end
+
     def remote_command(cmd)
       dispatch("#{STX}0#{cmd}#{ETX}")
     end
