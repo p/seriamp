@@ -74,6 +74,12 @@ module Sonamp
       dispatch_assert(cmd, expected)
     end
 
+    def power_off
+      1.upto(4).each do |zone|
+        set_zone_power(zone, false)
+      end
+    end
+
     def get_zone_volume(zone = nil)
       get_zone_value('V', zone)
     end
