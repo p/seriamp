@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra/base'
 require 'yamaha/utils'
 require 'yamaha/client'
@@ -46,7 +48,7 @@ module Yamaha
     def render_json(data)
       data.to_json
     end
-    
+
     def empty_response
       render_json({})
     end
