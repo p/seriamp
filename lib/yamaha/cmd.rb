@@ -63,10 +63,10 @@ module Yamaha
         which = ARGV.shift&.downcase
         if %w(main zone2 zone3).include?(which)
           method = "set_#{which}_power"
-          state = parse_on_off(ARGV.shift)
+          state = Utils.parse_on_off(ARGV.shift)
         else
           method = 'set_power'
-          state = parse_on_off(which)
+          state = Utils.parse_on_off(which)
         end
         client.public_send(method, state)
       when 'volume'
@@ -106,7 +106,7 @@ module Yamaha
         value = ARGV.shift.downcase
         client.set_program(value)
       when 'pure-direct'
-        state = parse_on_off(ARGV.shift)
+        state = Utils.parse_on_off(ARGV.shift)
         client.set_pure_direct(state)
       when 'status'
         pp client.last_status
