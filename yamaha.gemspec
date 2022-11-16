@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "yamaha"
-  spec.version       = '0.0.3'
+  spec.version       = '0.0.4'
   spec.authors       = ['Oleg Pudeyev']
   spec.email         = ['code@olegp.name']
   spec.summary       = %q{Yamaha Receiver Serial Control Interface}
