@@ -8,6 +8,8 @@ require 'sonamp/client'
 module Sonamp
   class Cmd
     def initialize(args)
+      args = args.dup
+
       options = {}
       OptionParser.new do |opts|
         opts.banner = "Usage: sonamp [-d device] command arg..."
@@ -29,10 +31,17 @@ module Sonamp
     attr_reader :logger
 
     def run
-      cmd = args.shift
-      unless cmd
-        raise ArgumentError, "No command given"
+      if args.any?
+        run_command(args)
+      else
+        STDIN.each_line do |line|
+          run_command(line.strip.split(%r,\s+,)
+        end
       end
+    end
+
+    def run_command(args)
+      cmd = args.shift
 
       case cmd
       when 'detect'
