@@ -35,6 +35,9 @@ module Sonamp
         run_command(args)
       else
         STDIN.each_line do |line|
+          if line =~ /\A\s*#/
+            next
+          end
           run_command(line.strip.split(%r,\s+,)
         end
       end
@@ -42,6 +45,9 @@ module Sonamp
 
     def run_command(args)
       cmd = args.shift
+      unless cmd
+        raise ArgumentError, "No command given"
+      end
 
       case cmd
       when 'detect'
