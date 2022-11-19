@@ -34,9 +34,10 @@ module Yamaha
         run_command(args)
       else
         STDIN.each_line do |line|
-          if line =~ /\A\s*#/
-            next
-          end
+          line.strip!
+          line.sub!(/#.*/, '')
+          next if line.empty?
+
           run_command(line.strip.split(%r,\s+,)
         end
       end
