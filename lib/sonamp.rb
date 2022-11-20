@@ -2,3 +2,4 @@
 
 require 'sonamp/version'
 require 'sonamp/client'
+require 'sonamp/detect'

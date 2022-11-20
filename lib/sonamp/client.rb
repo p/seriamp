@@ -1,46 +1,11 @@
 # frozen_string_literal: true
 
 require 'timeout'
+require 'sonamp/error'
 
 module Sonamp
-  class Error < StandardError; end
-  class InvalidCommand < Error; end
-  class NotApplicable < Error; end
-  class UnexpectedResponse < Error; end
-  class CommunicationTimeout < Error; end
 
   RS232_TIMEOUT = 3
-  DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
-
-  module_function def detect_device(*patterns, logger: nil)
-    if patterns.empty?
-      patterns = [DEFAULT_DEVICE_GLOB]
-    end
-    devices = patterns.map do |pattern|
-      Dir.glob(pattern)
-    end.flatten.uniq
-    queue = Queue.new
-    threads = devices.map do |device|
-      Thread.new do
-        Timeout.timeout(RS232_TIMEOUT * 2) do
-          logger&.debug("Trying #{device}")
-          Client.new(device, logger: logger).get_zone_power
-          logger&.debug("Found amplifier at #{device}")
-          queue << device
-        end
-      rescue CommunicationTimeout, IOError, SystemCallError => exc
-        logger&.debug("Failed on #{device}: #{exc.class}: #{exc}")
-      end
-    end
-    wait_thread = Thread.new do
-      threads.map(&:join)
-      queue << nil
-    end
-    queue.shift.tap do
-      threads.map(&:kill)
-      wait_thread.kill
-    end
-  end
 
   class Client
     def initialize(device = nil, logger: nil)
