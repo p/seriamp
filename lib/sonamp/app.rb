@@ -42,6 +42,9 @@ module Sonamp
       client.set_channel_volume(channel.to_i, volume)
     end
 
+    post '/' do
+    end
+
     private
 
     def client
