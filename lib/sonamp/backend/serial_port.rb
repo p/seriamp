@@ -16,7 +16,7 @@ module Sonamp
 
           if block_given?
             begin
-              yield
+              yield self
             ensure
               close rescue nil
             end
@@ -27,7 +27,7 @@ module Sonamp
 
         attr_reader :io
 
-        def_delegators :io, :close, :sysread, :syswrite
+        def_delegators :io, :close, :sysread, :syswrite, :readline
       end
     end
   end

@@ -156,7 +156,7 @@ module Sonamp
       if @f
         yield
       else
-        Backend::SerialPortBackend::Device.new(device, 'r+b') do |f|
+        Backend::SerialPortBackend::Device.new(device) do |f|
           @f = f
           yield.tap do
             @f = nil
