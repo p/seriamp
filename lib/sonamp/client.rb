@@ -156,12 +156,13 @@ module Sonamp
       if @f
         yield
       else
+        rv = nil
         Backend::SerialPortBackend::Device.new(device) do |f|
           @f = f
-          yield.tap do
-            @f = nil
-          end
+          rv = yield
+          @f = nil
         end
+        rv
       end
     end
 
@@ -210,13 +211,22 @@ module Sonamp
 
     def read_line(f, cmd)
       with_timeout do
-        f.readline.strip.tap do |resp|
-          if resp == 'ERR'
-            raise InvalidCommand, "Invalid command: #{cmd}"
-          elsif resp == 'N/A'
-            raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+        resp = +''
+        loop do
+          ch = f.sysread(1)
+          if ch
+            break if ch == ?\r
+            resp << ch
+          else
+            sleep 0.1
           end
         end
+        if resp == 'ERR'
+          raise InvalidCommand, "Invalid command: #{cmd}"
+        elsif resp == 'N/A'
+          raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+        end
+        resp
       end
     end
 
