@@ -2,6 +2,7 @@
 
 require 'timeout'
 require 'sonamp/error'
+require 'sonamp/backend/serial_port'
 
 module Sonamp
 
@@ -155,7 +156,7 @@ module Sonamp
       if @f
         yield
       else
-        File.open(device, 'r+b') do |f|
+        Backend::SerialPortBackend::Device.new(device, 'r+b') do |f|
           @f = f
           yield.tap do
             @f = nil
