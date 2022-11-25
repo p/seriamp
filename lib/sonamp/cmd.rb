@@ -4,6 +4,7 @@ require 'optparse'
 require 'logger'
 require 'sonamp/utils'
 require 'sonamp/client'
+require 'sonamp/detect'
 
 module Sonamp
   class Cmd
@@ -39,7 +40,7 @@ module Sonamp
           line.sub!(/#.*/, '')
           next if line.empty?
 
-          run_command(line.strip.split(%r,\s+,)
+          run_command(line.strip.split(%r,\s+,))
         end
       end
     end
