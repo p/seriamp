@@ -27,7 +27,10 @@ module Sonamp
       end
     end
     wait_thread = Thread.new do
-      threads.map(&:join)
+      threads.each do |thread|
+        # Unhandled exceptions raised in threads are reraised by the join method
+        thread.join rescue nil
+      end
       queue << nil
     end
     queue.shift.tap do
