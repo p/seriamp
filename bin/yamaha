@@ -3,10 +3,10 @@
 # frozen_string_literal: true
 
 begin
-  require 'yamaha/cmd'
+  require 'seriamp/yamaha/cmd'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'yamaha/cmd'
+  require 'seriamp/yamaha/cmd'
 end
 
-Yamaha::Cmd.new(ARGV).run
+Seriamp::Yamaha::Cmd.new(ARGV).run

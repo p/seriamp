@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'sonamp/cmd'
+  require 'seriamp/sonamp/cmd'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'sonamp/cmd'
+  require 'seriamp/sonamp/cmd'
 end
 
-Sonamp::Cmd.new(ARGV).run
+Seriamp::Sonamp::Cmd.new(ARGV).run

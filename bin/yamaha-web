@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'yamaha/app'
+  require 'seriamp/yamaha/app'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'yamaha/app'
+  require 'seriamp/yamaha/app'
 end
 require 'optparse'
 require 'logger'
@@ -25,7 +25,7 @@ logger = Logger.new(STDERR)
 
 #Yamaha::App.set :device, options[:device]
 #Yamaha::App.set :logger, logger
-Yamaha::App.set :client, Yamaha::Client.new(options[:device], logger: logger)
+Seriamp::Yamaha::App.set :client, Yamaha::Client.new(options[:device], logger: logger)
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Yamaha::App))
