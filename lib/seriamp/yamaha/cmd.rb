@@ -39,7 +39,7 @@ module Seriamp
             line.sub!(/#.*/, '')
             next if line.empty?
 
-            run_command(line.strip.split(%r,\s+,)
+            run_command(line.strip.split(%r,\s+,))
           end
         end
       end
