@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Serial control for amplifiers & A/V receivers}
   spec.description   = %q{Library for controlling Yamaha A/V receivers and Sonance Sonamp amplifiers via the serial port}
   spec.homepage      = "https://github.com/p/seriamp"
-  spec.license       = "BSD"
+  spec.license       = "BSD-2-Clause"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |path| path.start_with?('docs/') }
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
