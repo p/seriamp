@@ -23,7 +23,7 @@ module Seriamp
         @options = options
 
         @logger = Logger.new(STDERR)
-        @client = Yamaha::Client.new(options[:device], logger: @logger)
+        @client = Yamaha::Client.new(device: options[:device], logger: @logger)
 
         @args = args
       end

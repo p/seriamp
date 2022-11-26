@@ -13,21 +13,12 @@ module Seriamp
     class Client
       include Protocol::Methods
 
-      def initialize(device = nil, logger: nil)
+      def initialize(device: nil, glob: nil, logger: nil)
         @logger = logger
 
-        if device.nil?
-          device = Seriamp.detect_device(Yamaha, logger: logger)
-          if device
-            logger&.info("Using #{device} as TTY device")
-          end
-        end
-
-        unless device
-          raise ArgumentError, "No device specified and device could not be detected automatically"
-        end
-
         @device = device
+        @detect_device = device.nil?
+        @glob = glob
 
         if block_given?
           begin
@@ -39,7 +30,12 @@ module Seriamp
       end
 
       attr_reader :device
-      attr_accessor :logger
+      attr_reader :glob
+      attr_reader :logger
+
+      def detect_device?
+        @detect_device
+      end
 
       def present?
         last_status
@@ -100,6 +96,15 @@ module Seriamp
       include Protocol::Constants
 
       def open_device
+        if detect_device? && device.nil?
+          @device = Seriamp.detect_device(Yamaha, *glob, logger: logger)
+          if @device
+            logger&.info("Using #{device} as TTY device")
+          else
+            raise NoDevice, "No device specified and device could not be detected automatically"
+          end
+        end
+
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
         begin

@@ -24,7 +24,7 @@ module Seriamp
         @options = options
 
         @logger = Logger.new(STDERR)
-        @client = Sonamp::Client.new(options[:device], logger: @logger)
+        @client = Sonamp::Client.new(device: options[:device], logger: @logger)
 
         @args = args
       end
