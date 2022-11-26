@@ -2,6 +2,8 @@
 
 require 'timeout'
 require 'seriamp/backend/serial_port'
+require 'seriamp/yamaha/protocol/constants'
+require 'seriamp/yamaha/protocol/methods'
 
 module Seriamp
   module Yamaha
@@ -9,6 +11,8 @@ module Seriamp
     RS232_TIMEOUT = 3
 
     class Client
+      include Protocol::Methods
+
       def initialize(device = nil, logger: nil)
         @logger = logger
 
@@ -64,302 +68,37 @@ module Seriamp
         last_status
       end
 
-      # Turns the receiver on or off.
-      #
-      # @param [ true | false ] state Desired power state.
-      def set_power(state)
-        remote_command("7A1#{state ? 'D' : 'E'}")
+      %i(
+        model_code firmware_version system_status power main_power zone2_power
+        zone3_power input input_name audio_select audio_select_name
+        main_volume main_volume_db zone2_volume zone2_volume_db
+        zone3_volume zone3_volume_db program program_name sleep night night_name
+        format sample_rate
+      ).each do |meth|
+        define_method(meth) do
+          status.fetch(meth)
+        end
+
+        define_method("last_#{meth}") do
+          last_status.fetch(meth)
+        end
       end
 
-      # Turns main zone power on or off.
-      #
-      # @param [ true | false ] state Desired power state.
-      def set_main_power(state)
-        remote_command("7E7#{state ? 'E' : 'F'}")
-      end
+      %i(
+        multi_ch_input effect pure_direct speaker_a speaker_b
+      ).each do |meth|
+        define_method("#{meth}?") do
+          status.fetch(meth)
+        end
 
-      # Turns zone 2 power on or off.
-      #
-      # @param [ true | false ] state Desired power state.
-      def set_zone2_power(state)
-        remote_command("7EB#{state ? 'A' : 'B'}")
-      end
-
-      # Turns zone 3 power on or off.
-      #
-      # @param [ true | false ] state Desired power state.
-      def set_zone3_power(state)
-        remote_command("7AE#{state ? 'D' : 'E'}")
-      end
-
-      # Sets main zone volume.
-      #
-      # @param [ Integer ] value The raw volume value.
-      def set_main_volume(value)
-        system_command("30#{'%02x' % value}")
-      end
-
-      # Sets main zone volume.
-      #
-      # @param [ Float ] volume The volume in decibels.
-      def set_main_volume_db(volume)
-        value = Integer((volume + 80) * 2 + 39)
-        set_main_volume(value)
-      end
-
-      # Sets zone 2 volume.
-      #
-      # @param [ Integer ] value The raw volume value.
-      def set_zone2_volume(value)
-        system_command("31#{'%02x' % value}")
-      end
-
-      # Sets zone 2 volume.
-      #
-      # @param [ Float ] volume The volume in decibels.
-      def set_zone2_volume_db(volume)
-        value = Integer(volume + 33 + 39)
-        set_zone2_volume(value)
-      end
-
-      def zone2_volume_up
-        remote_command('7ADA')
-      end
-
-      def zone2_volume_down
-        remote_command('7ADB')
-      end
-
-      # Sets zone 3 volume.
-      #
-      # @param [ Integer ] volume The raw volume value.
-      def set_zone3_volume(volume)
-        remote_command("234#{'%02x' % value}")
-      end
-
-      def zone3_volume_up
-        remote_command('7AFD')
-      end
-
-      def zone3_volume_down
-        remote_command('7AFE')
-      end
-
-      def set_subwoofer_level(level)
-        dispatch("#{STX}249#{'%02x' % level}#{ETX}")
-      end
-
-      def get_main_volume_text
-        extract_text(system_command("2001"))[3...].strip
-      end
-
-      def get_zone2_volume_text
-        extract_text(system_command("2002"))[3...].strip
-      end
-
-      def get_zone3_volume_text
-        extract_text(system_command("2005"))[3...].strip
-      end
-
-      # Turns pure direct mode on or off.
-      #
-      # @param [ true | false ] state Desired state.
-      def set_pure_direct(state)
-        dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
-      end
-
-      def set_program(value)
-        program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z]/, '_'))
-        remote_command("7E#{program_code}")
-      end
-
-      def set_main_input(source)
-        source_code = MAIN_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-        remote_command("7A#{source_code}")
-      end
-
-      def set_zone2_input(source)
-        source_code = ZONE2_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-        remote_command("7A#{source_code}")
-      end
-
-      def set_zone3_input(source)
-        source_code = ZONE3_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
-        remote_command("7A#{source_code}")
+        define_method("last_#{meth}?") do
+          last_status.fetch(meth)
+        end
       end
 
       private
 
-      PROGRAM_SET = {
-        'munich' => 'E1',
-        'vienna' => 'E5',
-        'amsterdam' => 'E6',
-        'freiburg' => 'E8',
-        'chamber' => 'AF',
-        'village_vanguard' => 'EB',
-        'warehouse_loft' => 'EE',
-        'cellar_club' => 'CD',
-        'the_bottom_line' => 'EC',
-        'the_roxy_theatre' => 'ED',
-        'disco' => 'F0',
-        'game' => 'F2',
-        '7ch_stereo' => 'FF',
-        '2ch_stereo' => 'C0',
-        'sports' => 'F8',
-        'action_game' => 'F2',
-        'roleplaying_game' => 'CE',
-        'music_video' => 'F3',
-        'recital_opera' => 'F5',
-        'standard' => 'FE',
-        'spectacle' => 'F9',
-        'sci-fi' => 'FA',
-        'adventure' => 'FB',
-        'drama' => 'FC',
-        'mono_movie' => 'F7',
-        'surround_decode' => 'FD',
-        'thx_cinema' => 'C2',
-        'thx_music' => 'C3',
-        'thx_game' => 'C8',
-      }.freeze
-
-      MAIN_INPUTS_SET = {
-        'phono' => '14',
-        'cd' => '15',
-        'tuner' => '16',
-        'cd_r' => '19',
-        'md_tape' => '18',
-        'dvd' => 'C1',
-        'dtv' => '54',
-        'cbl_sat' => 'C0',
-        'vcr1' => '0F',
-        'dvr_vcr2' => '13',
-        'v_aux_dock' => '55',
-        'multi_ch' => '87',
-        'xm' => 'B4',
-      }.freeze
-
-      ZONE2_INPUTS_SET = {
-        'phono' => 'D0',
-        'cd' => 'D1',
-        'tuner' => 'D2',
-        'cd_r' => 'D4',
-        'md_tape' => 'D3',
-        'dvd' => 'CD',
-        'dtv' => 'D9',
-        'cbl_sat' => 'CC',
-        'vcr1' => 'D6',
-        'dvr_vcr2' => 'D7',
-        'v_aux_dock' => 'D8',
-        'xm' => 'B8',
-      }.freeze
-
-      ZONE3_INPUTS_SET = {
-        'phono' => 'F1',
-        'cd' => 'F2',
-        'tuner' => 'F3',
-        'cd_r' => 'F5',
-        'md_tape' => 'F4',
-        'dvd' => 'FC',
-        'dtv' => 'F6',
-        'cbl_sat' => 'F7',
-        'vcr1' => 'F9',
-        'dvr_vcr2' => 'FA',
-        'v_aux_dock' => 'F0',
-        'xm' => 'B9',
-      }.freeze
-
-      MAIN_INPUTS_GET = {
-        '0' => 'PHONO',
-        '1' => 'CD',
-        '2' => 'TUNER',
-        '3' => 'CD-R',
-        '4' => 'MD/TAPE',
-        '5' => 'DVD',
-        '6' => 'DTV',
-        '7' => 'CBL/SAT',
-        '8' => 'SAT',
-        '9' => 'VCR1',
-        'A' => 'DVR/VCR2',
-        'B' => 'VCR3/DVR',
-        'C' => 'V-AUX/DOCK',
-        'D' => 'NET/USB',
-        'E' => 'XM',
-      }.freeze
-
-      AUDIO_SELECT_GET = {
-        '0' => 'Auto', # Confirmed RX-V1500
-        '2' => 'DTS', # Confirmed RX-V1500
-        '3' => 'Coax / Opt', # Unconfirmed
-        '4' => 'Analog', # Confirmed RX-V1500
-        '5' => 'Analog Only', # Unconfirmed
-        '8' => 'HDMI', # Unconfirmed
-      }.freeze
-
-      NIGHT_GET = {
-        '0' => 'Off',
-        '1' => 'Cinema',
-        '2' => 'Music',
-      }.freeze
-
-      SLEEP_GET = {
-        '0' => 120,
-        '1' => 90,
-        '2' => 60,
-        '3' => 30,
-        '4' => nil,
-      }.freeze
-
-      PROGRAM_GET = {
-        '00' => 'Munich',
-        '01' => 'Hall B',
-        '02' => 'Hall C',
-        '04' => 'Hall D',
-        '05' => 'Vienna',
-        '06' => 'Live Concert',
-        '07' => 'Hall in Amsterdam',
-        '08' => 'Tokyo',
-        '09' => 'Freiburg',
-        '0A' => 'Royaumont',
-        '0B' => 'Chamber',
-        '0C' => 'Village Gate',
-        '0D' => 'Village Vanguard',
-        '0E' => 'The Bottom Line',
-        '0F' => 'Cellar Club',
-        '10' => 'The Roxy Theater',
-        '11' => 'Warehouse Loft',
-        '12' => 'Arena',
-        '14' => 'Disco',
-        '15' => 'Party',
-        '17' => '7ch Stereo',
-        '18' => 'Music Video',
-        '19' => 'DJ',
-        '1C' => 'Recital/Opera',
-        '1D' => 'Pavilion',
-        '1E' => 'Action Gamae',
-        '1F' => 'Role Playing Game',
-        '20' => 'Mono Movie',
-        '21' => 'Sports',
-        '24' => 'Spectacle',
-        '25' => 'Sci-Fi',
-        '28' => 'Adventure',
-        '29' => 'Drama',
-        '2C' => 'Surround Decode',
-        '2D' => 'Standard',
-        '30' => 'PLII Movie',
-        '31' => 'PLII Music',
-        '32' => 'Neo:6 Movie',
-        '33' => 'Neo:6 Music',
-        '34' => '2ch Stereo',
-        '35' => 'Direct Stereo',
-        '36' => 'THX Cinema',
-        '37' => 'THX Music',
-        '3C' => 'THX Game',
-        '40' => 'Enhancer 2ch Low',
-        '41' => 'Enhancer 2ch High',
-        '42' => 'Enhancer 7ch Low',
-        '43' => 'Enhancer 7ch High',
-        '80' => 'Straight',
-      }.freeze
+      include Protocol::Constants
 
       def open_device
         @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
@@ -497,34 +236,6 @@ module Seriamp
           )
         end
         @status
-      end
-
-      %i(
-        model_code firmware_version system_status power main_power zone2_power
-        zone3_power input input_name audio_select audio_select_name
-        main_volume main_volume_db zone2_volume zone2_volume_db
-        zone3_volume zone3_volume_db program program_name sleep night night_name
-        format sample_rate
-      ).each do |meth|
-        define_method(meth) do
-          status.fetch(meth)
-        end
-
-        define_method("last_#{meth}") do
-          last_status.fetch(meth)
-        end
-      end
-
-      %i(
-        multi_ch_input effect pure_direct speaker_a speaker_b
-      ).each do |meth|
-        define_method("#{meth}?") do
-          status.fetch(meth)
-        end
-
-        define_method("last_#{meth}?") do
-          last_status.fetch(meth)
-        end
       end
 
       def remote_command(cmd)
