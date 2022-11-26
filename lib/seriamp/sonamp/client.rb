@@ -2,7 +2,7 @@
 
 require 'timeout'
 require 'seriamp/error'
-require 'seriamp/sonamp/backend/serial_port'
+require 'seriamp/backend/serial_port'
 
 module Seriamp
   module Sonamp
@@ -14,7 +14,7 @@ module Seriamp
         @logger = logger
 
         if device.nil?
-          device = Sonamp.detect_device(logger: logger)
+          device = Seriamp.detect_device(Sonamp, logger: logger)
           if device
             logger&.info("Using #{device} as TTY device")
           end
@@ -29,6 +29,11 @@ module Seriamp
 
       attr_reader :device
       attr_accessor :logger
+
+      def present?
+        get_zone_power(1)
+        true
+      end
 
       def get_zone_power(zone = nil)
         get_zone_state('P', zone)

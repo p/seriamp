@@ -3,8 +3,8 @@
 require 'optparse'
 require 'logger'
 require 'seriamp/utils'
-require 'seriamp/sonamp/client'
 require 'seriamp/detect'
+require 'seriamp/sonamp/client'
 
 module Seriamp
   module Sonamp
@@ -54,7 +54,7 @@ module Seriamp
 
         case cmd
         when 'detect'
-          device = Sonamp.detect_device(*args, logger: logger)
+          device = Seriamp.detect_device(Sonamp, *args, logger: logger)
           if device
             puts device
             exit 0

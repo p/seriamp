@@ -4,6 +4,7 @@ require 'optparse'
 require 'logger'
 require 'pp'
 require 'seriamp/utils'
+require 'seriamp/detect'
 require 'seriamp/yamaha/client'
 
 module Seriamp
@@ -52,7 +53,7 @@ module Seriamp
 
         case cmd
         when 'detect'
-          device = Yamaha::Client.detect_device(*args, logger: logger)
+          device = Seriamp.detect_device(Yamaha, *args, logger: logger)
           if device
             puts device
             exit 0

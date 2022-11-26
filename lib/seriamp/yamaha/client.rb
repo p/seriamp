@@ -7,44 +7,13 @@ module Seriamp
   module Yamaha
 
     RS232_TIMEOUT = 3
-    DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
-
-    module_function def detect_device(*patterns, logger: nil)
-      if patterns.empty?
-        patterns = [DEFAULT_DEVICE_GLOB]
-      end
-      devices = patterns.map do |pattern|
-        Dir.glob(pattern)
-      end.flatten.uniq
-      queue = Queue.new
-      threads = devices.map do |device|
-        Thread.new do
-          Timeout.timeout(RS232_TIMEOUT * 3) do
-            logger&.debug("Trying #{device}")
-            Client.new(device, logger: logger).last_status
-            logger&.debug("Found receiver at #{device}")
-            queue << device
-          end
-        rescue CommunicationTimeout, IOError, SystemCallError => exc
-          logger&.debug("Failed on #{device}: #{exc.class}: #{exc}")
-        end
-      end
-      wait_thread = Thread.new do
-        threads.map(&:join)
-        queue << nil
-      end
-      queue.shift.tap do
-        threads.map(&:kill)
-        wait_thread.kill
-      end
-    end
 
     class Client
       def initialize(device = nil, logger: nil)
         @logger = logger
 
         if device.nil?
-          device = Yamaha.detect_device(logger: logger)
+          device = Seriamp.detect_device(Yamaha, logger: logger)
           if device
             logger&.info("Using #{device} as TTY device")
           end
@@ -68,6 +37,11 @@ module Seriamp
 
       attr_reader :device
       attr_accessor :logger
+
+      def present?
+        last_status
+        true
+      end
 
       def last_status
         unless @status
