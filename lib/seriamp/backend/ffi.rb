@@ -3,7 +3,7 @@
 require 'forwardable'
 require 'ffi'
 
-module Yamaha
+module Seriamp
   module Backend
     module FFIBackend
 

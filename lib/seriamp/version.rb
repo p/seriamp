@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-module Sonamp
-  VERSION = '0.0.8'
+module Seriamp
+  VERSION = '0.1.0'
 end

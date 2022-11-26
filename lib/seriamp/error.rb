@@ -1,4 +1,4 @@
-module Sonamp
+module Seriamp
   class Error < StandardError; end
   class InvalidCommand < Error; end
   class NotApplicable < Error; end

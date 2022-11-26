@@ -3,7 +3,7 @@
 require 'forwardable'
 require 'serialport'
 
-module Yamaha
+module Seriamp
   module Backend
     module SerialPortBackend
 
@@ -13,6 +13,14 @@ module Yamaha
         def initialize(device, logger: nil)
           @logger = logger
           @io = SerialPort.open(device)
+
+          if block_given?
+            begin
+              yield self
+            ensure
+              close rescue nil
+            end
+          end
         end
 
         attr_reader :device

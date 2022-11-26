@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Yamaha
+module Seriamp
   module Utils
 
     module_function def parse_on_off(value)

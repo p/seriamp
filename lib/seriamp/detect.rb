@@ -2,7 +2,7 @@
 
 require 'timeout'
 
-module Sonamp
+module Seriamp
 
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
@@ -18,6 +18,7 @@ module Sonamp
       Thread.new do
         Timeout.timeout(RS232_TIMEOUT * 2, CommunicationTimeout) do
           logger&.debug("Trying #{device}")
+          # TODO
           Client.new(device, logger: logger).get_zone_power
           logger&.debug("Found amplifier at #{device}")
           queue << device
