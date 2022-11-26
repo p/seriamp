@@ -30,7 +30,6 @@ module Seriamp
         @device = device
 
         if block_given?
-          open_device
           begin
             yield self
           ensure
@@ -49,7 +48,7 @@ module Seriamp
 
       def last_status
         unless @status
-          open_device do
+          with_device do
           end
         end
         @status.dup
@@ -57,7 +56,7 @@ module Seriamp
 
       def last_status_string
         unless @status_string
-          open_device do
+          with_device do
           end
         end
         @status_string.dup
@@ -101,7 +100,7 @@ module Seriamp
       include Protocol::Constants
 
       def open_device
-        @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
+        @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
         begin
           tries = 0
@@ -117,40 +116,44 @@ module Seriamp
             end
           end
 
-          yield
+          yield @io
         ensure
-          @f.close rescue nil
-          @f = nil
+          @io.close rescue nil
+          @io = nil
+        end
+      end
+
+      def with_device(&block)
+        if @io
+          yield @io
+        else
+          open_device(&block)
         end
       end
 
       # ASCII table: https://www.asciitable.com/
-      DC1 = +?\x11
-      DC2 = +?\x12
-      ETX = +?\x03
-      STX = +?\x02
-      DEL = +?\x7f
+      DC1 = ?\x11
+      DC2 = ?\x12
+      ETX = ?\x03
+      STX = ?\x02
+      DEL = ?\x7f
 
-      STATUS_REQ = -"#{DC1}001#{ETX}"
+      STATUS_REQ = "#{DC1}001#{ETX}"
 
       ZERO_ORD = '0'.ord
 
       def dispatch(cmd)
-        open_device do
-          do_dispatch(cmd)
+        with_device do
+          @io.syswrite(cmd.encode('ascii'))
+          read_response
         end
-      end
-
-      def do_dispatch(cmd)
-        @f.syswrite(cmd.encode('ascii'))
-        read_response
       end
 
       def read_response
         resp = +''
         Timeout.timeout(2, CommunicationTimeout) do
           loop do
-            ch = @f.sysread(1)
+            ch = @io.sysread(1)
             if ch
               resp << ch
               break if ch == ETX
@@ -165,9 +168,9 @@ module Seriamp
       def do_status
         resp = nil
         loop do
-          resp = do_dispatch(STATUS_REQ)
+          resp = dispatch(STATUS_REQ)
           again = false
-          while @f && IO.select([@f.io], nil, nil, 0)
+          while @io && IO.select([@io.io], nil, nil, 0)
             logger&.warn("Serial device readable after completely reading status response - concurrent access?")
             read_response
             again = true
