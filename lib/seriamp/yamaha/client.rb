@@ -436,7 +436,6 @@ module Seriamp
         @model_code = payload[0..4]
         @version = payload[5]
         length = payload[6..7].to_i(16)
-        p payload
         data = payload[8...-2]
         if data.length != length
           raise BadStatus, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
@@ -444,8 +443,6 @@ module Seriamp
         unless data.start_with?('@E01900')
           raise BadStatus, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
         end
-        puts data, data.length
-        p payload
         @status_string = data
         @status = {
           # RX-V1500: model R0177
