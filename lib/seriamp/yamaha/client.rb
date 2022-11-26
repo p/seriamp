@@ -364,21 +364,24 @@ module Seriamp
       def open_device
         @f = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
-        tries = 0
         begin
-          do_status
-        rescue CommunicationTimeout
-          tries += 1
-          if tries < 5
-            logger&.warn("Timeout handshaking with the receiver - will retry")
-            retry
-          else
-            raise
+          tries = 0
+          begin
+            do_status
+          rescue CommunicationTimeout
+            tries += 1
+            if tries < 5
+              logger&.warn("Timeout handshaking with the receiver - will retry")
+              retry
+            else
+              raise
+            end
           end
-        end
 
-        yield.tap do
-          @f.close
+          yield
+        ensure
+          @f.close rescue nil
+          @f = nil
         end
       end
 
