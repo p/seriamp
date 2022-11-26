@@ -6,14 +6,6 @@ require 'seriamp/backend/serial_port'
 module Seriamp
   module Yamaha
 
-    class Error < StandardError; end
-    class BadDevice < Error; end
-    class BadStatus < Error; end
-    class InvalidCommand < Error; end
-    class NotApplicable < Error; end
-    class UnexpectedResponse < Error; end
-    class CommunicationTimeout < Error; end
-
     RS232_TIMEOUT = 3
     DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
