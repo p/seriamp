@@ -25,7 +25,7 @@ logger = Logger.new(STDERR)
 
 #Yamaha::App.set :device, options[:device]
 #Yamaha::App.set :logger, logger
-Seriamp::Yamaha::App.set :client, Yamaha::Client.new(options[:device], logger: logger)
+Seriamp::Yamaha::App.set :client, Seriamp::Yamaha::Client.new(device: options[:device], logger: logger)
 
 options = Rack::Server::Options.new.parse!(ARGV)
-Rack::Server.start(options.merge(app: Yamaha::App))
+Rack::Server.start(options.merge(app: Seriamp::Yamaha::App))
