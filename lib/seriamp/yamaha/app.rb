@@ -13,6 +13,10 @@ module Seriamp
       set :logger, nil
       set :client, nil
 
+      get '/' do
+        render_json(client.status)
+      end
+
       get '/power' do
         render_json(client.last_status.fetch(:power) > 0)
       end
