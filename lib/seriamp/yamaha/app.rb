@@ -2,6 +2,7 @@
 
 require 'sinatra/base'
 require 'seriamp/utils'
+require 'seriamp/detect'
 require 'seriamp/yamaha/client'
 
 module Seriamp
@@ -27,11 +28,11 @@ module Seriamp
           empty_response
         end
 
-        get '/#{zone}/volume' do
+        get "/#{zone}/volume" do
           render_json(client.public_send("get_#{zone}_volume"))
         end
 
-        put '/#{zone}/volume' do
+        put "/#{zone}/volume" do
           value = Float(request.body.read)
           client.public_send("set_#{zone}_volume_db", value)
           empty_response
