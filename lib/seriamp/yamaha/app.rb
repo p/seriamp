@@ -64,6 +64,7 @@ module Seriamp
       end
 
       def render_json(data)
+        headers['content-type'] = 'application/json'
         data.to_json
       end
 
