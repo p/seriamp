@@ -169,6 +169,11 @@ module Seriamp
         resp
       end
 
+      MODEL_NAMES = {
+        'R0177' => 'RX-V1500',
+        'R0178' => 'RX-V2500',
+      }.freeze
+
       def do_status
         resp = nil
         loop do
@@ -194,8 +199,8 @@ module Seriamp
         end
         @status_string = data
         @status = {
-          # RX-V1500: model R0177
           model_code: @model_code,
+          model_name: MODEL_NAMES[@model_code],
           firmware_version: @version,
           system_status: data[7].ord - ZERO_ORD,
           power: power = data[8].ord - ZERO_ORD,
