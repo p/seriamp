@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+require 'seriamp/yamaha/protocol/constants'
+
 module Seriamp
   module Yamaha
     module Protocol
       module Methods
+        include Constants
 
         # Turns the receiver on or off.
         #
@@ -87,7 +90,7 @@ module Seriamp
         end
 
         def set_subwoofer_level(level)
-          dispatch("#{STX}249#{'%02x' % level}#{ETX}")
+          system_command("49#{'%02x' % level}")
         end
 
         def get_main_volume_text
@@ -106,7 +109,7 @@ module Seriamp
         #
         # @param [ true | false ] state Desired state.
         def set_pure_direct(state)
-          dispatch("#{STX}07E8#{state ? '0' : '2'}#{ETX}")
+          remote_command("7E8#{state ? '0' : '2'}")
         end
 
         def set_program(value)
