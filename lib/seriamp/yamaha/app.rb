@@ -37,6 +37,12 @@ module Seriamp
           client.public_send("set_#{zone}_volume_db", value)
           empty_response
         end
+
+        put "/pure-direct" do
+          state = Utils.parse_on_off(request.body.read)
+          client.public_send("set_pure_direct", state)
+          empty_response
+        end
       end
 
       private
