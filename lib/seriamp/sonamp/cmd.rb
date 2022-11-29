@@ -69,11 +69,11 @@ module Seriamp
           client.set_zone_power(4, false)
         when 'power'
           zone = args.shift.to_i
-          state = Utils.parse_on_off(ARGV.shift)
+          state = Utils.parse_on_off(args.shift)
           client.set_zone_power(zone, state)
         when 'zvol'
           zone = args.shift.to_i
-          volume = ARGV.shift.to_i
+          volume = args.shift.to_i
           client.set_zone_volume(zone, volume)
         when 'cvol'
           channel = args.shift.to_i
@@ -81,7 +81,7 @@ module Seriamp
           client.set_channel_volume(channel, volume)
         when 'zmute'
           zone = args.shift.to_i
-          mute = ARGV.shift.to_i
+          mute = args.shift.to_i
           client.set_zone_mute(zone, mute)
         when 'cmute'
           channel = args.shift.to_i

@@ -62,20 +62,20 @@ module Seriamp
             exit 3
           end
         when 'power'
-          which = ARGV.shift&.downcase
+          which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)
             method = "set_#{which}_power"
-            state = Utils.parse_on_off(ARGV.shift)
+            state = Utils.parse_on_off(args.shift)
           else
             method = 'set_power'
             state = Utils.parse_on_off(which)
           end
           client.public_send(method, state)
         when 'volume'
-          which = ARGV.shift
+          which = args.shift
           if %w(main zone2 zone3).include?(which)
             prefix = "set_#{which}"
-            value = ARGV.shift
+            value = args.shift
           else
             prefix = 'set_main'
             value = which
@@ -95,20 +95,20 @@ module Seriamp
           p client.get_zone2_volume_text
           p client.get_zone3_volume_text
         when 'input'
-          which = ARGV.shift&.downcase
+          which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)
             method = "set_#{which}_input"
-            input = ARGV.shift
+            input = args.shift
           else
             method = 'set_main_input'
             input = which
           end
           client.public_send(method, input)
         when 'program'
-          value = ARGV.shift.downcase
+          value = args.shift.downcase
           client.set_program(value)
         when 'pure-direct'
-          state = Utils.parse_on_off(ARGV.shift)
+          state = Utils.parse_on_off(args.shift)
           client.set_pure_direct(state)
         when 'status'
           pp client.last_status
