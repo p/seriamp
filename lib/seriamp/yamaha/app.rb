@@ -41,6 +41,12 @@ module Seriamp
           client.public_send("set_#{zone}_volume_db", value)
           empty_response
         end
+
+        put "/#{zone}/input" do
+          value = request.body.read
+          client.public_send("set_#{zone}_input", value)
+          empty_response
+        end
       end
 
       put "/pure-direct" do
