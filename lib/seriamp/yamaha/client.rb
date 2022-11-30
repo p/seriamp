@@ -175,6 +175,11 @@ module Seriamp
         'R0178' => 'RX-V2500',
       }.freeze
 
+      PURE_DIRECT_FIELD = {
+        'R0177' => 28,
+        'R0178' => 126,
+      }.freeze
+
       def do_status
         resp = nil
         loop do
@@ -241,7 +246,7 @@ module Seriamp
             sleep: SLEEP_GET.fetch(data[24]),
             night: night = data[27],
             night_name: NIGHT_GET.fetch(night),
-            pure_direct: data[28] == '1',
+            pure_direct: data[PURE_DIRECT_FIELD.fetch(@model_code)] == '1',
             speaker_a: data[29] == '1',
             speaker_b: data[30] == '1',
             format: data[31..32],
