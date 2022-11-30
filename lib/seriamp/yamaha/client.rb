@@ -180,6 +180,24 @@ module Seriamp
         'R0178' => 126,
       }.freeze
 
+      INPUT_MODE_R0178 = {
+        '0' => 'Auto',
+        '2' => 'DTS',
+        '4' => 'Analog',
+        '5' => 'Analog Only',
+      }.freeze
+
+      SAMPLE_RATE_R0178 = {
+        '0' => 'Analog',
+        '1' => 32000,
+        '2' => 44100,
+        '3' => 48000,
+        '4' => 64000,
+        '5' => 88200,
+        '6' => 96000,
+        '7' => 'Unknown',
+      }.freeze
+
       def do_status
         resp = nil
         loop do
@@ -249,9 +267,17 @@ module Seriamp
             pure_direct: data[PURE_DIRECT_FIELD.fetch(@model_code)] == '1',
             speaker_a: data[29] == '1',
             speaker_b: data[30] == '1',
-            format: data[31..32],
-            sample_rate: data[33..34],
+            # 2 positions on RX-Vx700
+            #format: data[31..32],
+            #sampling: data[33..34],
           )
+          if @model_code == 'R0178'
+            @status.update(
+              input_mode: INPUT_MODE_R0178.fetch(data[11]),
+              sampling: data[32],
+              sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
+            )
+          end
         end
         @status
       end
