@@ -112,8 +112,11 @@ module Seriamp
           client.set_pure_direct(state)
         when 'status'
           pp client.last_status
-        when 'status_string'
-          puts client.last_status_string
+        when 'dev-status'
+          status = client.last_status_string
+          0.upto(status.length-1).each do |i|
+            puts "%3d  %s" % [i, status[i]]
+          end
         when 'test'
           client.set_power(false)
           [true, false].each do |main_state|
