@@ -3,6 +3,7 @@
 require 'sinatra/base'
 require 'seriamp/utils'
 require 'seriamp/sonamp/client'
+require 'seriamp/detect'
 
 module Seriamp
   module Sonamp
