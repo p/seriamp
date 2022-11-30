@@ -7,7 +7,8 @@ require 'seriamp/yamaha/protocol/methods'
 module Seriamp
   module Yamaha
 
-    RS232_TIMEOUT = 3
+    # The manual says response should be received in 500 ms.
+    RS232_TIMEOUT = 0.75
 
     class Client
       include Protocol::Methods
