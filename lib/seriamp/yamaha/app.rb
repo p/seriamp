@@ -42,6 +42,34 @@ module Seriamp
           empty_response
         end
 
+        post "/#{zone}/volume/up" do
+          client.public_send("#{zone}_volume_up")
+          client.public_send("#{zone}_volume_up")
+          plain_response client.main_volume_db
+        end
+
+        post "/#{zone}/volume/up/:step" do |step|
+          client.public_send("#{zone}_volume_up")
+          step.to_i.times do
+            client.public_send("#{zone}_volume_up")
+          end
+          plain_response client.main_volume_db
+        end
+
+        post "/#{zone}/volume/down" do
+          client.public_send("#{zone}_volume_down")
+          client.public_send("#{zone}_volume_down")
+          plain_response client.main_volume_db
+        end
+
+        post "/#{zone}/volume/down/:step" do |step|
+          client.public_send("#{zone}_volume_down")
+          step.to_i.times do
+            client.public_send("#{zone}_volume_down")
+          end
+          plain_response client.main_volume_db
+        end
+
         put "/#{zone}/input" do
           value = request.body.read
           client.public_send("set_#{zone}_input", value)
@@ -70,6 +98,11 @@ module Seriamp
 
       def empty_response
         render_json({})
+      end
+
+      def plain_response(data)
+        headers['content-type'] = 'text/plain'
+        data.to_s
       end
     end
   end
