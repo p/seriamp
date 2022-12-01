@@ -66,6 +66,14 @@ module Seriamp
           set_zone2_volume(value)
         end
 
+        def main_volume_up
+          remote_command('7A1A')
+        end
+
+        def main_volume_down
+          remote_command('7A1B')
+        end
+
         def zone2_volume_up
           remote_command('7ADA')
         end

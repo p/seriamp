@@ -74,26 +74,34 @@ module Seriamp
         when 'volume'
           which = args.shift
           if %w(main zone2 zone3).include?(which)
-            prefix = "set_#{which}"
             value = args.shift
           else
-            prefix = 'set_main'
             value = which
+            which = 'main'
           end
-          if %w(. -).include?(value)
-            method = "#{prefix}_mute"
-            value = true
+          prefix = "set_#{which}"
+          value = value.downcase
+          if value == 'up'
+            # Just like with remote, the first volume up or down command
+            # doesn't do anything.
+            client.public_send("#{which}_volume_up")
+            client.public_send("#{which}_volume_up")
+          elsif value == 'down'
+            client.public_send("#{which}_volume_down")
+            client.public_send("#{which}_volume_down")
           else
-            method = "#{prefix}_volume_db"
-            if value[0] == ','
-              value = value[1..]
+            if %w(. -).include?(value)
+              method = "#{prefix}_mute"
+              value = true
+            else
+              method = "#{prefix}_volume_db"
+              if value[0] == ','
+                value = value[1..]
+              end
+              value = Float(value)
             end
-            value = Float(value)
+            client.public_send(method, value)
           end
-          client.public_send(method, value)
-          p client.get_main_volume_text
-          p client.get_zone2_volume_text
-          p client.get_zone3_volume_text
         when 'input'
           which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)
