@@ -1,5 +1,46 @@
 # Yamaha Receiver Serial Control Ruby Library
 
+## Hardware Requirements
+
+I used USB to serial adapters with both Prolific PL2303 and FTDI chips.
+Both chipsets work under Linux. The FTDI chipset appears to buffer the
+incoming data - when reading from the device, it returns more than one
+character at a time, whereas with the Prolific chipset only one character at
+a time is returned. This means the FTDI chip can possibly offer faster
+communication. Adapters based on the FTDI chip are also more expensive.
+
+On Windows, FTDI provides drivers for at least Windows 7, however they
+are not signed. Windows can be booted with the option to skip driver
+signing enforcement, which makes the adapter work. I couldn't locate a
+working Prolific driver for Windows 7.
+
+These USB to serial adapters all have male connection on the RS232 end.
+As such, no additional cable is needed if communicating with a receiver
+that requires a straight cable and has a female terminal (such as the
+Denon AVR-2308CI). For other receivers a gender changer or a cable is
+necessary.
+
+### Sonance Sonamp 875D / 875D MK II
+
+- 3-pin cable should be sufficient according to manual
+- Null-modem cable required
+- Receiver socket is female
+
+### Yamaha RX-V**00
+
+- 5-pin cable required (with RTS pin connected)
+- Null-modem cable required
+- Receiver socket is male
+
+### Denon AVR-2308CI
+
+- Straight cable required
+- Receiver socket is female
+
+### Integra DTR
+
+- Straight cable required
+
 ## Protocol Notes
 
 ### RX-V1500 Power Values
