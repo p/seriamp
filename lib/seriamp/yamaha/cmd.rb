@@ -90,9 +90,12 @@ module Seriamp
             client.public_send("#{which}_volume_down")
             client.public_send("#{which}_volume_down")
           else
-            if %w(. -).include?(value)
+            if %w(. - mute).include?(value)
               method = "#{prefix}_mute"
               value = true
+            elsif value == 'unmute'
+              method = "#{prefix}_mute"
+              value = false
             else
               method = "#{prefix}_volume_db"
               if value[0] == ','
