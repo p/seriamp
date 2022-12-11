@@ -80,6 +80,10 @@ module Seriamp
             which = 'main'
           end
           prefix = "set_#{which}"
+          if value.nil?
+            puts client.send("last_#{which}_volume_db")
+            return
+          end
           value = value.downcase
           if value == 'up'
             # Just like with remote, the first volume up or down command
