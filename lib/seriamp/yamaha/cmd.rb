@@ -112,13 +112,16 @@ module Seriamp
         when 'input'
           which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)
-            method = "set_#{which}_input"
             input = args.shift
           else
-            method = 'set_main_input'
             input = which
+            which = 'main'
           end
-          client.public_send(method, input)
+          if input.nil?
+            puts client.public_send("last_#{which}_input_name")
+            return
+          end
+          client.public_send("set_#{which}_input", input)
         when 'program'
           value = args.shift.downcase
           client.set_program(value)

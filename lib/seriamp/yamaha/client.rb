@@ -79,6 +79,9 @@ module Seriamp
         end
       end
 
+      alias main_input_name input_name
+      alias last_main_input_name last_input_name
+
       %i(
         multi_ch_input effect pure_direct speaker_a speaker_b
       ).each do |meth|
