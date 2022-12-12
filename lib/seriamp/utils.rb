@@ -13,5 +13,9 @@ module Seriamp
         raise ArgumentError, "Invalid on/off value: #{value}"
       end
     end
+
+    module_function def monotime
+      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    end
   end
 end

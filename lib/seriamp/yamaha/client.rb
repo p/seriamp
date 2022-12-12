@@ -94,12 +94,21 @@ module Seriamp
         end
       end
 
+      def with_device(&block)
+        if @io
+          yield @io
+        else
+          open_device(&block)
+        end
+      end
+
       private
 
       include Protocol::Constants
 
       def open_device
         if detect_device? && device.nil?
+          logger&.debug("Detecting device")
           @device = Seriamp.detect_device(Yamaha, *glob, logger: logger)
           if @device
             logger&.info("Using #{device} as TTY device")
@@ -108,6 +117,7 @@ module Seriamp
           end
         end
 
+        logger&.debug("Opening #{device}")
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
         begin
@@ -131,14 +141,6 @@ module Seriamp
         end
       end
 
-      def with_device(&block)
-        if @io
-          yield @io
-        else
-          open_device(&block)
-        end
-      end
-
       # ASCII table: https://www.asciitable.com/
       DC1 = ?\x11
       DC2 = ?\x12
@@ -151,9 +153,13 @@ module Seriamp
       ZERO_ORD = '0'.ord
 
       def dispatch(cmd)
+        start = Utils.monotime
         with_device do
           @io.syswrite(cmd.encode('ascii'))
           read_response
+        end.tap do
+          elapsed = Utils.monotime - start
+          logger&.debug("Yamaha: dispatched #{cmd} in #{'%.2f' % elapsed} s")
         end
       end
 

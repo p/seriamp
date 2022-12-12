@@ -28,8 +28,15 @@ module Seriamp
 
         put "/#{zone}/power" do
           state = Utils.parse_on_off(request.body.read)
-          client.public_send("set_#{zone}_power", state)
-          empty_response
+          client.with_device do
+            client.public_send("set_#{zone}_power", state)
+            rs = request.env['HTTP_RETURN_STATUS']
+            if rs && Utils.parse_on_off(rs)
+              render_json(client.status)
+            else
+              empty_response
+            end
+          end
         end
 
         get "/#{zone}/volume" do
@@ -97,7 +104,7 @@ module Seriamp
       end
 
       def empty_response
-        render_json({})
+        [204, '']
       end
 
       def plain_response(data)
