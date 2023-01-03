@@ -103,6 +103,9 @@ module Seriamp
         end
       end
 
+      # Shows a message via the on-screen display. The message must be 16
+      # characters or fewer. The message is NOT displayed on the front panel,
+      # it is shown only on the connected TV's OSD.
       def osd_message(msg)
         if msg.length < 16
           msg = msg.dup
