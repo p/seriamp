@@ -103,6 +103,27 @@ module Seriamp
         end
       end
 
+      def osd_message(msg)
+        if msg.length < 16
+          msg = msg.dup
+          while msg.length < 16
+            msg += ' '
+          end
+        elsif msg.length > 16
+          raise ArgumentError, "Message must be no more than 16 characters, #{msg.length} given"
+        end
+
+        with_device do
+          @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
+        end
+
+        nil
+      end
+
       private
 
       include Protocol::Constants
