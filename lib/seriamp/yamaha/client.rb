@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'timeout'
+require 'seriamp/utils'
 require 'seriamp/backend/serial_port'
 require 'seriamp/yamaha/protocol/methods'
 
