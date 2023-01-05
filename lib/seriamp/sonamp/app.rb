@@ -22,30 +22,40 @@ module Seriamp
       end
 
       get '/zone/:zone/power' do |zone|
-        render_json(client.get_zone_power(zone.to_i))
+        render_json(client.get_zone_power(Integer(zone)))
       end
 
       put '/zone/:zone/power' do |zone|
         state = Utils.parse_on_off(request.body.read)
-        client.set_zone_power(zone.to_i, state)
+        client.set_zone_power(Integer(zone), state)
       end
 
       get '/zone/:zone/volume' do |zone|
-        render_json(client.get_zone_volume(zone.to_i))
+        render_json(client.get_zone_volume(Integer(zone)))
       end
 
       put '/zone/:zone/volume' do |zone|
         volume = request.body.read.to_i
-        client.set_zone_volume(zone.to_i, volume)
+        client.set_zone_volume(Integer(zone), volume)
+      end
+
+      put '/zone/:zone/mute' do |zone|
+        state = Utils.parse_on_off(request.body.read)
+        client.set_zone_mute(Integer(zone), state)
       end
 
       get '/channel/:channel/volume' do |channel|
-        render_json(client.get_channel_volume(channel.to_i))
+        render_json(client.get_channel_volume(Integer(channel)))
       end
 
       put '/channel/:channel/volume' do |channel|
         volume = request.body.read.to_i
-        client.set_channel_volume(channel.to_i, volume)
+        client.set_channel_volume(Integer(channel), volume)
+      end
+
+      put '/channel/:channel/mute' do |channel|
+        state = Utils.parse_on_off(request.body.read)
+        client.set_channel_mute(Integer(channel), state)
       end
 
       post '/' do
