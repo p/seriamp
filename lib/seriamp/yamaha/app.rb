@@ -84,9 +84,49 @@ module Seriamp
         end
       end
 
-      put "/pure-direct" do
+      put "/pure_direct" do
         state = Utils.parse_on_off(request.body.read)
-        client.public_send("set_pure_direct", state)
+        client.set_pure_direct(state)
+        empty_response
+      end
+
+      put "/center_speaker_layout" do
+        client.set_center_speaker_layout(request.body.read)
+        empty_response
+      end
+
+      put "/front_speaker_layout" do
+        client.set_front_speaker_layout(request.body.read)
+        empty_response
+      end
+
+      put "/surround_speaker_layout" do
+        client.set_surround_speaker_layout(request.body.read)
+        empty_response
+      end
+
+      put "/surround_back_speaker_layout" do
+        client.set_surround_back_speaker_layout(request.body.read)
+        empty_response
+      end
+
+      put "/presence_speaker_layout" do
+        client.set_presence_speaker_layout(request.body.read)
+        empty_response
+      end
+
+      put "/bass_out" do
+        client.set_bass_out(request.body.read)
+        empty_response
+      end
+
+      put "/subwoofer_phase" do
+        client.set_subwoofer_phase(request.body.read)
+        empty_response
+      end
+
+      put "/subwoofer_crossover" do
+        client.set_subwoofer_crossover(Integer(request.body.read))
         empty_response
       end
 
