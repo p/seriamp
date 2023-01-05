@@ -128,6 +128,22 @@ module Seriamp
         when 'pure-direct'
           state = Utils.parse_on_off(args.shift)
           client.set_pure_direct(state)
+        when 'center-speaker-layout'
+          client.set_center_speaker_layout(args.shift)
+        when 'surround-speaker-layout'
+          client.set_surround_speaker_layout(args.shift)
+        when 'surround-back-speaker-layout'
+          client.set_surround_back_speaker_layout(args.shift)
+        when 'front-speaker-layout'
+          client.set_front_speaker_layout(args.shift)
+        when 'presence-speaker-layout'
+          client.set_presence_speaker_layout(args.shift)
+        when 'bass-out'
+          client.set_bass_out(args.shift)
+        when 'subwoofer-phase'
+          client.set_subwoofer_phase(args.shift)
+        when 'subwoofer-crossover'
+          client.set_subwoofer_crossover(Integer(args.shift))
         when 'status'
           pp client.last_status
         when 'dev-status'

@@ -177,6 +177,55 @@ module Seriamp
           '43' => 'Enhancer 7ch High',
           '80' => 'Straight',
         }.freeze
+
+        CENTER_SPEAKER_LAYOUTS = {
+          'large' => '00',
+          'small' => '01',
+          'none' => '02',
+        }.freeze
+
+        FRONT_SPEAKER_LAYOUTS = {
+          'large' => '00',
+          'small' => '01',
+        }.freeze
+
+        SURROUND_SPEAKER_LAYOUTS = CENTER_SPEAKER_LAYOUTS
+
+        SURROUND_BACK_SPEAKER_LAYOUTS = {
+          'large_x2' => '00',
+          'large_x1' => '01',
+          'small_x2' => '02',
+          'small_x1' => '03',
+          'none' => '04',
+        }.freeze
+
+        PRESENCE_SPEAKER_LAYOUTS = {
+          'yes' => '00',
+          'none' => '01',
+        }.freeze
+
+        BASS_OUTS = {
+          'subwoofer' => '00',
+          'front' => '01',
+          'both' => '02',
+        }.freeze
+
+        SUBWOOFER_PHASES = {
+          'normal' => '00',
+          'reverse' => '10',
+        }.freeze
+
+        SUBWOOFER_CROSSOVERS = {
+          40 => '00',
+          60 => '01',
+          80 => '02',
+          90 => '03',
+          100 => '04',
+          110 => '05',
+          120 => '06',
+          160 => '07',
+          200 => '08',
+        }.freeze
       end
     end
   end
