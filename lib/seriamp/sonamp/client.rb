@@ -101,12 +101,28 @@ module Seriamp
         get_zone_state('FP', zone)
       end
 
+      def set_bbe(zone, state)
+        set_zone_value('BP', zone, state ? 1 : 0)
+      end
+
       def get_bbe(zone = nil)
         get_zone_state('BP', zone)
       end
 
+      def set_bbe_boost(zone, state)
+        set_zone_value('BB', zone, convert_boolean_out(state))
+      end
+
+      def set_bbe_high_boost(zone, state)
+        set_zone_value('BH', zone, convert_boolean_out(state))
+      end
+
       def get_bbe_high_boost(zone = nil)
         get_zone_state('BH', zone)
+      end
+
+      def set_bbe_low_boost(zone, state)
+        set_zone_value('BL', zone, convert_boolean_out(state))
       end
 
       def get_bbe_low_boost(zone = nil)
@@ -308,6 +324,17 @@ module Seriamp
           value = value == 1
         end
         value
+      end
+
+      def convert_boolean_out(value)
+        case value
+        when true, 1
+          1
+        when false, 0
+          0
+        else
+          raise ArgumentError, "Invalid boolean value: #{value}"
+        end
       end
     end
   end
