@@ -4,6 +4,7 @@ require 'sinatra/base'
 require 'seriamp/utils'
 require 'seriamp/detect'
 require 'seriamp/yamaha/client'
+require 'seriamp/yamaha/executor'
 
 module Seriamp
   module Yamaha
@@ -14,7 +15,16 @@ module Seriamp
       set :client, nil
 
       get '/' do
-        render_json(client.status)
+        render_json(client.last_status)
+      end
+
+      post '/' do
+        executor = Executor.new
+        request.body.read.split("\n").each do |line|
+          args = line.strip.split(/\s+/)
+          executor.run_command(args)
+        end
+        standard_response
       end
 
       get '/power' do
@@ -150,6 +160,15 @@ module Seriamp
       def plain_response(data)
         headers['content-type'] = 'text/plain'
         data.to_s
+      end
+
+      def standart_response
+        rs = request.env['HTTP_X_RETURN_STATUS']
+        if rs && Utils.parse_on_off(rs)
+          render_json(client.status)
+        else
+          empty_response
+        end
       end
     end
   end
