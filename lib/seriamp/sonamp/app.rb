@@ -21,6 +21,16 @@ module Seriamp
         render_json(client.get_zone_power)
       end
 
+      get '/volume' do
+        payload = {
+          zone_volume: client.get_zone_volume,
+          zone_mute: client.get_zone_mute,
+          channel_volume: client.get_channel_volume,
+          channel_mute: client.get_channel_mute,
+        }
+        render_json(payload)
+      end
+
       get '/zone/:zone/power' do |zone|
         render_json(client.get_zone_power(Integer(zone)))
       end
