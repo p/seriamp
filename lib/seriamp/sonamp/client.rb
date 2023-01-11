@@ -274,7 +274,6 @@ module Seriamp
           resp = dispatch(":#{cmd_prefix}#{zone}?")
           typecast_value(resp[cmd_prefix.length + 1..], boolize)
         else
-          index = 1
           hashize_query_result(dispatch(":#{cmd_prefix}G?", 4), cmd_prefix, boolize)
         end
       end
