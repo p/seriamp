@@ -57,6 +57,9 @@ module Seriamp
       def last_status
         unless @status
           with_device do
+            unless @status
+              do_status
+            end
           end
         end
         @status.dup
@@ -73,6 +76,10 @@ module Seriamp
       def status
         do_status
         last_status
+      end
+
+      def clear_cache
+        @status = nil
       end
 
       %i(

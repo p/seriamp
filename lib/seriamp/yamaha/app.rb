@@ -15,6 +15,7 @@ module Seriamp
       set :client, nil
 
       get '/' do
+        clear_cache
         render_json(client.last_status)
       end
 
@@ -141,6 +142,14 @@ module Seriamp
       end
 
       private
+
+      def clear_cache
+        if settings.client
+          settings.client.clear_cache
+        else
+          @client&.clear_cache
+        end
+      end
 
       def client
         settings.client || begin
