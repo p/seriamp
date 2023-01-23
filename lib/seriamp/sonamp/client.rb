@@ -228,7 +228,7 @@ module Seriamp
       end
 
       def dispatch(cmd, resp_lines_range_or_count = 1)
-        resp_lines_range = if Range === resp_lines_range_or_count
+        resp_lines_range = if Range === resp_lines_range_or_count || Array === resp_lines_range_or_count
           resp_lines_range_or_count
         else
           1..resp_lines_range_or_count
@@ -321,14 +321,15 @@ module Seriamp
           resp = dispatch(":#{cmd_prefix}#{zone}?")
           typecast_value(resp[cmd_prefix.length + 1..], boolize)
         else
-          hashize_query_result(dispatch(":#{cmd_prefix}G?", include_all ? 1..5 : 1..4), cmd_prefix, boolize)
+          range = include_all ? [1, 2, 3, 4, 'A'] : (1..4).to_a
+          hashize_query_result(dispatch(":#{cmd_prefix}G?", range), cmd_prefix, boolize, range)
         end
       end
 
-      def hashize_query_result(resp_lines, cmd_prefix, boolize)
+      def hashize_query_result(resp_lines, cmd_prefix, boolize, range)
         index = 1
         Hash[resp_lines.map do |resp|
-          value = typecast_value(extract_suffix(resp, "#{cmd_prefix}#{index}"), boolize)
+          value = typecast_value(extract_suffix(resp, "#{cmd_prefix}#{range.to_a[index-1]}"), boolize)
           [index, value].tap do
             index += 1
           end
@@ -356,7 +357,7 @@ module Seriamp
           typecast_value(dispatch_extract_suffix(":#{cmd_prefix}#{channel}?", "#{cmd_prefix}#{channel}"), boolize)
         else
           index = 1
-          hashize_query_result(dispatch(":#{cmd_prefix}G?", 8), cmd_prefix, boolize)
+          hashize_query_result(dispatch(":#{cmd_prefix}G?", 8), cmd_prefix, boolize, 1..8)
         end
       end
 
