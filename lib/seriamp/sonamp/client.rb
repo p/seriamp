@@ -145,7 +145,7 @@ module Seriamp
       end
 
       def get_voltage_trigger_input(zone = nil)
-        get_zone_state('VTI', zone)
+        get_zone_state('VTI', zone, include_all: true)
       end
 
       def get_firmware_version
@@ -227,16 +227,27 @@ module Seriamp
         end
       end
 
-      def dispatch(cmd, resp_lines_count = 1)
+      def dispatch(cmd, resp_lines_range_or_count = 1)
+        resp_lines_range = if Range === resp_lines_range_or_count
+          resp_lines_range_or_count
+        else
+          1..resp_lines_range_or_count
+        end
+
         with_retry do
           with_device do
             with_timeout do
               @io.syswrite("#{cmd}\x0d")
             end
-            resp = 1.upto(resp_lines_count).map do
+            resp = resp_lines_range.map do
               read_line(@io, cmd)
             end
-            if resp_lines_count == 1
+
+            if @io && IO.select([@io.io], nil, nil, 0)
+              logger&.warn("Serial device readable after completely reading status response - concurrent access?")
+            end
+
+            if resp_lines_range_or_count == 1
               resp.first
             else
               resp
@@ -302,7 +313,7 @@ module Seriamp
         dispatch_assert(cmd, expected)
       end
 
-      def get_zone_value(cmd_prefix, zone, boolize: false)
+      def get_zone_value(cmd_prefix, zone, boolize: false, include_all: false)
         if zone
           if zone < 1 || zone > 4
             raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
@@ -310,7 +321,7 @@ module Seriamp
           resp = dispatch(":#{cmd_prefix}#{zone}?")
           typecast_value(resp[cmd_prefix.length + 1..], boolize)
         else
-          hashize_query_result(dispatch(":#{cmd_prefix}G?", 4), cmd_prefix, boolize)
+          hashize_query_result(dispatch(":#{cmd_prefix}G?", include_all ? 1..5 : 1..4), cmd_prefix, boolize)
         end
       end
 
@@ -324,8 +335,8 @@ module Seriamp
         end]
       end
 
-      def get_zone_state(cmd_prefix, zone)
-        get_zone_value(cmd_prefix, zone, boolize: true)
+      def get_zone_state(cmd_prefix, zone, include_all: false)
+        get_zone_value(cmd_prefix, zone, boolize: true, include_all: include_all)
       end
 
       def set_channel_value(cmd_prefix, channel, value)
