@@ -10,17 +10,28 @@ module Seriamp
     RS232_TIMEOUT = 3
 
     class Client
-      def initialize(device: nil, glob: nil, logger: nil)
+      def initialize(device: nil, glob: nil, logger: nil, retries: true)
         @logger = logger
 
         @device = device
         @detect_device = device.nil?
         @glob = glob
+        @retries = case retries
+          when nil, false
+            0
+          when true
+            1
+          when Integer
+            retries
+          else
+            raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
+          end
       end
 
       attr_reader :device
       attr_reader :glob
       attr_reader :logger
+      attr_reader :retries
 
       def detect_device?
         @detect_device
@@ -148,7 +159,7 @@ module Seriamp
       def status
         # Reusing the opened device file makes :VTIG? fail even with a delay
         # in front.
-        #open_device do
+        with_device do
           {
             firmware_version: get_firmware_version,
             temperature: get_temperature,
@@ -165,13 +176,22 @@ module Seriamp
             voltage_trigger_input: get_voltage_trigger_input,
             channel_front_panel_level: get_channel_front_panel_level,
           }
-        #end
+        end
       end
 
       private
 
+      def with_device(&block)
+        if @io
+          yield @io
+        else
+          open_device(&block)
+        end
+      end
+
       def open_device
         if detect_device? && device.nil?
+          logger&.debug("Detecting device")
           @device = Seriamp.detect_device(Sonamp, *glob, logger: logger)
           if @device
             logger&.info("Using #{device} as TTY device")
@@ -180,31 +200,47 @@ module Seriamp
           end
         end
 
-        if @f
+        logger&.debug("Opening #{device}")
+        @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
+
+        begin
+          yield @io
+        ensure
+          @io.close rescue nil
+          @io = nil
+        end
+      end
+
+      def with_retry
+        try = 1
+        begin
           yield
-        else
-          rv = nil
-          Backend::SerialPortBackend::Device.new(device) do |f|
-            @f = f
-            rv = yield
-            @f = nil
+        rescue Seriamp::Error => exc
+          if try <= retries
+            logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
+            try += 1
+            @device = nil
+            retry
+          else
+            raise
           end
-          rv
         end
       end
 
       def dispatch(cmd, resp_lines_count = 1)
-        open_device do
-          with_timeout do
-            @f.syswrite("#{cmd}\x0d")
-          end
-          resp = 1.upto(resp_lines_count).map do
-            read_line(@f, cmd)
-          end
-          if resp_lines_count == 1
-            resp.first
-          else
-            resp
+        with_retry do
+          with_device do
+            with_timeout do
+              @io.syswrite("#{cmd}\x0d")
+            end
+            resp = 1.upto(resp_lines_count).map do
+              read_line(@io, cmd)
+            end
+            if resp_lines_count == 1
+              resp.first
+            else
+              resp
+            end
           end
         end
       end
