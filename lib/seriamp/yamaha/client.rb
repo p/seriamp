@@ -14,7 +14,7 @@ module Seriamp
     class Client
       include Protocol::Methods
 
-      def initialize(device: nil, glob: nil, logger: nil, retries: true)
+      def initialize(device: nil, glob: nil, logger: nil, retries: true, thread_safe: false)
         @logger = logger
 
         @device = device
@@ -30,6 +30,11 @@ module Seriamp
           else
             raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
           end
+        @thread_safe = !!thread_safe
+
+        if thread_safe?
+          @lock = Mutex.new
+        end
 
         if block_given?
           begin
@@ -45,6 +50,10 @@ module Seriamp
       attr_reader :logger
       attr_reader :retries
 
+      def thread_safe?
+        @thread_safe
+      end
+
       def detect_device?
         @detect_device
       end
@@ -56,18 +65,29 @@ module Seriamp
 
       def last_status
         unless @status
-          with_device do
-            unless @status
-              do_status
+          with_lock do
+            with_retry do
+              with_device do
+                unless @status
+                  do_status
+                end
+              end
             end
           end
+        end
+        if @status.nil?
+          raise "This should not happen"
         end
         @status.dup
       end
 
       def last_status_string
         unless @status_string
-          with_device do
+          with_lock do
+            with_retry do
+              with_device do
+              end
+            end
           end
         end
         @status_string.dup
@@ -121,6 +141,16 @@ module Seriamp
         end
       end
 
+      def with_lock
+        if thread_safe?
+          @lock.synchronize do
+            yield
+          end
+        else
+          yield
+        end
+      end
+
       # Shows a message via the on-screen display. The message must be 16
       # characters or fewer. The message is NOT displayed on the front panel,
       # it is shown only on the connected TV's OSD.
@@ -134,13 +164,15 @@ module Seriamp
           raise ArgumentError, "Message must be no more than 16 characters, #{msg.length} given"
         end
 
-        with_retry do
-          with_device do
-            @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
-            @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
-            @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
-            @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
-            @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
+        with_lock do
+          with_retry do
+            with_device do
+              @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
+              @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
+              @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
+              @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
+              @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
+            end
           end
         end
 
@@ -265,9 +297,12 @@ module Seriamp
             end
             break unless again
           end
+          if resp.length < 10
+            raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
+          end
           payload = resp[1...-1]
-          @model_code = payload[0..4]
-          @version = payload[5]
+          model_code = payload[0..4]
+          version = payload[5]
           length = payload[6..7].to_i(16)
           data = payload[8...-2]
           if data.length != length
@@ -276,11 +311,11 @@ module Seriamp
           unless data.start_with?('@E01900')
             raise HandshakeFailure, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
           end
-          @status_string = data
-          @status = {
-            model_code: @model_code,
-            model_name: MODEL_NAMES[@model_code],
-            firmware_version: @version,
+          status_string = data
+          status = {
+            model_code: model_code,
+            model_name: MODEL_NAMES[model_code],
+            firmware_version: version,
             system_status: data[7].ord - ZERO_ORD,
             power: power = data[8].ord - ZERO_ORD,
             main_power: [1, 4, 5, 2].include?(power),
@@ -288,7 +323,7 @@ module Seriamp
             zone3_power: [1, 5, 3, 7].include?(power),
           }
           if data.length > 9
-            @status.update(
+            status.update(
               input: input = data[9],
               input_name: MAIN_INPUTS_GET.fetch(input),
               multi_ch_input: data[10] == '1',
@@ -319,34 +354,41 @@ module Seriamp
               sleep: SLEEP_GET.fetch(data[24]),
               night: night = data[27],
               night_name: NIGHT_GET.fetch(night),
-              pure_direct: data[PURE_DIRECT_FIELD.fetch(@model_code)] == '1',
+              pure_direct: data[PURE_DIRECT_FIELD.fetch(model_code)] == '1',
               speaker_a: data[29] == '1',
               speaker_b: data[30] == '1',
               # 2 positions on RX-Vx700
               #format: data[31..32],
               #sampling: data[33..34],
             )
-            if @model_code == 'R0178'
-              @status.update(
+            if model_code == 'R0178'
+              status.update(
                 input_mode: INPUT_MODE_R0178.fetch(data[11]),
                 sampling: data[32],
                 sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
               )
             end
           end
-          @status
+
+          @model_code, @version, @status_string =
+            model_code, version, status_string
+          @status = status
         end
       end
 
       def remote_command(cmd)
-        with_retry do
-          dispatch("#{STX}0#{cmd}#{ETX}")
+        with_lock do
+          with_retry do
+            dispatch("#{STX}0#{cmd}#{ETX}")
+          end
         end
       end
 
       def system_command(cmd)
-        with_retry do
-          dispatch("#{STX}2#{cmd}#{ETX}")
+        with_lock do
+          with_retry do
+            dispatch("#{STX}2#{cmd}#{ETX}")
+          end
         end
       end
 

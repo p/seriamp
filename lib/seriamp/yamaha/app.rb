@@ -13,6 +13,7 @@ module Seriamp
       set :device, nil
       set :logger, nil
       set :client, nil
+      set :retries, true
 
       get '/' do
         clear_cache
@@ -153,7 +154,8 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Yamaha::Client.new(settings.device, logger: settings.logger)
+          @client ||= Yamaha::Client.new(settings.device,
+            logger: settings.logger, retries: settings.retries, thread_safe: true)
         end
       end
 
