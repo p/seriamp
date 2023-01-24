@@ -25,7 +25,8 @@ logger = Logger.new(STDERR)
 
 #Sonamp::App.set :device, options[:device]
 #Sonamp::App.set :logger, logger
-Seriamp::Sonamp::App.set :client, Seriamp::Sonamp::Client.new(device: options[:device], logger: logger)
+Seriamp::Sonamp::App.set :client, Seriamp::Sonamp::Client.new(
+  device: options[:device], logger: logger, thread_safe: true)
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Seriamp::Sonamp::App))

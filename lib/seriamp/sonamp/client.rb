@@ -10,7 +10,7 @@ module Seriamp
     RS232_TIMEOUT = 3
 
     class Client
-      def initialize(device: nil, glob: nil, logger: nil, retries: true)
+      def initialize(device: nil, glob: nil, logger: nil, retries: true, thread_safe: false)
         @logger = logger
 
         @device = device
@@ -26,12 +26,21 @@ module Seriamp
           else
             raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
           end
+        @thread_safe = !!thread_safe
+
+        if thread_safe?
+          @lock = Mutex.new
+        end
       end
 
       attr_reader :device
       attr_reader :glob
       attr_reader :logger
       attr_reader :retries
+
+      def thread_safe?
+        @thread_safe
+      end
 
       def detect_device?
         @detect_device
@@ -182,10 +191,22 @@ module Seriamp
       private
 
       def with_device(&block)
-        if @io
-          yield @io
+        with_lock do
+          if @io
+            yield @io
+          else
+            open_device(&block)
+          end
+        end
+      end
+
+      def with_lock
+        if thread_safe?
+          @lock.synchronize do
+            yield
+          end
         else
-          open_device(&block)
+          yield
         end
       end
 

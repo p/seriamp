@@ -12,6 +12,7 @@ module Seriamp
       set :device, nil
       set :logger, nil
       set :client, nil
+      set :retries, true
 
       get '/' do
         render_json(client.status)
@@ -75,7 +76,8 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Sonamp::Client.new(settings.device, logger: settings.logger)
+          @client ||= Sonamp::Client.new(settings.device,
+            logger: settings.logger, retries: settings.retries, thread_safe: true)
         end
       end
 
