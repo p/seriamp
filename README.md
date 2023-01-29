@@ -144,6 +144,10 @@ Serial port communication in Ruby:
 - [rubyserial](https://github.com/hybridgroup/rubyserial)
 - [Ruby/SerialPort](https://github.com/hparra/ruby-serialport)
 
+Yamaha YNCA protocol:
+
+- [yamaha_ynca](https://github.com/mvdwetering/yamaha_ynca)
+
 ## Helpful Links
 
 - [Serial port programming in Ruby](https://www.thegeekdiary.com/serial-port-programming-reading-writing-status-of-control-lines-dtr-rts-cts-dsr/)
