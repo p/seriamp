@@ -37,7 +37,7 @@ and which do not:
 
 | Family   | RS-232C Present              | RS-232C Absent |
 | -------- | ---------------------------- | -------------- |
-| RX-Vx000 | RX-V1000, RX-V3000           |                |
+| RX-Vx000 | RX-V3000, RX-V1000           |                |
 |          |                              | HTR-5280       |
 | RX-Vx200 | RX-V2200                     | RX-V1200       |
 |          |                              | HTR-5490       |
@@ -46,17 +46,17 @@ and which do not:
 |          |                              | HTR-5660       |
 | RX-Vx400 | RX-V2400                     | RX-V1400       |
 |          |                              | HTR-5790       |
-| RX-Vx500 | RX-V1500, RX-V2500           |                |
+| RX-Vx500 | RX-V2500, RX-V1500           |                |
 |          | HTR-5890                     | HTR-5860       |
-| RX-Vx600 | RX-V1600, RX-V2600           |                |
+| RX-Vx600 | RX-V2600, RX-V1600           |                |
 |          | HTR-5990                     | HTR-5960       |
-| RX-Vx700 | RX-V1700, RX-V2700           |                |
+| RX-Vx700 | RX-V2700, RX-V1700           |                |
 |          |                              | HTR-6090       |
-| RX-Vx800 | RX-V1800, RX-V3800           |                |
+| RX-Vx800 | RX-V3800, RX-V1800           |                |
 |          | HTR-6190                     | HTR-6180       |
-| RX-Vx900 | RX-V1900, RX-V3900           |                |
+| RX-Vx900 | RX-V3900, RX-V1900           |                |
 |          |                              | HTR-6290       |
-| RX-Vx67  | RX-V1067, RX-V2067, RX-V3067 | RX-V867        |
+| RX-Vx67  | RX-V3067, RX-V2067, RX-V1067 | RX-V867        |
 
 RX-V2700, RX-V3800 and RX-V3900 have an Ethernet port in addition to
 RS-232C and should be controllable via the Yamaha YNCA protocol via the
