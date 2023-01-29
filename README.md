@@ -32,6 +32,39 @@ necessary.
 - Null-modem cable required
 - Receiver socket is male
 
+The following table shows which Yamaha receivers have RS-232 connector
+and which do not:
+
+| Family   | RS-232C Absent | RS-232C Present              |
+| -------- | -------------- | ---------------------------- |
+| RX-Vx000 |                | RX-V1000, RX-V3000           |
+|          | HTR-5280       |                              |
+| RX-Vx200 | RX-V1200       | RX-V2200                     |
+|          | HTR-5490       |                              |
+| RX-Vx300 | RX-V1300       | RX-V2300                     |
+|          | HTR-5590       |                              |
+|          | HTR-5660       |                              |
+| RX-Vx400 | RX-V1400       | RX-V2400                     |
+|          | HTR-5790       |                              |
+| RX-Vx500 |                | RX-V1500, RX-V2500           |
+|          | HTR-5860       | HTR-5890                     |
+| RX-Vx600 |                | RX-V1600, RX-V2600           |
+|          | HTR-5960       | HTR-5990                     |
+| RX-Vx700 |                | RX-V1700, RX-V2700           |
+|          | HTR-6090       |                              |
+| RX-Vx800 |                | RX-V1800, RX-V3800           |
+|          | HTR-6180       | HTR-6190                     |
+| RX-Vx900 |                | RX-V1900, RX-V3900           |
+|          | HTR-6290       |                              |
+| RX-Vx67  | RX-V867        | RX-V1067, RX-V2067, RX-V3067 |
+
+RX-V2700, RX-V3800 and RX-V3900 have an Ethernet port in addition to
+RS-232C and should be controllable via the Yamaha YNCA protocol via the
+Ethernet port. Over time Yamaha has been adding networking functionality
+to lower tier models, for example it is present in RX-V867, RX-V671 and RX-V475.
+
+Models lower than 1000 level receivers have never had RS-232C to my knowledge.
+
 ### Denon AVR-2308CI
 
 - Straight cable required
