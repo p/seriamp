@@ -426,7 +426,7 @@ module Seriamp
         try = 1
         begin
           yield
-        rescue Seriamp::Error => exc
+        rescue Seriamp::Error, IOError, SystemCallError => exc
           if try <= retries
             logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
             try += 1
