@@ -21,7 +21,7 @@ module Seriamp
       Thread.new do
         Timeout.timeout(timeout * 2, CommunicationTimeout) do
           logger&.debug("Trying #{device}")
-          client_cls.new(device: device, logger: logger).present?
+          client_cls.new(device: device, logger: logger, retries: false).present?
           logger&.debug("Found #{mod} device at #{device}")
           queue << device
         end
