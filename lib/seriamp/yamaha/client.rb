@@ -421,7 +421,9 @@ module Seriamp
           if try <= retries
             logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
             try += 1
-            @device = nil
+            if detect_device?
+              @device = nil
+            end
             retry
           else
             raise
