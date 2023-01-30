@@ -224,6 +224,15 @@ module Seriamp
         logger&.debug("Opening #{device}")
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
+        warned = false
+        while IO.select([@io.io], nil, nil, 0)
+          unless warned
+            logger&.warn("Serial device readable after opening - unread previous response?")
+            warned = true
+          end
+          IO.read(1)
+        end
+
         begin
           yield @io
         ensure
