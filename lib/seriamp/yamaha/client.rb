@@ -298,16 +298,9 @@ module Seriamp
       def do_status
         with_retry do
           resp = nil
-          loop do
-            resp = dispatch(STATUS_REQ)
-            again = false
-            while @io && IO.select([@io.io], nil, nil, 0)
-              logger&.warn("Serial device readable after completely reading status response - concurrent access?")
-              read_response
-              again = true
-            end
-            break unless again
-          end
+          resp = dispatch(STATUS_REQ)
+          Utils.consume_data(@io.io, logger,
+            "Serial device readable after completely reading status response - concurrent access?")
           if resp.length < 10
             raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
           end
