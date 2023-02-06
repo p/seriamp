@@ -311,15 +311,23 @@ module Seriamp
       def read_line(f, cmd)
         with_timeout do
           resp = +''
+          deadline = Utils.monotime + 1
           loop do
-            ch = f.sysread(1)
-            if ch
-              break if ch == ?\r
-              resp << ch
-            else
-              sleep 0.1
+            begin
+              buf = f.read_nonblock(1024)
+              if buf
+                resp += buf
+                break if buf[-1] == ?\r
+              end
+            rescue IO::WaitReadable
+              budget = deadline - Utils.monotime
+              if budget < 0
+                raise CommunicationTimeout
+              end
+              IO.select([f.io], nil, nil, budget)
             end
           end
+          resp.strip!
           if resp == 'ERR'
             raise InvalidCommand, "Invalid command: #{cmd}"
           elsif resp == 'N/A'
