@@ -197,19 +197,8 @@ module Seriamp
         logger&.debug("Opening #{device}")
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
-        warned = false
-        read_bytes = 0
-        while IO.select([@io.io], nil, nil, 0)
-          unless warned
-            logger&.warn("Serial device readable after opening - unread previous response?")
-            warned = true
-          end
-          buf = @io.io.read_nonblock(1024)
-          read_bytes += buf.length
-        end
-        if read_bytes > 0
-          logger&.warn("Consumed #{read_bytes} bytes")
-        end
+        Utils.consume_data(@io.io, logger,
+          "Serial device readable after opening - unread previous response?")
 
         begin
           tries = 0
