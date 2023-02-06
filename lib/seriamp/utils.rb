@@ -17,5 +17,22 @@ module Seriamp
     module_function def monotime
       Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
+
+    module_function def consume_data(io, logger, msg)
+      warned = false
+      read_bytes = 0
+      while IO.select([io], nil, nil, 0)
+        unless warned
+          logger&.warn(msg)
+          warned = true
+        end
+        buf = io.read_nonblock(1024)
+        read_bytes += buf.length
+      end
+      if read_bytes > 0
+        logger&.warn("Consumed #{read_bytes} bytes")
+      end
+      nil
+    end
   end
 end
