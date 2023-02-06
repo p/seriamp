@@ -27,7 +27,7 @@ module Seriamp
 
         attr_reader :io
 
-        def_delegators :io, :close, :sysread, :syswrite
+        def_delegators :io, :close, :sysread, :syswrite, :read_nonblock
       end
     end
   end

@@ -251,17 +251,25 @@ module Seriamp
 
       def read_response
         resp = +''
-        Timeout.timeout(2, CommunicationTimeout) do
+        deadline = Utils.monotime + 1
+        #Timeout.timeout(1, CommunicationTimeout) do
           loop do
-            ch = @io.sysread(1)
-            if ch
-              resp << ch
-              break if ch == ETX
-            else
-              sleep 0.1
+            begin
+              chunk = @io.read_nonblock(1000)
+              p chunk.length
+              if chunk
+                resp += chunk
+                break if chunk[-1] == ETX
+              end
+            rescue IO::WaitReadable
+              budget = deadline - Utils.monotime
+              if budget < 0
+                raise CommunicationTimeout
+              end
+              IO.select([@io.io], nil, nil, budget)
             end
           end
-        end
+        #end
         resp
       end
 
