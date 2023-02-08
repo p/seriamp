@@ -9,7 +9,7 @@ require 'seriamp/sonamp/client'
 module Seriamp
   module Sonamp
     class Cmd
-      def initialize(args)
+      def initialize(args = ARGV, stdin = STDIN)
         args = args.dup
 
         options = {}
@@ -27,16 +27,18 @@ module Seriamp
         @client = Sonamp::Client.new(device: options[:device], logger: @logger)
 
         @args = args
+        @stdin = stdin
       end
 
       attr_reader :args
+      attr_reader :stdin
       attr_reader :logger
 
       def run
         if args.any?
           run_command(args)
         else
-          STDIN.each_line do |line|
+          stdin.each_line do |line|
             line.strip!
             line.sub!(/#.*/, '')
             next if line.empty?

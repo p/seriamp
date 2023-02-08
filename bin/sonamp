@@ -7,4 +7,4 @@ rescue LoadError
   require 'seriamp/sonamp/cmd'
 end
 
-Seriamp::Sonamp::Cmd.new(ARGV).run
+Seriamp::Sonamp::Cmd.new.run
