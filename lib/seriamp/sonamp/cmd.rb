@@ -5,6 +5,7 @@ require 'logger'
 require 'seriamp/utils'
 require 'seriamp/detect'
 require 'seriamp/sonamp/client'
+require 'seriamp/sonamp/executor'
 
 module Seriamp
   module Sonamp
@@ -56,43 +57,18 @@ module Seriamp
 
         case cmd
         when 'detect'
-          device = Seriamp.detect_device(Sonamp, *args, logger: logger)
+          device = Seriamp.detect_device(Yamaha, *args, logger: logger)
           if device
             puts device
             exit 0
           else
-            STDERR.puts("Sonamp amplifier not found")
+            STDERR.puts("Yamaha receiver not found")
             exit 3
           end
-        when 'off'
-          client.set_zone_power(1, false)
-          client.set_zone_power(2, false)
-          client.set_zone_power(3, false)
-          client.set_zone_power(4, false)
-        when 'power'
-          zone = args.shift.to_i
-          state = Utils.parse_on_off(args.shift)
-          client.set_zone_power(zone, state)
-        when 'zvol'
-          zone = args.shift.to_i
-          volume = args.shift.to_i
-          client.set_zone_volume(zone, volume)
-        when 'cvol'
-          channel = args.shift.to_i
-          volume = args.shift.to_i
-          client.set_channel_volume(channel, volume)
-        when 'zmute'
-          zone = args.shift.to_i
-          mute = args.shift.to_i
-          client.set_zone_mute(zone, mute)
-        when 'cmute'
-          channel = args.shift.to_i
-          mute = args.shift.to_i
-          client.set_channel_mute(channel, mute)
         when 'status'
           pp client.status
         else
-          raise ArgumentError, "Unknown command: #{cmd}"
+          executor.run_command(cmd, *args)
         end
       end
 

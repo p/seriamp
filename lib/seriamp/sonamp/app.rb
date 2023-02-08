@@ -70,6 +70,12 @@ module Seriamp
       end
 
       post '/' do
+        executor = Executor.new
+        request.body.read.split("\n").each do |line|
+          args = line.strip.split(/\s+/)
+          executor.run_command(args)
+        end
+        render_json({})
       end
 
       private
