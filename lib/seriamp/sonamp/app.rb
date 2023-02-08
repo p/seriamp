@@ -46,7 +46,7 @@ module Seriamp
       end
 
       put '/zone/:zone/volume' do |zone|
-        volume = request.body.read.to_i
+        volume = Integer(request.body.read)
         client.set_zone_volume(Integer(zone), volume)
       end
 
@@ -60,7 +60,7 @@ module Seriamp
       end
 
       put '/channel/:channel/volume' do |channel|
-        volume = request.body.read.to_i
+        volume = Integer(request.body.read)
         client.set_channel_volume(Integer(channel), volume)
       end
 
