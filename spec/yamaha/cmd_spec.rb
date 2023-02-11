@@ -44,6 +44,17 @@ describe Seriamp::Yamaha::Cmd do
           cmd.run
         end
       end
+
+      describe 'two commands' do
+        let(:stdin_c) { "status\npure-direct on" }
+
+        it 'works' do
+          client.should_receive(:last_status)
+          client.should_receive(:set_pure_direct).with(true)
+          Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+          cmd.run
+        end
+      end
     end
   end
 end
