@@ -14,9 +14,24 @@ describe Seriamp::Yamaha::Cmd do
   let(:stdin) { StringIO.new(stdin_c) }
   let (:cmd) { described_class.new(args, stdin) }
 
-  describe '!status' do
-    it 'works' do
-      cmd.run
+  describe '#run' do
+    describe 'no command' do
+      it 'reads stdin' do
+        stdin.should receive(:each_line)
+        cmd.run
+      end
+    end
+
+    let(:client) { double('client') }
+
+    describe '!status' do
+      let(:args) { %w(status) }
+
+      it 'works' do
+        client.should_receive(:last_status)
+        Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+        cmd.run
+      end
     end
   end
 end
