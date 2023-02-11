@@ -33,5 +33,17 @@ describe Seriamp::Yamaha::Cmd do
         cmd.run
       end
     end
+
+    describe 'bulk commands' do
+      describe '!status' do
+        let(:stdin_c) { 'status' }
+
+        it 'works' do
+          client.should_receive(:last_status)
+          Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+          cmd.run
+        end
+      end
+    end
   end
 end
