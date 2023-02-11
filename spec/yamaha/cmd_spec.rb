@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 describe Seriamp::Yamaha::Cmd do
+  let(:client_cls) { Seriamp::Yamaha::Client }
+
   describe '#initialize' do
     it 'works' do
       described_class.new
@@ -29,7 +31,7 @@ describe Seriamp::Yamaha::Cmd do
 
       it 'works' do
         client.should_receive(:last_status)
-        Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+        client_cls.should receive(:new).and_return(client)
         cmd.run
       end
     end
@@ -40,7 +42,7 @@ describe Seriamp::Yamaha::Cmd do
 
         it 'works' do
           client.should_receive(:last_status)
-          Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+          client_cls.should receive(:new).and_return(client)
           cmd.run
         end
       end
@@ -51,7 +53,7 @@ describe Seriamp::Yamaha::Cmd do
         it 'works' do
           client.should_receive(:last_status)
           client.should_receive(:set_pure_direct).with(true)
-          Seriamp::Yamaha::Client.should receive(:new).and_return(client)
+          client_cls.should receive(:new).and_return(client)
           cmd.run
         end
       end
