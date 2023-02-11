@@ -2,7 +2,7 @@
 
 require 'timeout'
 require 'seriamp/utils'
-require 'seriamp/backend/serial_port'
+require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 
 module Seriamp

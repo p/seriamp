@@ -2,7 +2,7 @@
 
 require 'timeout'
 require 'seriamp/error'
-require 'seriamp/backend/serial_port'
+require 'seriamp/backend'
 
 module Seriamp
   module Sonamp
