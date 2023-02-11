@@ -10,6 +10,7 @@ module Seriamp
       attr_reader :client
 
       def run_command(cmd, *args)
+        cmd = cmd.gsub('_', '-')
         case cmd
         when 'detect'
           device = Seriamp.detect_device(Yamaha, *args, logger: logger)

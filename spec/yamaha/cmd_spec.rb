@@ -47,6 +47,26 @@ describe Seriamp::Yamaha::Cmd do
         end
       end
 
+      describe 'dash syntax' do
+        let(:stdin_c) { "pure-direct on" }
+
+        it 'works' do
+          client.should_receive(:set_pure_direct).with(true)
+          client_cls.should receive(:new).and_return(client)
+          cmd.run
+        end
+      end
+
+      describe 'underscore syntax' do
+        let(:stdin_c) { "pure_direct on" }
+
+        it 'works' do
+          client.should_receive(:set_pure_direct).with(true)
+          client_cls.should receive(:new).and_return(client)
+          cmd.run
+        end
+      end
+
       describe 'two commands' do
         let(:stdin_c) { "status\npure-direct on" }
 
