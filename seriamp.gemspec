@@ -17,5 +17,7 @@ Gem::Specification.new do |spec|
   
   spec.add_runtime_dependency 'serialport', '~> 1.0'
   
+  spec.add_development_dependency 'rspec', '~> 1.0'
+  
   # Optional dependencies: sinatra for the web apps
 end
