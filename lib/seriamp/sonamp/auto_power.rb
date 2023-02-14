@@ -1,3 +1,4 @@
+autoload :JSON, 'json'
 require 'seriamp/faraday_facade'
 require 'seriamp/utils'
 
@@ -22,6 +23,16 @@ module Seriamp
       end
 
       def run
+        if (state_path = options[:state_path]) && File.exist?(state_path)
+          begin
+            @stored_sonamp_power = File.open(state_path) do |f|
+              JSON.load(f)
+            end
+          rescue JSON::ParserError => exc
+            logger&.warn("Failed to load state: #{exc.class}: #{exc}")
+          end
+        end
+
         bump('application start')
 
         prev_sonamp_power = nil
@@ -127,6 +138,11 @@ module Seriamp
         # the same.
         if prev_sonamp_power == sonamp_power && sonamp_power.values.any? { |v| v == true }
           @stored_sonamp_power = sonamp_power
+          if state_path = options[:state_path]
+            File.open(state_path + '.part', 'w') do |f|
+              f << JSON.dump(sonamp_power)
+            end
+          end
         end
       end
 
