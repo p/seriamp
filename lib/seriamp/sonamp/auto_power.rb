@@ -1,4 +1,5 @@
 autoload :JSON, 'json'
+autoload :FileUtils, 'fileutils'
 require 'seriamp/faraday_facade'
 require 'seriamp/utils'
 
@@ -142,6 +143,7 @@ module Seriamp
             File.open(state_path + '.part', 'w') do |f|
               f << JSON.dump(sonamp_power)
             end
+            FileUtils.mv(state_path + '.part', state_path)
           end
         end
       end
