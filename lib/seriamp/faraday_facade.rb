@@ -13,7 +13,7 @@ module Seriamp
       end
 
       @conn = Faraday.new(**opts) do |faraday|
-        faraday.response :logger, nil, { headers: true, bodies: false }
+        #faraday.response :logger, nil, { headers: true, bodies: false }
         #faraday.response :logger
       end
 
@@ -29,12 +29,17 @@ module Seriamp
       end
     end
 
-    def get_json(url)
+    def get!(url)
       resp = get(url)
       if resp.status != 200
         raise HttpError, "Bad status: #{resp.status} for #{base_url} #{url} with #{options}"
       end
-      JSON.parse(resp.body)
+      resp.body
+    end
+
+    def get_json(url)
+      resp = get!(url)
+      JSON.parse(resp)
     end
 
     def put(uri, body: nil)

@@ -26,13 +26,13 @@ module Seriamp
 
         prev_sonamp_power = nil
         handle_exceptions do
-          prev_sonamp_power = sonamp_client.get_zone_power.values.any? { |v| v == true }
+          prev_sonamp_power = sonamp_client.get_json('power').values.any? { |v| v == true }
         end
 
         loop do
           sonamp_power = nil
           handle_exceptions do
-            sonamp_power = sonamp_client.get_zone_power.values.any? { |v| v == true }
+            sonamp_power = sonamp_client.get_json('power').values.any? { |v| v == true }
             if sonamp_power && prev_sonamp_power == false
               bump('amplifier turned on')
             end
@@ -43,7 +43,14 @@ module Seriamp
           # turn-offs.
           receiver_power = nil
           handle_exceptions do
-            receiver_power = yamaha_client.main_power
+            receiver_power = case resp = yamaha_client.get!('power')
+              when 'true'
+                true
+              when 'false'
+                false
+              else
+                raise "Unknown yamaha power response: #{resp}"
+              end
           end
           p receiver_power
           case receiver_power
