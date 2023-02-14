@@ -22,6 +22,13 @@ module Seriamp
         render_json(client.get_zone_power)
       end
 
+      post '/off' do
+        1.upto(4) do |zone|
+          client.set_zone_power(zone, false)
+        end
+        render_json(client.get_zone_power)
+      end
+
       get '/volume' do
         payload = {
           zone_volume: client.get_zone_volume,

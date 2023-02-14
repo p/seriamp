@@ -70,7 +70,7 @@ module Seriamp
           if delta < 0
             logger&.info("Turning amplifier off")
             handle_exceptions do
-              sonamp_client.power_off
+              sonamp_client.post!('off')
             end
           else
             puts "TTL: #{delta / 60}:#{'%02d' % (delta % 60)}"
