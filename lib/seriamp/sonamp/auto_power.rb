@@ -82,7 +82,7 @@ module Seriamp
           end
 
           delta = (@alive_through - Utils.monotime).to_i
-          if delta < 0
+          if delta < 0 && sonamp_on
             logger&.info("Turning amplifier off")
             handle_exceptions do
               sonamp_client.post!('off')
