@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    seriamp (0.1.14)
+    seriamp (0.2.1)
       serialport (~> 1.3)
 
 GEM
@@ -44,7 +44,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   faraday (~> 2.7)
-  rack-test
+  rack-test (~> 2.0)
   rspec-core (~> 3.12)
   rspec-expectations (~> 3.12)
   rspec-mocks (~> 3.12)
