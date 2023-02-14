@@ -162,9 +162,17 @@ Yamaha YNCA protocol:
 
 Integra serial control:
 
-- [https://www.avforums.com/threads/onkyo-tx-nr-1007-webinterface-programming.1107346/page-14](Many resources)
+- [Many resources](https://www.avforums.com/threads/onkyo-tx-nr-1007-webinterface-programming.1107346/page-14)
 - [onkyoweb-php](https://github.com/guikubivan/onkyoweb-php)
 - [onkyo-eiscp](https://github.com/miracle2k/onkyo-eiscp)
+- [onpc](https://github.com/mkulesh/onpc)
+- [ISCP/eISCP](https://habr.com/en/post/427985/)
+- [Decrypting Onkyo firmware](http://divideoverflow.com/2014/04/decrypting-onkyo-firmware-files/)
+- [Post](https://robotskirts.com/2012/04/28/controlling-onkyo-integra-receivers-via-rs-232/)
+
+Pioneer serial control:
+
+- [Manuals](https://www.pioneerelectronics.com/PUSA/Support/Home-Entertainment-Custom-Install/RS-232+&+IP+Codes/A+V+Receivers)
 
 ## Helpful Links
 
