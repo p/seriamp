@@ -46,6 +46,7 @@ module Seriamp
 
         loop do
           sonamp_power = nil
+          sonamp_on = nil
           handle_exceptions do
             sonamp_power = sonamp_client.get_json('power')
             sonamp_on = sonamp_power.values.any? { |v| v == true }
