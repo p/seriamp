@@ -143,7 +143,7 @@ to open a TTY in Python, buffering must be disabled.
 See [here](https://www.avsforum.com/threads/enhancing-yamaha-avrs-via-rs-232.1066484/)
 for more Yamaha-related software.
 
-## Other Libraries
+## Other Libraries & Tools
 
 Yamaha RS232/serial protocol:
 
@@ -159,6 +159,12 @@ Serial port communication in Ruby:
 Yamaha YNCA protocol:
 
 - [yamaha_ynca](https://github.com/mvdwetering/yamaha_ynca)
+
+Integra serial control:
+
+- [https://www.avforums.com/threads/onkyo-tx-nr-1007-webinterface-programming.1107346/page-14](Many resources)
+- [onkyoweb-php](https://github.com/guikubivan/onkyoweb-php)
+- [onkyo-eiscp](https://github.com/miracle2k/onkyo-eiscp)
 
 ## Helpful Links
 
