@@ -75,7 +75,7 @@ module Seriamp
             bump('receiver is on')
             if sonamp_on == false
               puts("turning on amplifier")
-              sonamp_on
+              sonamp_set_on
             end
           when nil
             bump('failed to communicate with receiver - assuming it is on')
@@ -148,8 +148,9 @@ module Seriamp
         end
       end
 
-      def sonamp_on
+      def sonamp_set_on
         if stored_sonamp_power
+          logger&.debug("sonamp on")
           stored_sonamp_power.each do |zone, value|
             if value
               logger&.debug("Sonamp: zone #{zone} on")
