@@ -21,11 +21,23 @@ OptionParser.new do |opts|
     options[:log_path] = path
   end
 
+  opts.on("--sonamp-url=URL", "-s", "Path to Sonamp webapp URL") do |v|
+    options[:sonamp_url] = v
+  end
+
+  opts.on("--yamaha-url=URL", "-y", "Path to Yamaha webapp URL") do |v|
+    options[:yamaha_url] = v
+  end
+
 end.parse!
 
 logger = Logger.new(STDERR)
 
-runner = AutoPower.new(logger: logger)
+runner = Seriamp::Sonamp::AutoPower.new(
+  logger: logger,
+  sonamp_url: options[:sonamp_url],
+  yamaha_url: options[:yamaha_url],
+)
 
 if options[:daemonize]
   Process.daemonize
