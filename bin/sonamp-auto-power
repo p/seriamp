@@ -25,6 +25,10 @@ OptionParser.new do |opts|
     options[:sonamp_url] = v
   end
 
+  opts.on("--state=PATH", "-f", "Path to state file") do |path|
+    options[:state_path] = path
+  end
+
   opts.on("--ttl=TTL", "-t", "Delay in seconds for turning amplifier off after receiver is detected off") do |v|
     options[:ttl] = Integer(v)
   end
@@ -40,6 +44,7 @@ logger = Logger.new(STDERR)
 runner = Seriamp::Sonamp::AutoPower.new(
   logger: logger,
   sonamp_url: options[:sonamp_url],
+  state_path: options[:state_path],
   ttl: options[:ttl],
   yamaha_url: options[:yamaha_url],
 )
