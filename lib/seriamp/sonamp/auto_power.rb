@@ -87,7 +87,7 @@ module Seriamp
             handle_exceptions do
               sonamp_client.post!('off')
             end
-          else
+          elsif ttl > 0
             puts "TTL: #{delta / 60}:#{'%02d' % (delta % 60)}"
           end
 
