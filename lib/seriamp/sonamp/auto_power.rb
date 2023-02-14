@@ -91,8 +91,10 @@ module Seriamp
       end
 
       def bump(reason)
-        logger&.debug("Bumping 7 minutes: #{reason}")
-        @alive_through = Utils.monotime + 7*60
+        if ttl > 0
+          logger&.debug("Bumping #{ttl} seconds: #{reason}")
+        end
+        @alive_through = Utils.monotime + ttl*60
       end
 
       def sonamp_client
@@ -107,6 +109,12 @@ module Seriamp
           url: options.fetch(:yamaha_url),
           timeout: options[:yamaha_timeout] || 5,
         )
+      end
+
+      def ttl
+        @ttl ||= begin
+          options[:ttl] || 0
+        end
       end
     end
   end
