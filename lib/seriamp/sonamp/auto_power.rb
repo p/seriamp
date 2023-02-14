@@ -25,18 +25,24 @@ module Seriamp
         bump('application start')
 
         prev_sonamp_power = nil
+        prev_sonamp_on = nil
         handle_exceptions do
-          prev_sonamp_power = sonamp_client.get_json('power').values.any? { |v| v == true }
+          prev_sonamp_power = sonamp_client.get_json('power')
+          store_sonamp_power(prev_sonamp_power, prev_sonamp_power)
+          prev_sonamp_on = prev_sonamp_power.values.any? { |v| v == true }
         end
 
         loop do
           sonamp_power = nil
           handle_exceptions do
-            sonamp_power = sonamp_client.get_json('power').values.any? { |v| v == true }
-            if sonamp_power && prev_sonamp_power == false
+            sonamp_power = sonamp_client.get_json('power')
+            sonamp_on = sonamp_power.values.any? { |v| v == true }
+            if sonamp_on && prev_sonamp_on == false
               bump('amplifier turned on')
             end
+            store_sonamp_power(prev_sonamp_power, sonamp_power)
             prev_sonamp_power = sonamp_power
+            prev_sonamp_on = sonamp_on
           end
 
           # If we cannot query the receiver, assume it is on to prevent unintended
@@ -52,15 +58,12 @@ module Seriamp
                 raise "Unknown yamaha power response: #{resp}"
               end
           end
-          p receiver_power
           case receiver_power
           when true
             bump('receiver is on')
-            if sonamp_power == false
+            if sonamp_on == false
               puts("turning on amplifier")
-              sonamp_client.set_zone_power(1, true)
-              sonamp_client.set_zone_power(2, true)
-              sonamp_client.set_zone_power(3, true)
+              sonamp_on
             end
           when nil
             bump('failed to communicate with receiver - assuming it is on')
@@ -81,6 +84,8 @@ module Seriamp
       end
 
       private
+
+      attr_reader :stored_sonamp_power
 
       def handle_exceptions
         yield
@@ -114,6 +119,27 @@ module Seriamp
       def ttl
         @ttl ||= begin
           options[:ttl] || 0
+        end
+      end
+
+      def store_sonamp_power(prev_sonamp_power, sonamp_power)
+        # Wait for the power state to be stable - both readings should be
+        # the same.
+        if prev_sonamp_power == sonamp_power && sonamp_power.values.any? { |v| v == true }
+          @stored_sonamp_power = sonamp_power
+        end
+      end
+
+      def sonamp_on
+        if stored_sonamp_power
+          stored_sonamp_power.each do |zone, value|
+            if value
+              logger&.debug("Sonamp: zone #{zone} on")
+              sonamp_client.put!("zone/#{zone}/power", body: 'true')
+            end
+          end
+        else
+          logger&.warn("No stored sonamp power")
         end
       end
     end
