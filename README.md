@@ -1,4 +1,4 @@
-# Yamaha Receiver Serial Control Ruby Library
+# Receiver & Amplifier Serial Control Ruby Library
 
 ## Hardware Requirements
 
