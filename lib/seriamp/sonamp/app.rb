@@ -89,7 +89,7 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Sonamp::Client.new(settings.device,
+          @client ||= Sonamp::Client.new(device: settings.device,
             logger: settings.logger, retries: settings.retries, thread_safe: true)
         end
       end
