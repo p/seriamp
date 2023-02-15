@@ -26,11 +26,25 @@ necessary.
 - Null-modem cable required
 - Receiver socket is female
 
+Connection options:
+
+- PC with serial port (male) <-> null-modem cable female to male <->
+  receiver
+- USB-serial adapter (male) <-> null-modem male to female adapter <->
+  receiver
+
 ### Yamaha RX-V**00
 
 - 5-pin cable required (with RTS pin connected)
 - Null-modem cable required
 - Receiver socket is male
+
+Connection options:
+
+- PC with serial port (male) <-> null-modem cable female to female <->
+  receiver
+- USB-serial adapter (male) <-> null-modem female to female adapter <->
+  receiver
 
 The following table shows which Yamaha receivers have RS-232 connector
 and which do not:
@@ -85,6 +99,12 @@ has nuts on the serial end and does not attach to the receiver, requiring
 either a straight through female to male serial cable or removing the nuts
 from one of the ends (the USB to serial adapter is the cheaper device,
 I modify the adapters rather than the receivers/amplifiers).
+
+Connection options:
+
+- PC with serial port (male) <-> straight cable female to male <->
+  receiver
+- USB-serial adapter (male) <-> receiver
 
 ## Protocol Notes
 
