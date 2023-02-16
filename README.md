@@ -24,7 +24,7 @@ necessary.
 
 - 3-pin cable should be sufficient according to manual
 - Null-modem cable required
-- Receiver socket is female
+- Receiver socket is female with nuts
 
 Connection options:
 
@@ -37,7 +37,7 @@ Connection options:
 
 - 5-pin cable required (with RTS pin connected)
 - Null-modem cable required
-- Receiver socket is male
+- Receiver socket is male with nuts
 
 Connection options:
 
