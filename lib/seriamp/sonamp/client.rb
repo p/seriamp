@@ -351,8 +351,12 @@ module Seriamp
           if zone < 1 || zone > 4
             raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
           end
-          resp = dispatch(":#{cmd_prefix}#{zone}?")
-          typecast_value(resp[cmd_prefix.length + 1..], boolize)
+          sent_prefix = "#{cmd_prefix}#{zone}"
+          resp = dispatch(":#{sent_prefix}?")
+          unless resp.start_with?(sent_prefix)
+            raise UnexpectedResponse, "Expected #{sent_prefix}..., received #{resp}"
+          end
+          typecast_value(resp[sent_prefix.length..], boolize)
         else
           range = include_all ? [1, 2, 3, 4, 'A'] : (1..4).to_a
           hashize_query_result(dispatch(":#{cmd_prefix}G?", range), cmd_prefix, boolize, range)
