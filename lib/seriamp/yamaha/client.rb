@@ -265,6 +265,11 @@ module Seriamp
             IO.select([@io.io], nil, nil, budget)
           end
         end
+
+        if resp.count(ETX) > 1
+          logger&.warn("Multiple responses received: #{resp}")
+        end
+
         resp
       end
 
