@@ -46,6 +46,7 @@ module Seriamp
       put '/zone/:zone/power' do |zone|
         state = Utils.parse_on_off(request.body.read)
         client.set_zone_power(Integer(zone), state)
+        empty_response
       end
 
       get '/zone/:zone/volume' do |zone|
@@ -97,6 +98,10 @@ module Seriamp
       def render_json(data)
         headers['content-type'] = 'application/json'
         data.to_json
+      end
+
+      def empty_response
+        [204, '']
       end
     end
   end

@@ -39,4 +39,15 @@ describe Seriamp::Sonamp::App do
       JSON.parse(last_response.body).should == final_state
     end
   end
+
+  describe '/zone/:zone/power' do
+    it 'works' do
+      client.should_receive(:set_zone_power).with(2, true)
+
+      put '/zone/2/power', 'true'
+
+      last_response.status.should == 204
+      p last_response.body.should == ''
+    end
+  end
 end
