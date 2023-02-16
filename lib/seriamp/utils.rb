@@ -10,7 +10,7 @@ module Seriamp
       when '0', 'off', 'no', 'false'
         false
       else
-        raise ArgumentError, "Invalid on/off value: #{value}"
+        raise InvalidOnOffValue, "Invalid on/off value: #{value}"
       end
     end
 

@@ -103,6 +103,11 @@ module Seriamp
       def empty_response
         [204, '']
       end
+
+      error InvalidOnOffValue do |e|
+        headers['content-type'] = 'text/plain'
+        [422, "Error: #{e.class}: #{e}"]
+      end
     end
   end
 end

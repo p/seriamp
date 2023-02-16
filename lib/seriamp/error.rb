@@ -7,4 +7,6 @@ module Seriamp
   class UnexpectedResponse < Error; end
   class HandshakeFailure < UnexpectedResponse; end
   class CommunicationTimeout < Error; end
+
+  class InvalidOnOffValue < ArgumentError; end
 end

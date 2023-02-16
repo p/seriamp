@@ -49,5 +49,16 @@ describe Seriamp::Sonamp::App do
       last_response.status.should == 204
       p last_response.body.should == ''
     end
+
+    context 'when value is invalid' do
+      it 'returns 422' do
+        client.should_not receive(:set_zone_power)
+
+        put '/zone/2/power', 'bogus'
+
+        last_response.status.should == 422
+        last_response.body.should =~ /\AError: .* bogus/
+      end
+    end
   end
 end
