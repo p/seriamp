@@ -7,7 +7,7 @@ module Seriamp
 
   DEFAULT_DEVICE_GLOB = '/dev/ttyUSB*'
 
-  module_function def detect_device(mod, *patterns, logger: nil)
+  module_function def detect_device(mod, *patterns, logger: nil, timeout: nil)
     if patterns.empty?
       patterns = [DEFAULT_DEVICE_GLOB]
     end
@@ -15,13 +15,13 @@ module Seriamp
       Dir.glob(pattern)
     end.flatten.uniq
     queue = Queue.new
-    timeout = mod.const_get(:RS232_TIMEOUT)
+    timeout ||= mod.const_get(:DEFAULT_RS232_TIMEOUT)
     client_cls = mod.const_get(:Client)
     threads = devices.map do |device|
       Thread.new do
         Timeout.timeout(timeout * 2, CommunicationTimeout) do
           logger&.debug("Trying #{device}")
-          client_cls.new(device: device, logger: logger, retries: false).present?
+          client_cls.new(device: device, logger: logger, retries: false, timeout: timeout).present?
           logger&.debug("Found #{mod} device at #{device}")
           queue << device
         end

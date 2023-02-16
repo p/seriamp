@@ -3,17 +3,19 @@
 module Seriamp
   module Yamaha
     class Executor
-      def initialize(client)
+      def initialize(client, **opts)
         @client = client
+        @options = opts.dup.freeze
       end
 
       attr_reader :client
+      attr_reader :options
 
       def run_command(cmd, *args)
         cmd = cmd.gsub('_', '-')
         case cmd
         when 'detect'
-          device = Seriamp.detect_device(Yamaha, *args, logger: logger)
+          device = Seriamp.detect_device(Yamaha, *args, logger: logger, timeout: options[:timeout])
           if device
             puts device
             exit 0

@@ -7,10 +7,12 @@ require 'seriamp/backend'
 module Seriamp
   module Sonamp
 
-    RS232_TIMEOUT = 3
+    DEFAULT_RS232_TIMEOUT = 3
 
     class Client
-      def initialize(device: nil, glob: nil, logger: nil, retries: true, thread_safe: false)
+      def initialize(device: nil, glob: nil, logger: nil, retries: true,
+        timeout: nil, thread_safe: false
+      )
         @logger = logger
 
         @device = device
@@ -26,6 +28,7 @@ module Seriamp
           else
             raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
           end
+        @timeout = timeout || DEFAULT_RS232_TIMEOUT
         @thread_safe = !!thread_safe
 
         if thread_safe?
@@ -37,6 +40,7 @@ module Seriamp
       attr_reader :glob
       attr_reader :logger
       attr_reader :retries
+      attr_reader :timeout
 
       def thread_safe?
         @thread_safe
@@ -213,7 +217,7 @@ module Seriamp
       def open_device
         if detect_device? && device.nil?
           logger&.debug("Detecting device")
-          @device = Seriamp.detect_device(Sonamp, *glob, logger: logger)
+          @device = Seriamp.detect_device(Sonamp, *glob, logger: logger, timeout: timeout)
           if @device
             logger&.info("Using #{device} as TTY device")
           else
@@ -305,13 +309,13 @@ module Seriamp
       end
 
       def with_timeout(&block)
-        Timeout.timeout(RS232_TIMEOUT, CommunicationTimeout, &block)
+        Timeout.timeout(timeout, CommunicationTimeout, &block)
       end
 
       def read_line(f, cmd)
         with_timeout do
           resp = +''
-          deadline = Utils.monotime + 1
+          deadline = Utils.monotime + timeout
           loop do
             begin
               buf = f.read_nonblock(1024)

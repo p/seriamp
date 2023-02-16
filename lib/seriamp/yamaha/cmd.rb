@@ -14,17 +14,22 @@ module Seriamp
       def initialize(args = ARGV, stdin = STDIN)
         options = {}
         OptionParser.new do |opts|
-          opts.banner = "Usage: yamaha [-d device] command arg..."
+          opts.banner = "Usage: yamaha [options] command arg..."
 
           opts.on("-d", "--device DEVICE", "TTY to use (default autodetect)") do |v|
             options[:device] = v
+          end
+
+          opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
+            options[:timeout] = Float(v)
           end
         end.parse!
 
         @options = options
 
         @logger = Logger.new(STDERR)
-        @client = Yamaha::Client.new(device: options[:device], logger: @logger)
+        @client = Yamaha::Client.new(device: options[:device],
+          logger: @logger, timeout: options[:timeout])
 
         @args = args
         @stdin = stdin
@@ -33,6 +38,7 @@ module Seriamp
       attr_reader :args
       attr_reader :stdin
       attr_reader :logger
+      attr_reader :options
 
       def run
         if args.any?
@@ -74,7 +80,7 @@ module Seriamp
       attr_reader :client
 
       def executor
-        @executor ||= Executor.new(client)
+        @executor ||= Executor.new(client, timeout: options[:timeout])
       end
     end
   end

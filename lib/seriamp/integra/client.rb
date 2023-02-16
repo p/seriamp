@@ -8,12 +8,14 @@ require 'seriamp/integra/protocol/methods'
 module Seriamp
   module Integra
 
-    RS232_TIMEOUT = 0.25
+    DEFAULT_RS232_TIMEOUT = 0.25
 
     class Client
       include Protocol::Methods
 
-      def initialize(device: nil, glob: nil, logger: nil, retries: true, thread_safe: false)
+      def initialize(device: nil, glob: nil, logger: nil, retries: true,
+        timeout: nil, thread_safe: false
+      )
         @logger = logger
 
         @device = device
@@ -29,6 +31,7 @@ module Seriamp
           else
             raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
           end
+        @timeout = timeout || DEFAULT_RS232_TIMEOUT
         @thread_safe = !!thread_safe
 
         if thread_safe?
@@ -48,6 +51,7 @@ module Seriamp
       attr_reader :glob
       attr_reader :logger
       attr_reader :retries
+      attr_reader :timeout
 
       def thread_safe?
         @thread_safe
@@ -94,7 +98,7 @@ module Seriamp
       def open_device
         if detect_device? && device.nil?
           logger&.debug("Detecting device")
-          @device = Seriamp.detect_device(Integra, *glob, logger: logger)
+          @device = Seriamp.detect_device(Integra, *glob, logger: logger, timeout: timeout)
           if @device
             logger&.info("Using #{device} as TTY device")
           else
@@ -133,7 +137,7 @@ module Seriamp
 
       def read_response
         resp = +''
-        deadline = Utils.monotime + 1
+        deadline = Utils.monotime + timeout
         loop do
           begin
             chunk = @io.read_nonblock(1000)

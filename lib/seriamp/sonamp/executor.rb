@@ -3,16 +3,18 @@
 module Seriamp
   module Sonamp
     class Executor
-      def initialize(client)
+      def initialize(client, **opts)
         @client = client
+        @options = opts.dup.freeze
       end
 
       attr_reader :client
+      attr_reader :options
 
       def run_command(cmd, *args)
         case cmd
         when 'detect'
-          device = Seriamp.detect_device(Sonamp, *args, logger: logger)
+          device = Seriamp.detect_device(Sonamp, *args, logger: logger, timeout: options[:timeout])
           if device
             puts device
             exit 0
