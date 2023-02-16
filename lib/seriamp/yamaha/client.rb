@@ -201,8 +201,9 @@ module Seriamp
         logger&.debug("Opening #{device}")
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
-        Utils.consume_data(@io.io, logger,
+        buf = Utils.consume_data(@io.io, logger,
           "Serial device readable after opening - unread previous response?")
+        report_unread_response(buf)
 
         begin
           tries = 0
@@ -305,8 +306,9 @@ module Seriamp
         with_retry do
           resp = nil
           resp = dispatch(STATUS_REQ)
-          Utils.consume_data(@io.io, logger,
+          buf = Utils.consume_data(@io.io, logger,
             "Serial device readable after completely reading status response - concurrent access?")
+          report_unread_response(buf)
           if resp.length < 10
             raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
           end
@@ -438,6 +440,28 @@ module Seriamp
           else
             raise
           end
+        end
+      end
+
+      def report_unread_response(buf)
+        return if buf.nil?
+
+        if buf.count(ETX) > 1
+          logger&.warn("Multiple unread responses: #{buf}")
+
+          buf.split(ETX).each do |resp|
+            report_unread_response(resp + ETX)
+          end
+          return
+        end
+
+        case buf[0]
+        when DC2
+          logger&.warn("Status response, #{buf.length} bytes")
+        when STX
+          logger&.warn("Command response: #{buf}")
+        else
+          logger&.warn("Unknown unread response: #{buf}")
         end
       end
     end
