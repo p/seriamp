@@ -207,7 +207,7 @@ module Seriamp
         begin
           tries = 0
           begin
-            do_status
+            #do_status
           rescue CommunicationTimeout
             tries += 1
             if tries < 5
