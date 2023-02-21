@@ -277,6 +277,7 @@ module Seriamp
       MODEL_NAMES = {
         'R0177' => 'RX-V1500',
         'R0178' => 'RX-V2500',
+        'R0226' => 'RX-V1800',
       }.freeze
 
       PURE_DIRECT_FIELD = {
