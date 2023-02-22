@@ -3,6 +3,7 @@
 require 'timeout'
 require 'seriamp/error'
 require 'seriamp/backend'
+require 'seriamp/recursive_mutex'
 
 module Seriamp
   module Sonamp
@@ -32,7 +33,7 @@ module Seriamp
         @thread_safe = !!thread_safe
 
         if thread_safe?
-          @lock = Mutex.new
+          @lock = RecursiveMutex.new
         end
       end
 
