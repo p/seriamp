@@ -10,7 +10,8 @@ describe Seriamp::Sonamp::Client do
     end
   end
 
-  let(:client) { described_class.new(device: '/dev/bogus') }
+  let(:extra_client_options) { {} }
+  let(:client) { described_class.new(**{device: '/dev/bogus'}.update(extra_client_options)) }
   let(:device) do
     double('tty device').tap do |device|
       allow(device).to receive(:close)
@@ -51,9 +52,8 @@ describe Seriamp::Sonamp::Client do
       ]
     }
 
-    it 'works' do
-      setup_requests_responses(device, rr)
-      client.status.should == {
+    let(:expected_status) do
+      {
         firmware_version: '1.00',
         temperature: 1,
         zone_power: {1 => true, 2 => true, 3 => true, 4 => true},
@@ -70,6 +70,20 @@ describe Seriamp::Sonamp::Client do
         voltage_trigger_input: {1 => true, 2 => true, 3 => true, 4 => true, 5 => true},
         channel_front_panel_level: {1 => 1, 2 => 1, 3 => 1, 4 => 1, 5 => 1, 6 => 1, 7 => 1, 8 => 1},
       }
+    end
+
+    it 'works' do
+      setup_requests_responses(device, rr)
+      client.status.should == expected_status
+    end
+
+    context 'when thread safety is enabled' do
+      let(:extra_client_options) { {thread_safe: true} }
+
+      it 'works' do
+        setup_requests_responses(device, rr)
+        client.status.should == expected_status
+      end
     end
   end
 end
