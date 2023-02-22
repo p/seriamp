@@ -170,37 +170,37 @@ module Seriamp
       end
 
       def status
-        # Reusing the opened device file makes :VTIG? fail even with a delay
-        # in front.
-        with_device do
-          {
-            firmware_version: get_firmware_version,
-            temperature: get_temperature,
-            zone_power: get_zone_power,
-            zone_fault: get_zone_fault,
-            zone_volume: get_zone_volume,
-            channel_volume: get_channel_volume,
-            zone_mute: get_zone_mute,
-            channel_mute: get_channel_mute,
-            bbe: get_bbe,
-            bbe_high_boost: get_bbe_high_boost,
-            bbe_low_boost: get_bbe_low_boost,
-            auto_trigger_input: get_auto_trigger_input,
-            voltage_trigger_input: get_voltage_trigger_input,
-            channel_front_panel_level: get_channel_front_panel_level,
-          }
+        with_lock do
+          # Reusing the opened device file makes :VTIG? fail even with a delay
+          # in front.
+          with_device do
+            {
+              firmware_version: get_firmware_version,
+              temperature: get_temperature,
+              zone_power: get_zone_power,
+              zone_fault: get_zone_fault,
+              zone_volume: get_zone_volume,
+              channel_volume: get_channel_volume,
+              zone_mute: get_zone_mute,
+              channel_mute: get_channel_mute,
+              bbe: get_bbe,
+              bbe_high_boost: get_bbe_high_boost,
+              bbe_low_boost: get_bbe_low_boost,
+              auto_trigger_input: get_auto_trigger_input,
+              voltage_trigger_input: get_voltage_trigger_input,
+              channel_front_panel_level: get_channel_front_panel_level,
+            }
+          end
         end
       end
 
       private
 
       def with_device(&block)
-        with_lock do
-          if @io
-            yield @io
-          else
-            open_device(&block)
-          end
+        if @io
+          yield @io
+        else
+          open_device(&block)
         end
       end
 
@@ -264,22 +264,24 @@ module Seriamp
           1..resp_lines_range_or_count
         end
 
-        with_retry do
-          with_device do
-            with_timeout do
-              @io.syswrite("#{cmd}\x0d")
-            end
-            resp = resp_lines_range.map do
-              read_line(@io, cmd)
-            end
+        with_lock do
+          with_retry do
+            with_device do
+              with_timeout do
+                @io.syswrite("#{cmd}\x0d")
+              end
+              resp = resp_lines_range.map do
+                read_line(@io, cmd)
+              end
 
-            Utils.consume_data(@io.io, logger,
-              "Serial device readable after completely reading status response - concurrent access?")
+              Utils.consume_data(@io.io, logger,
+                "Serial device readable after completely reading status response - concurrent access?")
 
-            if resp_lines_range_or_count == 1
-              resp.first
-            else
-              resp
+              if resp_lines_range_or_count == 1
+                resp.first
+              else
+                resp
+              end
             end
           end
         end
