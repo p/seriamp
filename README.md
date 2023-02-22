@@ -166,6 +166,13 @@ To monitor serial communications under Linux, I used
 [slsnif](https://github.com/aeruder/slsnif) which I found via
 [this summary of serial port monitoring tools](https://serverfault.com/questions/112957/sniff-serial-port-on-linux).
 
+### Yamaha Timeout
+
+The manual specifies that commands should be responded to in 500 ms and to
+retry after this timeout elapsed. However in my environment (RX-V1500/1800/2500)
+the status command takes 850 ms to complete, thus the timeout must be set to
+at least one second.
+
 ### Yamaha Status in Standby
 
 The receiver is very frequently not responding to the "ready" command.

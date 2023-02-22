@@ -9,7 +9,9 @@ module Seriamp
   module Yamaha
 
     # The manual says response should be received in 500 ms.
-    DEFAULT_RS232_TIMEOUT = 0.75
+    # However, the status response takes 850 ms to be received in my
+    # environment (RX-V1500/1800/2500).
+    DEFAULT_RS232_TIMEOUT = 1
 
     class Client
       include Protocol::Methods
