@@ -17,6 +17,10 @@ OptionParser.new do |opts|
     options[:device] = v
   end
 
+  opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
+    options[:timeout] = Float(v)
+  end
+
   opts.separator ''
   opts.separator 'To see rackup options: yamaha-web -- -h'
 end.parse!
@@ -26,7 +30,8 @@ logger = Logger.new(STDERR)
 #Seriamp::Yamaha::App.set :device, options[:device]
 #Seriamp::Yamaha::App.set :logger, logger
 Seriamp::Yamaha::App.set :client, Seriamp::Yamaha::Client.new(
-  device: options[:device], logger: logger, thread_safe: true)
+  device: options[:device], timeout: options[:timeout],
+  logger: logger, thread_safe: true)
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Seriamp::Yamaha::App))

@@ -17,6 +17,10 @@ OptionParser.new do |opts|
     options[:device] = v
   end
 
+  opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
+    options[:timeout] = Float(v)
+  end
+
   opts.separator ''
   opts.separator 'To see rackup options: sonamp-web -- -h'
 end.parse!
@@ -26,7 +30,8 @@ logger = Logger.new(STDERR)
 #Seriamp::Sonamp::App.set :device, options[:device]
 #Seriamp::Sonamp::App.set :logger, logger
 Seriamp::Sonamp::App.set :client, Seriamp::Sonamp::Client.new(
-  device: options[:device], logger: logger, thread_safe: true)
+  device: options[:device], timeout: options[:timeout],
+  logger: logger, thread_safe: true)
 
 options = Rack::Server::Options.new.parse!(ARGV)
 Rack::Server.start(options.merge(app: Seriamp::Sonamp::App))
