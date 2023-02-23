@@ -286,6 +286,7 @@ module Seriamp
       PURE_DIRECT_FIELD = {
         'R0177' => 28,
         'R0178' => 126,
+        'R0226' => 126,
       }.freeze
 
       INPUT_MODE_R0178 = {
