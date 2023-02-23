@@ -174,6 +174,10 @@ module Seriamp
         end
       end
 
+      def command(cmd)
+        dispatch("!1#{cmd}\r")
+      end
+
       def question(cmd)
         dispatch("!1#{cmd}QSTN\r")
       end

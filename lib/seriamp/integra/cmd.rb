@@ -23,7 +23,7 @@ module Seriamp
           opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
             options[:timeout] = Float(v)
           end
-        end.parse!
+        end.parse!(args)
 
         @options = options
 
