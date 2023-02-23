@@ -173,7 +173,7 @@ module Seriamp
         data.to_s
       end
 
-      def standart_response
+      def standard_response
         rs = request.env['HTTP_X_RETURN_STATUS']
         if rs && Utils.parse_on_off(rs)
           render_json(client.status)
