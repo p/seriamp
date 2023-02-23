@@ -14,6 +14,10 @@ module Seriamp
     devices = patterns.map do |pattern|
       Dir.glob(pattern)
     end.flatten.uniq
+    if devices.length == 1
+      logger&.debug("Assuming #{devices.first} as the only device matching the pattern(s)")
+      return devices.first
+    end
     queue = Queue.new
     timeout ||= mod.const_get(:DEFAULT_RS232_TIMEOUT)
     client_cls = mod.const_get(:Client)
