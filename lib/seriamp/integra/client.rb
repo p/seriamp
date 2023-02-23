@@ -8,7 +8,9 @@ require 'seriamp/integra/protocol/methods'
 module Seriamp
   module Integra
 
-    DEFAULT_RS232_TIMEOUT = 0.25
+    # When DTR-50.4 is in standby, it takes 1.55 seconds in my environment
+    # to turn the power on.
+    DEFAULT_RS232_TIMEOUT = 2
 
     class Client
       include Protocol::Methods
