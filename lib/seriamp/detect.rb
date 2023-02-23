@@ -14,7 +14,11 @@ module Seriamp
     devices = patterns.map do |pattern|
       Dir.glob(pattern)
     end.flatten.uniq
-    if devices.length == 1
+    case devices.length
+    when 0
+      logger&.debug("No devices matched the pattern(s)")
+      return nil
+    when 1
       logger&.debug("Assuming #{devices.first} as the only device matching the pattern(s)")
       return devices.first
     end
