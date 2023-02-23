@@ -92,6 +92,7 @@ module Seriamp
           with_lock do
             with_retry do
               with_device do
+                status
               end
             end
           end
