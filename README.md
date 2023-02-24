@@ -186,6 +186,17 @@ communication, the transmission wakes up the CPU but is not processed.
 The next transmission, received after a small delay, will be processed by
 the now running CPU.
 
+### Yamaha Volume in Standby
+
+Yamaha receivers I have (RX-V1500, RX-V2500, RX-V1800)
+respond to volume changes while in standby. While the volume knob is
+doing nothing while in standby, sending volume commands via RS232 does
+alter the volume when the receiver is subsequently turned on.
+As far as I can tell this behavior is not documented.
+
+Some of the other parameters are not changeable in standby - for example,
+input name and pure direct setting.
+
 ### Yamaha Receiver Documentation
 
 I have RX-V1500 and RX-V2500, however I couldn't locate RS232 protocol manuals
