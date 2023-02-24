@@ -37,6 +37,10 @@ module Seriamp
         def set_zone4_power(state)
           command("PW40#{state ? 1 : 0}")
         end
+
+        def get_main_volume
+          Integer(question('MVL'), 16)
+        end
       end
     end
   end

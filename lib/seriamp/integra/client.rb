@@ -70,6 +70,7 @@ module Seriamp
       def status
         {
           power: get_power,
+          volume: get_main_volume,
         }
       end
 
@@ -181,21 +182,29 @@ module Seriamp
       end
 
       def question(cmd)
-        dispatch("!1#{cmd}QSTN\r")
+        resp = dispatch("!1#{cmd}QSTN\r")
+        if resp.start_with?(cmd)
+          resp[cmd.length...]
+        else
+          raise UnexpectedResponse, "Bad response #{resp} for #{cmd}"
+        end
       end
 
       def boolean_question(cmd)
-        resp = question(cmd)
-        if resp.start_with?(cmd)
-          case Integer(resp[cmd.length...])
-          when 1
-            true
-          when 0
-            false
-          else
-            raise "Bad response #{resp}"
-          end
+        resp = integer_question(cmd)
+        case resp
+        when 1
+          true
+        when 0
+          false
+        else
+          raise "Bad response #{resp} for boolean question #{cmd}"
         end
+      end
+
+      def integer_question(cmd)
+        resp = question(cmd)
+        Integer(resp)
       end
     end
   end
