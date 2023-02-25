@@ -3,10 +3,10 @@
 # frozen_string_literal: true
 
 begin
-  require 'seriamp/integra/cmd'
+  require 'seriamp/cmd'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'seriamp/integra/cmd'
+  require 'seriamp/cmd'
 end
 
-Seriamp::Integra::Cmd.new.run
+Seriamp::Cmd.new(module_name: 'integra').run

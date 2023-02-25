@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 
+# frozen_string_literal: true
+
 begin
-  require 'seriamp/sonamp/cmd'
+  require 'seriamp/cmd'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'seriamp/sonamp/cmd'
+  require 'seriamp/cmd'
 end
 
-Seriamp::Sonamp::Cmd.new.run
+Seriamp::Cmd.new(module_name: 'sonamp').run
