@@ -26,6 +26,11 @@ module Seriamp
         when 'command'
           command = args.shift&.upcase
           puts client.command(command)
+        when 'off'
+          client.set_main_power(false)
+          client.set_zone2_power(false)
+          client.set_zone3_power(false)
+          client.set_zone4_power(false)
         when 'power'
           which = args.shift&.downcase
           if %w(main zone2 zone3 zone4).include?(which)
