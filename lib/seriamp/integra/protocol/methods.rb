@@ -8,6 +8,10 @@ module Seriamp
       module Methods
         include Constants
 
+        def get_power
+          boolean_question('PWR')
+        end
+
         # Turns the receiver on or off.
         #
         # @param [ true | false ] state Desired power state.
@@ -17,6 +21,10 @@ module Seriamp
 
         alias set_main_power set_power
 
+        def get_zone2_power
+          boolean_question('ZPW')
+        end
+
         # Turns zone 2 power on or off.
         #
         # @param [ true | false ] state Desired power state.
@@ -24,11 +32,19 @@ module Seriamp
           command("ZPW0#{state ? 1 : 0}")
         end
 
+        def get_zone3_power
+          boolean_question('PW3')
+        end
+
         # Turns zone 3 power on or off.
         #
         # @param [ true | false ] state Desired power state.
         def set_zone3_power(state)
           command("PW30#{state ? 1 : 0}")
+        end
+
+        def get_zone4_power
+          boolean_question('PW4')
         end
 
         # Turns zone 4 power on or off.
@@ -49,6 +65,19 @@ module Seriamp
           zone4: 'VL4',
         }.each do |which, cmd|
           _which, _cmd = which, cmd
+
+          define_method("get_#{which}_volume") do
+            case value = public_send("get_#{_which}_raw_volume")
+            when 0
+              nil
+            else
+              value - 82
+            end
+          end
+
+          define_method("get_#{which}_raw_volume") do
+            Integer(question(_cmd), 16)
+          end
 
           define_method("set_#{which}_volume") do |value|
             case value

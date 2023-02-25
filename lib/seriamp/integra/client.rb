@@ -63,15 +63,23 @@ module Seriamp
         @detect_device
       end
 
-      def get_power
-        boolean_question('PWR')
-      end
-
       def status
-        {
-          power: get_power,
-          volume: get_main_volume,
-        }
+        with_device do
+          {
+            main_power: get_power,
+            zone2_power: get_zone2_power,
+            zone3_power: get_zone3_power,
+            main_volume: get_main_volume,
+            #zone2_volume: get_zone2_volume,
+            #zone3_volume: get_zone3_volume,
+            #zone4_volume: get_zone4_volume,
+          }.tap do |status|
+            begin
+              status[:zone4_power] = get_zone4_power
+            rescue NotApplicable
+            end
+          end
+        end
       end
 
       def with_device(&block)
@@ -204,7 +212,16 @@ module Seriamp
 
       def integer_question(cmd)
         resp = question(cmd)
-        Integer(resp)
+        case resp
+        when 'N/A'
+          # Used in responses to e.g. PW4 command when receiver does not
+          # support zone 4 (but the firmware understands the PW4 command).
+          # If the firmware does not understand the command, it simply
+          # does not respond causing a timeout exception to be raised.
+          raise NotApplicable
+        else
+          Integer(resp)
+        end
       end
     end
   end
