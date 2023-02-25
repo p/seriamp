@@ -69,10 +69,15 @@ module Seriamp
             main_power: power,
             zone2_power: zone2_power,
             zone3_power: zone3_power,
+            # Main volume is returned when the power is off.
             main_volume: main_volume,
-            zone2_volume: zone2_volume,
-            zone3_volume: zone3_volume,
           }.tap do |status|
+            if status[:zone2_power]
+              status[:zone2_volume] = zone2_volume
+            end
+            if status[:zone3_power]
+              status[:zone3_volume] = zone3_volume
+            end
             begin
               status[:zone4_power] = zone4_power
               status[:zone4_volume] = zone4_volume
@@ -232,7 +237,10 @@ module Seriamp
           # support zone 4 (but the firmware understands the PW4 command).
           # If the firmware does not understand the command, it simply
           # does not respond causing a timeout exception to be raised.
-          raise NotApplicable
+          # Also used in response to e.g. ZVL (zone 2 volume) when zone 2 is
+          # turned off (turning on zone 2 will make this command return a
+          # good response on the same receiver).
+          raise NotApplicable, "#{cmd} not applicable to this receiver at this time"
         else
           Integer(resp, 16)
         end
