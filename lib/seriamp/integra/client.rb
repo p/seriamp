@@ -66,16 +66,16 @@ module Seriamp
       def status
         with_device do
           {
-            main_power: get_power,
-            zone2_power: get_zone2_power,
-            zone3_power: get_zone3_power,
-            main_volume: get_main_volume,
-            #zone2_volume: get_zone2_volume,
-            #zone3_volume: get_zone3_volume,
-            #zone4_volume: get_zone4_volume,
+            main_power: power,
+            zone2_power: zone2_power,
+            zone3_power: zone3_power,
+            main_volume: main_volume,
+            zone2_volume: zone2_volume,
+            zone3_volume: zone3_volume,
           }.tap do |status|
             begin
-              status[:zone4_power] = get_zone4_power
+              status[:zone4_power] = zone4_power
+              status[:zone4_volume] = zone4_volume
             rescue NotApplicable
             end
           end
@@ -221,6 +221,20 @@ module Seriamp
           raise NotApplicable
         else
           Integer(resp)
+        end
+      end
+
+      def hex_integer_question(cmd)
+        resp = question(cmd)
+        case resp
+        when 'N/A'
+          # Used in responses to e.g. PW4 command when receiver does not
+          # support zone 4 (but the firmware understands the PW4 command).
+          # If the firmware does not understand the command, it simply
+          # does not respond causing a timeout exception to be raised.
+          raise NotApplicable
+        else
+          Integer(resp, 16)
         end
       end
     end
