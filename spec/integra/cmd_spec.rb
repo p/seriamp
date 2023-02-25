@@ -70,11 +70,11 @@ describe Seriamp::Integra::Cmd do
       end
 
       describe 'two commands' do
-        let(:stdin_c) { "status\npure-direct on" }
+        let(:stdin_c) { "power zone2 on\npower zone3 on" }
 
         it 'works' do
-          pending
-          client.should_receive(:set_pure_direct).with(true)
+          client.should_receive(:set_zone2_power).with(true)
+          client.should_receive(:set_zone3_power).with(true)
           client_cls.should receive(:new).and_return(client)
           cmd.run
         end
