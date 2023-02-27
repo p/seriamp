@@ -36,6 +36,16 @@ describe 'integra commands' do
       end
     end
 
+    describe '!volume' do
+      let(:args) { %w(volume ,-80) }
+
+      it 'works' do
+        client.should_receive(:set_main_volume).with(-80)
+        client_cls.should receive(:new).and_return(client)
+        cmd.run
+      end
+    end
+
     describe 'bulk commands' do
       describe '!status' do
         let(:stdin_c) { 'status' }

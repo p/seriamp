@@ -82,7 +82,7 @@ module Seriamp
           end
 
           define_method("set_#{which}_volume") do |value|
-            case value
+            value = case value
             when nil
               0
             when Integer
