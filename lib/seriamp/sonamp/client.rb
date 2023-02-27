@@ -170,27 +170,33 @@ module Seriamp
         Integer(global_query('TP'))
       end
 
+      STATUS_FIELDS = %i(
+        firmware_version
+        temperature
+        zone_power
+        zone_fault
+        zone_volume
+        channel_volume
+        zone_mute
+        channel_mute
+        bbe
+        bbe_high_boost
+        bbe_low_boost
+        auto_trigger_input
+        voltage_trigger_input
+        channel_front_panel_level
+      ).freeze
+
       def status
         with_lock do
           # Reusing the opened device file makes :VTIG? fail even with a delay
           # in front.
           with_device do
-            {
-              firmware_version: get_firmware_version,
-              temperature: get_temperature,
-              zone_power: get_zone_power,
-              zone_fault: get_zone_fault,
-              zone_volume: get_zone_volume,
-              channel_volume: get_channel_volume,
-              zone_mute: get_zone_mute,
-              channel_mute: get_channel_mute,
-              bbe: get_bbe,
-              bbe_high_boost: get_bbe_high_boost,
-              bbe_low_boost: get_bbe_low_boost,
-              auto_trigger_input: get_auto_trigger_input,
-              voltage_trigger_input: get_voltage_trigger_input,
-              channel_front_panel_level: get_channel_front_panel_level,
-            }
+            {}.tap do |status|
+              STATUS_FIELDS.each do |field|
+                status[field] = public_send("get_#{field}")
+              end
+            end
           end
         end
       end

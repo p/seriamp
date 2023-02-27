@@ -67,27 +67,63 @@ describe Seriamp::Sonamp::App do
   end
 
   describe 'get /' do
-    let(:client_status) do
-      {
-        zone_power: {1 => true, 2 => false, 3 => true, 4 => false},
-        zone_fault: {1 => true, 2 => false, 3 => true, 4 => false},
-      }
+    context 'basic usage' do
+      let(:client_status) do
+        {
+          zone_power: {1 => true, 2 => false, 3 => true, 4 => false},
+          zone_fault: {1 => true, 2 => false, 3 => true, 4 => false},
+        }
+      end
+
+      let(:expected_response) do
+        {
+          'zone_power' => {'1' => true, '2' => false, '3' => true, '4' => false},
+          'zone_fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
+        }
+      end
+
+      it 'works' do
+        client.should receive(:status).and_return(client_status)
+
+        get '/'
+
+        last_response.status.should == 200
+        last_json.should == expected_response
+      end
     end
 
-    let(:expected_response) do
-      {
-        'zone_power' => {'1' => true, '2' => false, '3' => true, '4' => false},
-        'zone_fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
-      }
-    end
+    context 'selected fields' do
+      context 'valid fields' do
+        let(:expected_response) do
+          {
+            'zone_power' => {'1' => true, '2' => false, '3' => true, '4' => false},
+            'zone_volume' => {'1' => 10, '2' => 20, '3' => 33, '4' => 44},
+          }
+        end
 
-    it 'works' do
-      client.should receive(:status).and_return(client_status)
+        it 'works' do
+          client.should receive(:get_zone_power).and_return({1 => true, 2 => false, 3 => true, 4 => false})
+          client.should receive(:get_zone_volume).and_return({1 => 10, 2 => 20, 3 => 33, 4 => 44})
 
-      get '/'
+          get '/?fields=zone_power,zone_volume'
 
-      last_response.status.should == 200
-      last_json.should == expected_response
+          last_response.status.should == 200
+          last_json.should == expected_response
+        end
+      end
+
+      context 'invalid fields' do
+        it 'works' do
+          # Retrieves the good fields up until the first bad one
+          client.should receive(:get_zone_power).and_return({1 => true, 2 => false, 3 => true, 4 => false})
+          client.should_not receive(:get_zone_volume)
+
+          get '/?fields=zone_power,bogus,zone_volume'
+
+          last_response.status.should == 422
+          last_json.should == {'error' => "Invalid fields requested: bogus"}
+        end
+      end
     end
   end
 

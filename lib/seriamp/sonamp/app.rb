@@ -15,8 +15,31 @@ module Seriamp
       set :client, nil
       set :retries, true
 
+      ALLOWED_STATUS_FIELDS = Hash[Client::STATUS_FIELDS.map do |field|
+        [field.to_s, true]
+      end]
+
       get '/' do
-        render_json(client.status)
+        if fields = params[:fields]
+          status = {}
+          bad_fields = []
+          fields.split(',').each do |field|
+            if ALLOWED_STATUS_FIELDS.key?(field)
+              if bad_fields.empty?
+                status[field] = client.public_send("get_#{field}")
+              end
+            else
+              bad_fields << field
+            end
+          end
+          if bad_fields.any?
+            render_422("Invalid fields requested: #{bad_fields.join(', ')}")
+          else
+            render_json(status)
+          end
+        else
+          render_json(client.status)
+        end
       end
 
       get '/power' do
@@ -99,6 +122,11 @@ module Seriamp
       def render_json(data)
         headers['content-type'] = 'application/json'
         data.to_json
+      end
+
+      def render_422(error)
+        headers['content-type'] = 'application/json'
+        [422, {error: error}.to_json]
       end
 
       def empty_response
