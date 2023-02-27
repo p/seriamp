@@ -23,13 +23,15 @@ module Seriamp
         if fields = params[:fields]
           status = {}
           bad_fields = []
-          fields.split(',').each do |field|
-            if ALLOWED_STATUS_FIELDS.key?(field)
-              if bad_fields.empty?
-                status[field] = client.public_send("get_#{field}")
+          client.with_session do
+            fields.split(',').each do |field|
+              if ALLOWED_STATUS_FIELDS.key?(field)
+                if bad_fields.empty?
+                  status[field] = client.public_send("get_#{field}")
+                end
+              else
+                bad_fields << field
               end
-            else
-              bad_fields << field
             end
           end
           if bad_fields.any?

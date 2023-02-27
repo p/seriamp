@@ -201,6 +201,14 @@ module Seriamp
         end
       end
 
+      # Like with_device, but public.
+      # This method does not yiel the device to the caller.
+      def with_session
+        with_device do
+          yield
+        end
+      end
+
       private
 
       def with_device(&block)

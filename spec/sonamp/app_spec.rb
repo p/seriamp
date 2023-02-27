@@ -102,6 +102,7 @@ describe Seriamp::Sonamp::App do
         end
 
         it 'works' do
+          client.should receive(:with_session).and_yield
           client.should receive(:get_zone_power).and_return({1 => true, 2 => false, 3 => true, 4 => false})
           client.should receive(:get_zone_volume).and_return({1 => 10, 2 => 20, 3 => 33, 4 => 44})
 
@@ -115,6 +116,7 @@ describe Seriamp::Sonamp::App do
       context 'invalid fields' do
         it 'works' do
           # Retrieves the good fields up until the first bad one
+          client.should receive(:with_session).and_yield
           client.should receive(:get_zone_power).and_return({1 => true, 2 => false, 3 => true, 4 => false})
           client.should_not receive(:get_zone_volume)
 
