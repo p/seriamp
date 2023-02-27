@@ -5,6 +5,10 @@ require 'spec_helper'
 describe Seriamp::Sonamp::App do
   include Rack::Test::Methods
 
+  def last_json
+    JSON.parse(last_response.body)
+  end
+
   describe '#initialize' do
     it 'works' do
       described_class.new
@@ -59,6 +63,31 @@ describe Seriamp::Sonamp::App do
         last_response.status.should == 422
         last_response.body.should =~ /\AError: .* bogus/
       end
+    end
+  end
+
+  describe 'get /' do
+    let(:client_status) do
+      {
+        zone_power: {1 => true, 2 => false, 3 => true, 4 => false},
+        zone_fault: {1 => true, 2 => false, 3 => true, 4 => false},
+      }
+    end
+
+    let(:expected_response) do
+      {
+        'zone_power' => {'1' => true, '2' => false, '3' => true, '4' => false},
+        'zone_fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
+      }
+    end
+
+    it 'works' do
+      client.should receive(:status).and_return(client_status)
+
+      get '/'
+
+      last_response.status.should == 200
+      last_json.should == expected_response
     end
   end
 
