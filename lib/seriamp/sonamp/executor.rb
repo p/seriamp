@@ -41,11 +41,11 @@ module Seriamp
           client.set_channel_volume(channel, volume)
         when 'zmute'
           zone = Integer(args.shift)
-          mute = Integer(args.shift)
+          mute = Utils.parse_on_off(args.shift)
           client.set_zone_mute(zone, mute)
         when 'cmute'
           channel = Integer(args.shift)
-          mute = Integer(args.shift)
+          mute = Utils.parse_on_off(args.shift)
           client.set_channel_mute(channel, mute)
         when 'status'
           client.status
