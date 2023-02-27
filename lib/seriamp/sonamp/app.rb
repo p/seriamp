@@ -3,6 +3,7 @@
 require 'sinatra/base'
 require 'seriamp/utils'
 require 'seriamp/sonamp/client'
+require 'seriamp/sonamp/executor'
 require 'seriamp/detect'
 
 module Seriamp
@@ -78,12 +79,12 @@ module Seriamp
       end
 
       post '/' do
-        executor = Executor.new
+        executor = Executor.new(client)
         request.body.read.split("\n").each do |line|
           args = line.strip.split(/\s+/)
-          executor.run_command(args)
+          executor.run_command(args.first, *args[1..])
         end
-        render_json({})
+        empty_response
       end
 
       private

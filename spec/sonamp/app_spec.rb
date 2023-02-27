@@ -61,4 +61,15 @@ describe Seriamp::Sonamp::App do
       end
     end
   end
+
+  describe 'post /' do
+    it 'works' do
+      client.should receive(:set_zone_power).with(2, true)
+
+      post '/', "power 2 on"
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
 end
