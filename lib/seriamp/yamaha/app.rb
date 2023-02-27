@@ -21,10 +21,10 @@ module Seriamp
       end
 
       post '/' do
-        executor = Executor.new
+        executor = Executor.new(client)
         request.body.read.split("\n").each do |line|
           args = line.strip.split(/\s+/)
-          executor.run_command(args)
+          executor.run_command(args.first, *args[1..])
         end
         standard_response
       end

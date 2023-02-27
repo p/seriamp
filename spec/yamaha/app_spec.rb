@@ -34,4 +34,15 @@ describe Seriamp::Yamaha::App do
       last_response.body.should == ''
     end
   end
+
+  describe 'post /' do
+    it 'works' do
+      client.should receive(:set_main_power).with(true)
+
+      post '/', "power main on"
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
 end
