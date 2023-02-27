@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe Seriamp::Sonamp::Cmd do
+describe 'sonamp commands' do
   describe '#initialize' do
     it 'works' do
-      described_class.new
+      Seriamp::Cmd.new(module_name: 'sonamp')
     end
   end
 end

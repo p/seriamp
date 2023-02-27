@@ -2,19 +2,19 @@
 
 require 'spec_helper'
 
-describe Seriamp::Integra::Cmd do
+describe 'integra commands' do
   let(:client_cls) { Seriamp::Integra::Client }
 
   describe '#initialize' do
     it 'works' do
-      described_class.new([], StringIO.new(''))
+      Seriamp::Cmd.new([], StringIO.new(''), module_name: 'integra')
     end
   end
 
   let(:args) { [] }
   let(:stdin_c) { '' }
   let(:stdin) { StringIO.new(stdin_c) }
-  let (:cmd) { described_class.new(args, stdin) }
+  let (:cmd) { Seriamp::Cmd.new(args, stdin, module_name: 'integra') }
 
   describe '#run' do
     describe 'no command' do

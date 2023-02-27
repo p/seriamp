@@ -2,19 +2,19 @@
 
 require 'spec_helper'
 
-describe Seriamp::Yamaha::Cmd do
+describe 'yamaha commands' do
   let(:client_cls) { Seriamp::Yamaha::Client }
 
   describe '#initialize' do
     it 'works' do
-      described_class.new
+      Seriamp::Cmd.new(module_name: 'yamaha')
     end
   end
 
   let(:args) { [] }
   let(:stdin_c) { '' }
   let(:stdin) { StringIO.new(stdin_c) }
-  let (:cmd) { described_class.new(args, stdin) }
+  let (:cmd) { Seriamp::Cmd.new(args, stdin, module_name: 'yamaha') }
 
   describe '#run' do
     describe 'no command' do
