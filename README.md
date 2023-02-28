@@ -281,6 +281,17 @@ Unlike Yamaha receivers, the volume up/down commands immediately alter the
 volume (Yamaha receivers ignore the first up/down command, treating it
 as the command to display current volume level on the front panel).
 
+### Functionality Comparison
+
+- *Subwoofer crossover frequency*: settable in Yamaha receivers, not settable
+in Onkyo/Integra receivers.
+- *Speaker configuration (small/large)*: settable in Yamaha receivers, not
+settable in Onkyo/Integra receivers.
+- *Bass destination (front speakers/subwoofer)*: settable in Yamaha receivers,
+not settable in Onkyo/Integra receivers.
+- *Volume*: main zone volume is settable in Yamaha and Onkyo/Integra receivers
+while the receiver is in standby.
+
 ### Yamaha Python Buffering
 
 While testing with Python, I ran into [this issue](https://bugs.python.org/issue20074) -
