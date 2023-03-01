@@ -5,7 +5,7 @@ require 'spec_helper'
 describe Seriamp::Sonamp::App do
   include Rack::Test::Methods
 
-  def last_json
+  def last_payload
     JSON.parse(last_response.body)
   end
 
@@ -88,7 +88,7 @@ describe Seriamp::Sonamp::App do
         get '/'
 
         last_response.status.should == 200
-        last_json.should == expected_response
+        last_payload.should == expected_response
       end
     end
 
@@ -109,7 +109,7 @@ describe Seriamp::Sonamp::App do
           get '/?fields=zone_power,zone_volume'
 
           last_response.status.should == 200
-          last_json.should == expected_response
+          last_payload.should == expected_response
         end
       end
 
@@ -123,7 +123,7 @@ describe Seriamp::Sonamp::App do
           get '/?fields=zone_power,bogus,zone_volume'
 
           last_response.status.should == 422
-          last_json.should == {'error' => "Invalid fields requested: bogus"}
+          last_payload.should == {'error' => "Invalid fields requested: bogus"}
         end
       end
     end
