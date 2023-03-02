@@ -1,4 +1,7 @@
+require 'seriamp'
 require 'seriamp/cmd'
 require 'seriamp/integra/client'
+require 'seriamp/sonamp'
 require 'seriamp/sonamp/app'
+require 'seriamp/yamaha'
 require 'seriamp/yamaha/app'

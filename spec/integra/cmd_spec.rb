@@ -19,7 +19,7 @@ describe 'integra commands' do
   describe '#run' do
     describe 'no command' do
       it 'reads stdin' do
-        stdin.should receive(:each_line)
+        stdin.should receive(:each_line).and_return([])
         cmd.run
       end
     end

@@ -3,6 +3,7 @@
 require 'optparse'
 require 'logger'
 require 'pp'
+require 'seriamp'
 require 'seriamp/utils'
 require 'seriamp/detect'
 
@@ -21,6 +22,10 @@ module Seriamp
           options[:device] = v
         end
 
+        opts.on("-s", "--service URL", "Route commands through the webapp service at URL") do |v|
+          options[:service_url] = v
+        end
+
         opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
           options[:timeout] = Float(v)
         end
@@ -36,8 +41,12 @@ module Seriamp
       @mod = Seriamp.const_get(mod_name.sub(/(.)/) { $1.upcase })
 
       @logger = Logger.new(STDERR)
-      @client = mod.const_get(:Client).new(device: options[:device],
-        logger: @logger, timeout: options[:timeout])
+      if url = options[:service_url]
+        @service_client = Seriamp::FaradayFacade.new(url: url, timeout: options[:timeout])
+      else
+        @direct_client = mod.const_get(:Client).new(device: options[:device],
+          logger: @logger, timeout: options[:timeout])
+      end
 
       @args = args
       @stdin = stdin
@@ -51,15 +60,29 @@ module Seriamp
     attr_reader :options
 
     def run
-      if args.any?
-        run_command(args)
+      commands = if args.any?
+        [args]
       else
-        stdin.each_line do |line|
+        stdin.each_line.map do |line|
           line.strip!
           line.sub!(/#.*/, '')
-          next if line.empty?
+          if line.empty?
+            nil
+          else
+            line.strip.split(%r,\s+,)
+          end
+        end.compact
+      end
 
-          run_command(line.strip.split(%r,\s+,))
+      if service_client
+        body = commands.map do |args|
+          args.join(' ')
+        end.join("\n")
+        resp = service_client.post!('', body: body)
+        puts resp.body
+      else
+        commands.each do |args|
+          run_command(args)
         end
       end
     end
@@ -87,10 +110,12 @@ module Seriamp
 
     private
 
-    attr_reader :client
+    attr_reader :direct_client
+    attr_reader :service_client
 
     def executor
-      @executor ||= mod.const_get(:Executor).new(client, timeout: options[:timeout])
+      @executor ||= mod.const_get(:Executor).new(
+        direct_client, timeout: options[:timeout])
     end
   end
 end

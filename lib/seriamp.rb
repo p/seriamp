@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
 require 'seriamp/version'
-require 'seriamp/sonamp'
-require 'seriamp/yamaha'
+
+module Seriamp
+  autoload :FaradayFacade, 'seriamp/faraday_facade'
+  autoload :Sonamp, 'seriamp/sonamp'
+  autoload :Yamaha, 'seriamp/yamaha'
+end
