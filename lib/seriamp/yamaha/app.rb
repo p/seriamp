@@ -142,6 +142,16 @@ module Seriamp
         empty_response
       end
 
+      error Error do |exc|
+        case request.env['HTTP_ACCEPT']
+        when 'application/json'
+          headers['content-type'] = 'application/json'
+          [500, {error: "#{exc.class}: #{exc}"}.to_json]
+        else
+          raise
+        end
+      end
+
       private
 
       def clear_cache
