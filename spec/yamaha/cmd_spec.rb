@@ -86,6 +86,7 @@ describe 'yamaha commands' do
       let(:client) { double('service client') }
       let(:args) { %w(-s http://service/) + extra_args }
       let(:extra_args) { [] }
+      let(:response) { double('mock response') }
 
       before do
         Seriamp::FaradayFacade.should receive(:new).and_return(client)
@@ -95,7 +96,8 @@ describe 'yamaha commands' do
         let(:extra_args) { %w(status) }
 
         it 'works' do
-          client.should_receive(:post!).with('', body: 'status')
+          response.should receive(:body).and_return({})
+          client.should_receive(:post!).with('', body: 'status').and_return(response)
           cmd.run
         end
       end
@@ -105,7 +107,8 @@ describe 'yamaha commands' do
           let(:stdin_c) { 'status' }
 
           it 'works' do
-            client.should_receive(:post!).with('', body: 'status')
+            response.should receive(:body).and_return({})
+            client.should_receive(:post!).with('', body: 'status').and_return(response)
             cmd.run
           end
         end
@@ -114,7 +117,8 @@ describe 'yamaha commands' do
           let(:stdin_c) { "pure-direct on" }
 
           it 'forwards as is' do
-            client.should_receive(:post!).with('', body: 'pure-direct on')
+            response.should receive(:body).and_return({})
+            client.should_receive(:post!).with('', body: 'pure-direct on').and_return(response)
             cmd.run
           end
         end
@@ -123,7 +127,8 @@ describe 'yamaha commands' do
           let(:stdin_c) { "pure_direct on" }
 
           it 'forwards as is' do
-            client.should_receive(:post!).with('', body: 'pure_direct on')
+            response.should receive(:body).and_return({})
+            client.should_receive(:post!).with('', body: 'pure_direct on').and_return(response)
             cmd.run
           end
         end
@@ -132,7 +137,8 @@ describe 'yamaha commands' do
           let(:stdin_c) { "status\npure-direct on" }
 
           it 'works' do
-            client.should_receive(:post!).with('', body: "status\npure-direct on")
+            response.should receive(:body).and_return({})
+            client.should_receive(:post!).with('', body: "status\npure-direct on").and_return(response)
             cmd.run
           end
         end
