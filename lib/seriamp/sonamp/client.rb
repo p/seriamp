@@ -265,6 +265,7 @@ module Seriamp
             if detect_device?
               @device = nil
             end
+            Utils.sleep_before_retry
             retry
           else
             raise

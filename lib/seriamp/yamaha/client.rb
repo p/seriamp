@@ -216,6 +216,7 @@ module Seriamp
             tries += 1
             if tries < 5
               logger&.warn("Timeout handshaking with the receiver - will retry")
+              Utils.sleep_before_retry
               retry
             else
               raise
@@ -441,6 +442,7 @@ module Seriamp
             if detect_device?
               @device = nil
             end
+            Utils.sleep_before_retry
             retry
           else
             raise
