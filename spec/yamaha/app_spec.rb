@@ -35,6 +35,19 @@ describe Seriamp::Yamaha::App do
     end
   end
 
+  describe 'post /main/volume/down' do
+    it 'works' do
+      client.should receive(:main_volume_down)
+      client.should receive(:main_volume_down)
+      client.should receive(:main_volume_db).and_return(42)
+
+      post '/main/volume/down', '2'
+
+      last_response.status.should == 200
+      last_response.body.should == '42'
+    end
+  end
+
   describe 'post /' do
     it 'works' do
       client.should receive(:set_main_power).with(true)
