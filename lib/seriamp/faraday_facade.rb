@@ -71,7 +71,12 @@ module Seriamp
     def post!(url, **opts)
       post(url, **opts).tap do |resp|
         unless resp.success?
-          raise HttpError, "Bad status: #{resp.status} for #{url}"
+          body = if resp.body.length > 1000
+            resp[..500] + '...' + resp[-500..]
+          else
+            resp.body
+          end
+          raise HttpError, "Bad status: #{resp.status} for #{URI.join(base_url, url)}: #{body}"
         end
       end
     end
