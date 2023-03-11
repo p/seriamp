@@ -329,6 +329,11 @@ Pioneer serial control:
 
 - [Manuals](https://www.pioneerelectronics.com/PUSA/Support/Home-Entertainment-Custom-Install/RS-232+&+IP+Codes/A+V+Receivers)
 
+Harman/Kardon serial control:
+
+- [avr_control](https://github.com/Teque5/avr_control)
+- [hifictl](https://github.com/jherland/hifictl)
+
 ## Helpful Links
 
 - [Serial port programming in Ruby](https://www.thegeekdiary.com/serial-port-programming-reading-writing-status-of-control-lines-dtr-rts-cts-dsr/)
