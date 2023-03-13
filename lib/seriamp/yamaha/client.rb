@@ -322,9 +322,28 @@ module Seriamp
       end
 
       MODEL_NAMES = {
+        # RX-V1000
+        # RX-V3000
+        # RX-V2200
+        # RX-V3200
+        'R0132' => 'RX-V2300',
+        'R0133' => 'RX-V3300',
+        'R0161' => 'RX-V2400',
         'R0177' => 'RX-V1500',
         'R0178' => 'RX-V2500',
+        # RX-V1600
+        # RX-V2600
+        # HTR-5990
+        'R0210' => 'RX-V1700',
+        'R0212' => 'RX-V2700',
         'R0226' => 'RX-V1800',
+        # RX-V3800
+        # HTR-6190
+        # RX-V1900
+        # RX-V3900
+        # RX-V1067
+        # RX-V2067
+        # RX-V3067
       }.freeze
 
       PURE_DIRECT_FIELD = {
