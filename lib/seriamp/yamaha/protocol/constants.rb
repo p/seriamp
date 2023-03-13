@@ -226,6 +226,17 @@ module Seriamp
           160 => '07',
           200 => '08',
         }.freeze
+
+        POWER_GET = {
+          '00' => {main_power: false, zone2_power: false, zone3_power: false},
+          '01' => {main_power: true, zone2_power: true, zone3_power: true},
+          '02' => {main_power: true, zone2_power: false, zone3_power: false},
+          '03' => {main_power: false, zone2_power: true, zone3_power: true},
+          '04' => {main_power: true, zone2_power: true, zone3_power: false},
+          '05' => {main_power: true, zone2_power: false, zone3_power: false},
+          '06' => {main_power: false, zone2_power: true, zone3_power: true},
+          '07' => {main_power: false, zone2_power: false, zone3_power: true},
+        }.freeze
       end
     end
   end

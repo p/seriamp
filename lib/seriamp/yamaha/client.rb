@@ -275,7 +275,50 @@ module Seriamp
           logger&.warn("Multiple responses received: #{resp}")
         end
 
-        resp
+        parse_response(resp)
+      end
+
+      def parse_response(resp)
+        unless resp[0] == STX
+          raise UnexpectedResponse, "Invalid response: expected to start with STX: #{resp}"
+        end
+        unless resp[-1] == ETX
+          raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
+        end
+        resp = resp[1...-1]
+        control_type = parse_flag(resp[0], {
+          '0' => :rs232c,
+          '1' => :remote,
+          '2' => :key,
+          '3' => :system,
+          '4' => :encoder,
+        }, 'Invalid control type value')
+        guard = parse_flag(resp[1], {
+          '0' => nil,
+          '1' => :system,
+          '2' => :setting,
+        }, 'Invalid guard value')
+        command = resp[2..3]
+        data = resp[4..5]
+        state = case command
+        when '20'
+          POWER_GET.fetch(data)
+        else
+          raise UnexpectedResponse, "Unhandled response: #{command} (#{data})"
+        end
+        {
+          control_type: control_type,
+          guard: guard,
+          state: state,
+        }
+      end
+
+      def parse_flag(value, map, error_msg)
+        if map.key?(value)
+          map[value]
+        else
+          raise UnexpectedResponse, "#{error_msg}: #{value}"
+        end
       end
 
       MODEL_NAMES = {
