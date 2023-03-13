@@ -12,7 +12,7 @@ module Seriamp
       attr_reader :options
 
       def run_command(cmd, *args)
-        cmd = cmd.gsub('_', '-')
+        cmd = cmd.gsub('-', '_')
         case cmd
         when 'detect'
           device = Seriamp.detect_device(Integra, *args, logger: logger, timeout: options[:timeout])
@@ -41,6 +41,9 @@ module Seriamp
             state = Utils.parse_on_off(which)
           end
           client.public_send(method, state)
+        when 'main_power', 'zone2_power', 'zone3_power', 'zone4_power'
+          value = Utils.parse_on_off(Utils.one_arg(args))
+          client.public_send("set_#{cmd}", value)
         when 'volume'
           which = args.shift
           if %w(main zone2 zone3 zone4).include?(which)

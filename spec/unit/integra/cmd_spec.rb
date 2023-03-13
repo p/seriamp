@@ -58,22 +58,20 @@ describe 'integra commands' do
       end
 
       describe 'dash syntax' do
-        let(:stdin_c) { "pure-direct on" }
+        let(:stdin_c) { "zone2-power on" }
 
         it 'works' do
-          pending
-          client.should_receive(:set_pure_direct).with(true)
+          client.should_receive(:set_zone2_power).with(true)
           client_cls.should receive(:new).and_return(client)
           cmd.run
         end
       end
 
       describe 'underscore syntax' do
-        let(:stdin_c) { "pure_direct on" }
+        let(:stdin_c) { "zone2_power on" }
 
         it 'works' do
-          pending
-          client.should_receive(:set_pure_direct).with(true)
+          client.should_receive(:set_zone2_power).with(true)
           client_cls.should receive(:new).and_return(client)
           cmd.run
         end

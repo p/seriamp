@@ -14,6 +14,13 @@ module Seriamp
       end
     end
 
+    module_function def one_arg(args)
+      if args.length != 1
+        raise ArgumentError, "Exactly one argument is required"
+      end
+      args.first
+    end
+
     module_function def monotime
       Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
