@@ -4,64 +4,18 @@ require 'timeout'
 require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/integra/protocol/methods'
+require 'seriamp/client'
 
 module Seriamp
   module Integra
 
-    # When DTR-50.4 is in standby, it takes 1.55 seconds in my environment
-    # to turn the power on.
-    DEFAULT_RS232_TIMEOUT = 2
+    class Client < Seriamp::Client
 
-    class Client
+      # When DTR-50.4 is in standby, it takes 1.55 seconds in my environment
+      # to turn the power on.
+      DEFAULT_RS232_TIMEOUT = 2
+
       include Protocol::Methods
-
-      def initialize(device: nil, glob: nil, logger: nil, retries: true,
-        timeout: nil, thread_safe: false
-      )
-        @logger = logger
-
-        @device = device
-        @detect_device = device.nil?
-        @glob = glob
-        @retries = case retries
-          when nil, false
-            0
-          when true
-            1
-          when Integer
-            retries
-          else
-            raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
-          end
-        @timeout = timeout || DEFAULT_RS232_TIMEOUT
-        @thread_safe = !!thread_safe
-
-        if thread_safe?
-          @lock = Mutex.new
-        end
-
-        if block_given?
-          begin
-            yield self
-          ensure
-            close
-          end
-        end
-      end
-
-      attr_reader :device
-      attr_reader :glob
-      attr_reader :logger
-      attr_reader :retries
-      attr_reader :timeout
-
-      def thread_safe?
-        @thread_safe
-      end
-
-      def detect_device?
-        @detect_device
-      end
 
       def status
         with_device do
@@ -84,24 +38,6 @@ module Seriamp
             rescue NotApplicable
             end
           end
-        end
-      end
-
-      def with_device(&block)
-        if @io
-          yield @io
-        else
-          open_device(&block)
-        end
-      end
-
-      def with_lock
-        if thread_safe?
-          @lock.synchronize do
-            yield
-          end
-        else
-          yield
         end
       end
 
@@ -174,25 +110,6 @@ module Seriamp
           end
         end
         resp
-      end
-
-      def with_retry
-        try = 1
-        begin
-          yield
-        rescue Seriamp::Error, IOError, SystemCallError => exc
-          if try <= retries
-            logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
-            try += 1
-            if detect_device?
-              @device = nil
-            end
-            Utils.sleep_before_retry
-            retry
-          else
-            raise
-          end
-        end
       end
 
       def question(cmd)
