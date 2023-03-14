@@ -440,11 +440,11 @@ module Seriamp
             # mute: 0
             # -33 dB (min): 39
             # 0 dB (max): 72
-            main_volume: volume = data[15..16].to_i(16),
+            main_volume: volume = Integer(data[15..16], 16),
             main_volume_db: int_to_half_db(volume),
-            zone2_volume: zone2_volume = data[17..18].to_i(16),
+            zone2_volume: zone2_volume = Integer(data[17..18], 16),
             zone2_volume_db: int_to_full_db(zone2_volume),
-            zone3_volume: zone3_volume = data[129..130].to_i(16),
+            zone3_volume: zone3_volume = Integer(data[129..130], 16),
             zone3_volume_db: int_to_full_db(zone3_volume),
             program: program = data[19..20],
             program_name: PROGRAM_GET.fetch(program),
