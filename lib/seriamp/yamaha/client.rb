@@ -305,7 +305,7 @@ module Seriamp
       end
 
       def parse_response(resp)
-        case resp[0]
+        case first_byte = resp[0]
         when STX
           parse_stx_response(resp)
         when DC2
