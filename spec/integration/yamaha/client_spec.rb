@@ -18,6 +18,9 @@ describe 'Yamaha integration' do
 
     it 'works' do
       client.set_main_power(true).should be nil
+
+      # check
+      client.main_power.should be true
     end
 
     after do
@@ -31,9 +34,15 @@ describe 'Yamaha integration' do
     end
 
     it 'works' do
-      client.set_main_power(false).should == {
+      client.set_main_power(false).should be nil
+=begin
+      {
         main_power: false, zone2_power: false, zone3_power: false,
       }
+=end
+
+      # check
+      client.main_power.should be false
     end
   end
 end

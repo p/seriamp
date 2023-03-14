@@ -12,14 +12,20 @@ module Seriamp
         #
         # @param [ true | false ] state Desired power state.
         def set_power(state)
+          # Sometimes this command returns power state and sometimes it does not?
           remote_command("7A1#{state ? 'D' : 'E'}")
+          extend_next_deadline if state
+          nil
         end
 
         # Turns main zone power on or off.
         #
         # @param [ true | false ] state Desired power state.
         def set_main_power(state)
+          # Sometimes this command returns power state and sometimes it does not?
           remote_command("7E7#{state ? 'E' : 'F'}")
+          extend_next_deadline if state
+          nil
         end
 
         # Turns zone 2 power on or off.

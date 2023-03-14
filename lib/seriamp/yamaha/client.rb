@@ -18,7 +18,7 @@ module Seriamp
       include Protocol::Methods
 
       def initialize(device: nil, glob: nil, logger: nil, retries: true,
-        timeout: nil, thread_safe: false
+        timeout: nil, thread_safe: false, persistent: thread_safe
       )
         @logger = logger
 
@@ -37,6 +37,7 @@ module Seriamp
           end
         @timeout = timeout || DEFAULT_RS232_TIMEOUT
         @thread_safe = !!thread_safe
+        @persistent = !!persistent
 
         if thread_safe?
           @lock = Mutex.new
@@ -59,6 +60,10 @@ module Seriamp
 
       def thread_safe?
         @thread_safe
+      end
+
+      def persistent?
+        @persistent
       end
 
       def detect_device?
@@ -143,6 +148,13 @@ module Seriamp
 
       def with_device(&block)
         if @io
+          if IO.select(nil, nil, [@io.io], 0)
+            logger&.debug("Closing stale device handle due to I/O error")
+            close
+          end
+        end
+
+        if @io
           yield @io
         else
           open_device(&block)
@@ -187,6 +199,13 @@ module Seriamp
         nil
       end
 
+      def close
+        if @io
+          @io.close rescue nil
+          @io = nil
+        end
+      end
+
       private
 
       include Protocol::GetConstants
@@ -226,8 +245,10 @@ module Seriamp
 
           yield @io
         ensure
-          @io.close rescue nil
-          @io = nil
+          unless persistent?
+            @io.close rescue nil
+            @io = nil
+          end
         end
       end
 
@@ -275,6 +296,8 @@ module Seriamp
         if resp.count(ETX) > 1
           logger&.warn("Multiple responses received: #{resp}")
         end
+
+        logger&.debug("Received response: #{resp}")
 
         parse_response(resp)
       end
@@ -478,9 +501,14 @@ module Seriamp
         with_retry do
           resp = nil
           status = dispatch(STATUS_REQ)
-          buf = Utils.consume_data(@io.io, logger,
-            "Serial device readable after completely reading status response - concurrent access?")
-          report_unread_response(buf)
+          # Device could have been closed by now.
+          # TODO keep the device open the entire time if thread safety
+          # (locking) is enabled.
+          if @io
+            buf = Utils.consume_data(@io.io, logger,
+              "Serial device readable after completely reading status response - concurrent access?")
+            report_unread_response(buf)
+          end
 
           @model_code, @version, @status_string =
             status.fetch(:model_code), status.fetch(:firmware_version),
@@ -565,6 +593,10 @@ module Seriamp
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
+      end
+
+      def extend_next_deadline
+        @next_earliest_deadline = Utils.monotime + 3
       end
     end
   end
