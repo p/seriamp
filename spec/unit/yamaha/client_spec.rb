@@ -18,7 +18,6 @@ describe Seriamp::Yamaha::Client do
       it 'parses' do
         parsed.should == {
           control_type: :rs232c,
-          guard: nil,
           state: {main_power: true, zone2_power: false, zone3_power: false},
         }
       end
