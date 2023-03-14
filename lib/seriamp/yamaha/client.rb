@@ -5,72 +5,21 @@ require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
+require 'seriamp/client'
 
 module Seriamp
   module Yamaha
 
-    # The manual says response should be received in 500 ms.
-    # However, the status response takes 850 ms to be received in my
-    # environment (RX-V1500/1800/2500).
-    # 1 second is insufficient here to turn the receiver on after it has
-    # just been powered off.
-    DEFAULT_RS232_TIMEOUT = 2
+    class Client < Seriamp::Client
 
-    class Client
+      # The manual says response should be received in 500 ms.
+      # However, the status response takes 850 ms to be received in my
+      # environment (RX-V1500/1800/2500).
+      # 1 second is insufficient here to turn the receiver on after it has
+      # just been powered off.
+      DEFAULT_RS232_TIMEOUT = 2
+
       include Protocol::Methods
-
-      def initialize(device: nil, glob: nil, logger: nil, retries: true,
-        timeout: nil, thread_safe: false, persistent: thread_safe
-      )
-        @logger = logger
-
-        @device = device
-        @detect_device = device.nil?
-        @glob = glob
-        @retries = case retries
-          when nil, false
-            0
-          when true
-            1
-          when Integer
-            retries
-          else
-            raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
-          end
-        @timeout = timeout || DEFAULT_RS232_TIMEOUT
-        @thread_safe = !!thread_safe
-        @persistent = !!persistent
-
-        if thread_safe?
-          @lock = Mutex.new
-        end
-
-        if block_given?
-          begin
-            yield self
-          ensure
-            close
-          end
-        end
-      end
-
-      attr_reader :device
-      attr_reader :glob
-      attr_reader :logger
-      attr_reader :retries
-      attr_reader :timeout
-
-      def thread_safe?
-        @thread_safe
-      end
-
-      def persistent?
-        @persistent
-      end
-
-      def detect_device?
-        @detect_device
-      end
 
       def present?
         last_status
@@ -148,31 +97,6 @@ module Seriamp
         end
       end
 
-      def with_device(&block)
-        if @io
-          if IO.select(nil, nil, [@io.io], 0)
-            logger&.debug("Closing stale device handle due to I/O error")
-            close
-          end
-        end
-
-        if @io
-          yield @io
-        else
-          open_device(&block)
-        end
-      end
-
-      def with_lock
-        if thread_safe?
-          @lock.synchronize do
-            yield
-          end
-        else
-          yield
-        end
-      end
-
       # Shows a message via the on-screen display. The message must be 16
       # characters or fewer. The message is NOT displayed on the front panel,
       # it is shown only on the connected TV's OSD.
@@ -201,58 +125,9 @@ module Seriamp
         nil
       end
 
-      def close
-        if @io
-          @io.close rescue nil
-          @io = nil
-        end
-      end
-
       private
 
       include Protocol::GetConstants
-
-      def open_device
-        if detect_device? && device.nil?
-          logger&.debug("Detecting device")
-          @device = Seriamp.detect_device(Yamaha, *glob, logger: logger, timeout: timeout)
-          if @device
-            logger&.info("Using #{device} as TTY device")
-          else
-            raise NoDevice, "No device specified and device could not be detected automatically"
-          end
-        end
-
-        logger&.debug("Opening #{device}")
-        @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
-
-        buf = Utils.consume_data(@io.io, logger,
-          "Serial device readable after opening - unread previous response?")
-        report_unread_response(buf)
-
-        begin
-          tries = 0
-          begin
-            #do_status
-          rescue CommunicationTimeout
-            tries += 1
-            if tries < 5
-              logger&.warn("Timeout handshaking with the receiver - will retry")
-              Utils.sleep_before_retry
-              retry
-            else
-              raise
-            end
-          end
-
-          yield @io
-        ensure
-          unless persistent?
-            @io.close rescue nil
-            @io = nil
-          end
-        end
-      end
 
       # ASCII table: https://www.asciitable.com/
       DC1 = ?\x11
@@ -277,29 +152,13 @@ module Seriamp
       end
 
       def read_response
-        resp = +''
-        deadline = [Utils.monotime + timeout, @next_earliest_deadline].compact.max
-        loop do
-          begin
-            chunk = @io.read_nonblock(1000)
-            if chunk
-              resp += chunk
-              break if chunk[-1] == ETX
-            end
-          rescue IO::WaitReadable
-            budget = deadline - Utils.monotime
-            if budget < 0
-              raise CommunicationTimeout
-            end
-            IO.select([@io.io], nil, nil, budget)
+        super.tap do |resp|
+          if resp.count(ETX) > 1
+            logger&.warn("Multiple responses received: #{resp}")
           end
-        end
 
-        if resp.count(ETX) > 1
-          logger&.warn("Multiple responses received: #{resp}")
+          logger&.debug("Received response: #{resp}")
         end
-
-        logger&.debug("Received response: #{resp}")
 
         parse_response(resp)
       end
@@ -553,25 +412,6 @@ module Seriamp
           :mute
         else
           (value - 39) - 33
-        end
-      end
-
-      def with_retry
-        try = 1
-        begin
-          yield
-        rescue Seriamp::Error, IOError, SystemCallError => exc
-          if try <= retries
-            logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
-            try += 1
-            if detect_device?
-              @device = nil
-            end
-            Utils.sleep_before_retry
-            retry
-          else
-            raise
-          end
         end
       end
 

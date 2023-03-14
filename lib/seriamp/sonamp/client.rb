@@ -3,53 +3,14 @@
 require 'timeout'
 require 'seriamp/error'
 require 'seriamp/backend'
-require 'seriamp/recursive_mutex'
+require 'seriamp/client'
 
 module Seriamp
   module Sonamp
 
-    DEFAULT_RS232_TIMEOUT = 3
+    class Client < Seriamp::Client
 
-    class Client
-      def initialize(device: nil, glob: nil, logger: nil, retries: true,
-        timeout: nil, thread_safe: false
-      )
-        @logger = logger
-
-        @device = device
-        @detect_device = device.nil?
-        @glob = glob
-        @retries = case retries
-          when nil, false
-            0
-          when true
-            1
-          when Integer
-            retries
-          else
-            raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
-          end
-        @timeout = timeout || DEFAULT_RS232_TIMEOUT
-        @thread_safe = !!thread_safe
-
-        if thread_safe?
-          @lock = RecursiveMutex.new
-        end
-      end
-
-      attr_reader :device
-      attr_reader :glob
-      attr_reader :logger
-      attr_reader :retries
-      attr_reader :timeout
-
-      def thread_safe?
-        @thread_safe
-      end
-
-      def detect_device?
-        @detect_device
-      end
+      DEFAULT_RS232_TIMEOUT = 3
 
       def present?
         get_zone_power(1)
