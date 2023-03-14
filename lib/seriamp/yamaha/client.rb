@@ -4,6 +4,7 @@ require 'timeout'
 require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
+require 'seriamp/yamaha/protocol/get_constants'
 
 module Seriamp
   module Yamaha
@@ -188,7 +189,7 @@ module Seriamp
 
       private
 
-      include Protocol::Constants
+      include Protocol::GetConstants
 
       def open_device
         if detect_device? && device.nil?

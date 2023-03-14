@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'seriamp/yamaha/protocol/constants'
+require 'seriamp/yamaha/protocol/set_constants'
 
 module Seriamp
   module Yamaha
     module Protocol
       module Methods
-        include Constants
+        include SetConstants
 
         # Turns the receiver on or off.
         #
