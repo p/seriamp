@@ -25,6 +25,12 @@ module Seriamp
           'E' => 'XM',
         }.freeze
 
+        DECODER_MODE_GET = {
+          '0' => 'Auto',
+          '1' => 'DTS',
+          '2' => 'AAC',
+        }.freeze
+
         AUDIO_SELECT_GET = {
           '0' => 'Auto', # Confirmed RX-V1500
           '2' => 'DTS', # Confirmed RX-V1500
@@ -100,15 +106,155 @@ module Seriamp
           '80' => 'Straight',
         }.freeze
 
+        FORMAT_GET = {
+          '00' => 'Analog',
+          '01' => 'PCM',
+          '02' => 'DSD',
+          '03' => 'Digital',
+          '04' => 'Dolby Digital',
+          '05' => 'DTS',
+          '06' => 'AAC',
+          '07' => 'DTS-HD',
+          '08' => 'DTS-HD MSTR',
+          '09' => 'DD Plus',
+          '0A' => 'TrueHD',
+          '0B' => 'WMA',
+          '0C' => 'MP3',
+          'FE' => '???',
+          'FF' => '---',
+        }.freeze
+
+        SAMPLING_GET = {
+          '00' => 'Analog',
+          '01' => '8000',
+          '02' => '11025',
+          '03' => '12000',
+          '04' => '16000',
+          '05' => '22050',
+          '06' => '24000',
+          '07' => '32000',
+          '08' => '44100',
+          '09' => '48000',
+          '0A' => '64000',
+          '0B' => '88200',
+          '0C' => '96000',
+          '0D' => '128000',
+          '0E' => '176400',
+          'OF' => '192000',
+          '10' => 'DSD', # 2.8224 MHz
+          'FE' => '???',
+          'FF' => '---',
+        }.freeze
+
+        INPUT_CHANNELS_GET = {
+          '00' => '1+',
+          '01' => '1/0',
+          '02' => '2/0',
+          '03' => '3/0',
+          '04' => '2/1',
+          '05' => '3/1',
+          '06' => '2/2',
+          '07' => '3/2',
+          '08' => '2/3',
+          '09' => '3/3',
+          '0A' => '2/4',
+          '0B' => '3/4',
+          'AC' => 'MLT',
+          '0F' => '---',
+        }.freeze
+
+        INPUT_LFE_CHANNEL_GET = {
+          '00' => '0.1',
+          'FF' => '---',
+        }.freeze
+
+        BIT_RATE_GET = {
+          '00' => '32000',
+          '01' => '40000',
+          '02' => '48000',
+          '03' => '56000',
+          '04' => '64000',
+          '05' => '72000',
+          '06' => '80000',
+          '07' => '96000',
+          '08' => '112000',
+          '09' => '128000',
+          '0A' => '144000',
+          '0B' => '160000',
+          '0C' => '192000',
+          '0D' => '224000',
+          '0E' => '256000',
+          '0F' => '288000',
+          '10' => '320000',
+          '11' => '384000',
+          '12' => '448000',
+          '13' => '512000',
+          '14' => '576000',
+          '15' => '640000',
+          '16' => '768000',
+          '17' => '960000',
+          '18' => '1024000',
+          '19' => '1152000',
+          '1A' => '1280000',
+          '1B' => '1344000',
+          '1C' => '1408000',
+          '1D' => '1411200',
+          '1E' => '1472000',
+          '1F' => '1536000',
+          '20' => '1920000',
+          '21' => '2048000',
+          '22' => '3072000',
+          '23' => '3840000',
+          '24' => 'Open',
+          '25' => 'Variable',
+          '26' => 'Losless',
+          'FF' => '---',
+        }.freeze
+
         POWER_GET = {
-          '00' => {main_power: false, zone2_power: false, zone3_power: false},
-          '01' => {main_power: true, zone2_power: true, zone3_power: true},
-          '02' => {main_power: true, zone2_power: false, zone3_power: false},
-          '03' => {main_power: false, zone2_power: true, zone3_power: true},
-          '04' => {main_power: true, zone2_power: true, zone3_power: false},
-          '05' => {main_power: true, zone2_power: false, zone3_power: false},
-          '06' => {main_power: false, zone2_power: true, zone3_power: true},
-          '07' => {main_power: false, zone2_power: false, zone3_power: true},
+          '00' => {main_power: false, zone2_power: false, zone3_power: false}.freeze,
+          '01' => {main_power: true, zone2_power: true, zone3_power: true}.freeze,
+          '02' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
+          '03' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
+          '04' => {main_power: true, zone2_power: true, zone3_power: false}.freeze,
+          '05' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
+          '06' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
+          '07' => {main_power: false, zone2_power: false, zone3_power: true}.freeze,
+        }.freeze
+
+        INPUT_NAME_GET = {
+          '00' => 'PHONO',
+          '01' => 'CD',
+          '02' => 'TUNER',
+          '03' => 'CD-R',
+          '04' => 'MD/TAPE',
+          '05' => 'DVD',
+          '06' => 'DTV',
+          '07' => 'CBL/SAT',
+          '08' => 'SAT',
+          '09' => 'VCR1',
+          '0A' => 'DVR/VCR2',
+          '0B' => 'VCR3/DVR',
+          '0C' => 'V-AUX/DOCK',
+          '0D' => 'NET/USB',
+          '0E' => 'XM',
+          '10' => 'Multi-Channel',
+        }.freeze
+
+        MUTE_GET = {
+          '00' => false,
+          '01' => true,
+        }.freeze
+
+        GET_MAP = {
+          '10' => :format,
+          '11' => :sampling,
+          '12' => :input_channels,
+          '13' => :input_lfe_channel,
+          '14' => :bit_rate,
+          '20' => :power,
+          '21' => :input_name,
+          '23' => :mute,
         }.freeze
       end
     end

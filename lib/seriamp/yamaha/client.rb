@@ -280,8 +280,19 @@ module Seriamp
       end
 
       def parse_response(resp)
+        case resp[0]
+        when STX
+          parse_stx_response(resp)
+        when DC2
+          parse_status_response(resp)
+        else
+          raise NotImplemented, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
+        end
+      end
+
+      def parse_stx_response(resp)
         unless resp[0] == STX
-          raise UnexpectedResponse, "Invalid response: expected to start with STX: #{resp}"
+          raise UnexpectedResponse, "Invalid response: expected to start with STX: #{resp} #{resp[0].ord}"
         end
         unless resp[-1] == ETX
           raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
@@ -301,17 +312,33 @@ module Seriamp
         }, 'Invalid guard value')
         command = resp[2..3]
         data = resp[4..5]
-        state = case command
-        when '20'
-          POWER_GET.fetch(data)
+        logger&.debug("Command response: #{command} #{data}")
+        state = if field_name = GET_MAP[command]
+          map = self.class.const_get("#{field_name.upcase}_GET")
+          value = map[data]
+          if value.nil?
+            logger&.warn("Unhandled value #{data} for #{command} (#{field_name})")
+          end
+          unless Hash === value
+            value = {field_name => value}
+          end
+          value
         else
-          raise UnexpectedResponse, "Unhandled response: #{command} (#{data})"
+          case command
+          when '22'
+            {
+              decoder_mode: DECODER_MODE_GET.fetch(data[0]),
+              audio_select: AUDIO_SELECT_GET.fetch(data[1]),
+            }
+          else
+            logger&.warn("Unhandled response: #{command} (#{data})")
+            nil
+          end
         end
-        {
-          control_type: control_type,
-          guard: guard,
-          state: state,
-        }
+        {control_type: control_type}.tap do |res|
+          res[:guard] = guard if guard
+          res[:state] = state if state
+        end
       end
 
       def parse_flag(value, map, error_msg)
@@ -371,88 +398,93 @@ module Seriamp
         '7' => 'Unknown',
       }.freeze
 
+      def parse_status_response(resp)
+        if resp.length < 10
+          raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
+        end
+        payload = resp[1...-1]
+        model_code = payload[0..4]
+        version = payload[5]
+        length = payload[6..7].to_i(16)
+        data = payload[8...-2]
+        if data.length != length
+          raise HandshakeFailure, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
+        end
+        unless data.start_with?('@E01900')
+          raise HandshakeFailure, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
+        end
+        status = {
+          model_code: model_code,
+          model_name: MODEL_NAMES[model_code],
+          firmware_version: version,
+          system_status: data[7].ord - ZERO_ORD,
+          power: power = data[8].ord - ZERO_ORD,
+          main_power: [1, 4, 5, 2].include?(power),
+          zone2_power: [1, 4, 3, 6].include?(power),
+          zone3_power: [1, 5, 3, 7].include?(power),
+        }
+        if data.length > 9
+          status.update(
+            input: input = data[9],
+            input_name: MAIN_INPUTS_GET.fetch(input),
+            multi_ch_input: data[10] == '1',
+            audio_select: audio_select = data[11],
+            audio_select_name: AUDIO_SELECT_GET.fetch(audio_select),
+            mute: data[12] == '1',
+            # Volume values (0.5 dB increment):
+            # mute: 0
+            # -80.0 dB (min): 39
+            # 0 dB: 199
+            # +14.5 dB (max): 228
+            # Zone2 volume values (1 dB increment):
+            # mute: 0
+            # -33 dB (min): 39
+            # 0 dB (max): 72
+            main_volume: volume = data[15..16].to_i(16),
+            main_volume_db: int_to_half_db(volume),
+            zone2_volume: zone2_volume = data[17..18].to_i(16),
+            zone2_volume_db: int_to_full_db(zone2_volume),
+            zone3_volume: zone3_volume = data[129..130].to_i(16),
+            zone3_volume_db: int_to_full_db(zone3_volume),
+            program: program = data[19..20],
+            program_name: PROGRAM_GET.fetch(program),
+            # true: straight; false: effect
+            effect: data[21] == '1',
+            #extended_surround: data[22],
+            #short_message: data[23],
+            sleep: SLEEP_GET.fetch(data[24]),
+            night: night = data[27],
+            night_name: NIGHT_GET.fetch(night),
+            pure_direct: data[PURE_DIRECT_FIELD.fetch(model_code)] == '1',
+            speaker_a: data[29] == '1',
+            speaker_b: data[30] == '1',
+            # 2 positions on RX-Vx700
+            #format: data[31..32],
+            #sampling: data[33..34],
+          )
+          if model_code == 'R0178'
+            status.update(
+              input_mode: INPUT_MODE_R0178.fetch(data[11]),
+              sampling: data[32],
+              sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
+            )
+          end
+        end
+        status.update(raw_string: data)
+        status
+      end
+
       def do_status
         with_retry do
           resp = nil
-          resp = dispatch(STATUS_REQ)
+          status = dispatch(STATUS_REQ)
           buf = Utils.consume_data(@io.io, logger,
             "Serial device readable after completely reading status response - concurrent access?")
           report_unread_response(buf)
-          if resp.length < 10
-            raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
-          end
-          payload = resp[1...-1]
-          model_code = payload[0..4]
-          version = payload[5]
-          length = payload[6..7].to_i(16)
-          data = payload[8...-2]
-          if data.length != length
-            raise HandshakeFailure, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device?"
-          end
-          unless data.start_with?('@E01900')
-            raise HandshakeFailure, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
-          end
-          status_string = data
-          status = {
-            model_code: model_code,
-            model_name: MODEL_NAMES[model_code],
-            firmware_version: version,
-            system_status: data[7].ord - ZERO_ORD,
-            power: power = data[8].ord - ZERO_ORD,
-            main_power: [1, 4, 5, 2].include?(power),
-            zone2_power: [1, 4, 3, 6].include?(power),
-            zone3_power: [1, 5, 3, 7].include?(power),
-          }
-          if data.length > 9
-            status.update(
-              input: input = data[9],
-              input_name: MAIN_INPUTS_GET.fetch(input),
-              multi_ch_input: data[10] == '1',
-              audio_select: audio_select = data[11],
-              audio_select_name: AUDIO_SELECT_GET.fetch(audio_select),
-              mute: data[12] == '1',
-              # Volume values (0.5 dB increment):
-              # mute: 0
-              # -80.0 dB (min): 39
-              # 0 dB: 199
-              # +14.5 dB (max): 228
-              # Zone2 volume values (1 dB increment):
-              # mute: 0
-              # -33 dB (min): 39
-              # 0 dB (max): 72
-              main_volume: volume = data[15..16].to_i(16),
-              main_volume_db: int_to_half_db(volume),
-              zone2_volume: zone2_volume = data[17..18].to_i(16),
-              zone2_volume_db: int_to_full_db(zone2_volume),
-              zone3_volume: zone3_volume = data[129..130].to_i(16),
-              zone3_volume_db: int_to_full_db(zone3_volume),
-              program: program = data[19..20],
-              program_name: PROGRAM_GET.fetch(program),
-              # true: straight; false: effect
-              effect: data[21] == '1',
-              #extended_surround: data[22],
-              #short_message: data[23],
-              sleep: SLEEP_GET.fetch(data[24]),
-              night: night = data[27],
-              night_name: NIGHT_GET.fetch(night),
-              pure_direct: data[PURE_DIRECT_FIELD.fetch(model_code)] == '1',
-              speaker_a: data[29] == '1',
-              speaker_b: data[30] == '1',
-              # 2 positions on RX-Vx700
-              #format: data[31..32],
-              #sampling: data[33..34],
-            )
-            if model_code == 'R0178'
-              status.update(
-                input_mode: INPUT_MODE_R0178.fetch(data[11]),
-                sampling: data[32],
-                sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
-              )
-            end
-          end
 
           @model_code, @version, @status_string =
-            model_code, version, status_string
+            status.fetch(:model_code), status.fetch(:firmware_version),
+            status.fetch(:raw_string)
           @status = status
         end
       end
@@ -529,7 +561,7 @@ module Seriamp
         when DC2
           logger&.warn("Status response, #{buf.length} bytes")
         when STX
-          logger&.warn("Command response: #{buf}")
+          logger&.warn("Command response: #{buf} #{parse_stx_response(buf)}")
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
