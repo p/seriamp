@@ -104,7 +104,7 @@ module Seriamp
           exit 3
         end
       else
-        executor.run_command(cmd, *args)
+        format_output(executor.run_command(cmd, *args))
       end
     end
 
@@ -116,6 +116,17 @@ module Seriamp
     def executor
       @executor ||= mod.const_get(:Executor).new(
         direct_client, timeout: options[:timeout])
+    end
+
+    def format_output(result)
+      case result
+      when Hash
+        result.keys.sort.each do |k|
+          puts "  #{k}: #{result[k]}"
+        end
+      else
+        pp result
+      end
     end
   end
 end
