@@ -11,6 +11,10 @@ describe 'Yamaha integration' do
   let(:logger) { Logger.new(STDERR) }
   let(:client) { Seriamp::Yamaha::Client.new(device: device, logger: logger) }
 
+  after do
+    client.close
+  end
+
   describe 'power on' do
     before do
       client.set_main_power(false)
@@ -24,7 +28,7 @@ describe 'Yamaha integration' do
     end
 
     after do
-      sleep 4
+      sleep 3
     end
   end
 

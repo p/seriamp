@@ -12,7 +12,9 @@ module Seriamp
     # The manual says response should be received in 500 ms.
     # However, the status response takes 850 ms to be received in my
     # environment (RX-V1500/1800/2500).
-    DEFAULT_RS232_TIMEOUT = 1
+    # 1 second is insufficient here to turn the receiver on after it has
+    # just been powered off.
+    DEFAULT_RS232_TIMEOUT = 2
 
     class Client
       include Protocol::Methods
@@ -276,7 +278,7 @@ module Seriamp
 
       def read_response
         resp = +''
-        deadline = Utils.monotime + timeout
+        deadline = [Utils.monotime + timeout, @next_earliest_deadline].compact.max
         loop do
           begin
             chunk = @io.read_nonblock(1000)
@@ -309,7 +311,7 @@ module Seriamp
         when DC2
           parse_status_response(resp)
         else
-          raise NotImplemented, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
+          raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end
       end
 
@@ -596,6 +598,7 @@ module Seriamp
       end
 
       def extend_next_deadline
+        # 2 seconds here is definitely insufficient for RX-V1500 powering on
         @next_earliest_deadline = Utils.monotime + 3
       end
     end
