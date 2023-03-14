@@ -49,4 +49,21 @@ describe 'Yamaha integration' do
       client.main_power.should be false
     end
   end
+
+  describe 'power cycle' do
+    before do
+      client.set_main_power(false)
+    end
+
+    it 'works' do
+      client.set_main_power(true).should be nil
+      client.main_power.should be true
+
+      client.set_main_power(false).should be nil
+      client.main_power.should be false
+
+      client.set_main_power(true).should be nil
+      client.main_power.should be true
+    end
+  end
 end
