@@ -9,7 +9,7 @@ describe 'Sonamp integration' do
 
   let(:device) { ENV.fetch('SERIAMP_INTEGRATION_SONAMP') }
   let(:logger) { Logger.new(STDERR) }
-  let(:client) { Seriamp::Sonamp::Client.new(device: device, logger: logger) }
+  let(:client) { Seriamp::Sonamp::Client.new(device: device, logger: logger, backend: :logging_serial_port) }
 
   after do
     client.close
