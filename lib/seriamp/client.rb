@@ -45,6 +45,8 @@ module Seriamp
         @lock = RecursiveMutex.new
       end
 
+      @next_earliest_deadline = Utils.monotime
+
       if block_given?
         begin
           yield self
@@ -148,13 +150,13 @@ module Seriamp
 
     def read_response
       resp = +''
-      deadline = [Utils.monotime + timeout, @next_earliest_deadline].compact.max
+      deadline = [Utils.monotime + timeout, @next_earliest_deadline].max
       loop do
         begin
           chunk = @io.read_nonblock(1000)
           if chunk
             resp += chunk
-            break if chunk[-1] == ETX
+            break if complete_response?(chunk)
           end
         rescue IO::WaitReadable
           budget = deadline - Utils.monotime
@@ -164,14 +166,7 @@ module Seriamp
           IO.select([@io.io], nil, nil, budget)
         end
       end
-
-      if resp.count(ETX) > 1
-        logger&.warn("Multiple responses received: #{resp}")
-      end
-
-      logger&.debug("Received response: #{resp}")
-
-      parse_response(resp)
+      resp
     end
 
     def with_retry

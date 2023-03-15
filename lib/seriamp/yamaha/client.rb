@@ -152,7 +152,7 @@ module Seriamp
       end
 
       def read_response
-        super.tap do |resp|
+        resp = super.tap do |resp|
           if resp.count(ETX) > 1
             logger&.warn("Multiple responses received: #{resp}")
           end
@@ -161,6 +161,10 @@ module Seriamp
         end
 
         parse_response(resp)
+      end
+
+      def complete_response?(chunk)
+        chunk[-1] == ETX
       end
 
       def parse_response(resp)
