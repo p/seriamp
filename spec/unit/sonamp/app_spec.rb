@@ -120,6 +120,7 @@ describe Seriamp::Sonamp::App do
           client.should receive(:get_zone_power).and_return({1 => true, 2 => false, 3 => true, 4 => false})
           client.should_not receive(:get_zone_volume)
 
+          header 'accept', 'application/json'
           get '/?fields=zone_power,bogus,zone_volume'
 
           last_response.status.should == 422
