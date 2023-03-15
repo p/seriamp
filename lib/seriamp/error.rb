@@ -9,4 +9,5 @@ module Seriamp
   class CommunicationTimeout < Error; end
 
   class InvalidOnOffValue < ArgumentError; end
+  class InvalidBackend < ArgumentError; end
 end

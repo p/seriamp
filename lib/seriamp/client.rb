@@ -120,6 +120,8 @@ module Seriamp
           backend[1..].to_s.gsub(/_(.)/) { $1.upcase } +
           'Backend'
       ).const_get(:Device)
+    rescue NameError => exc
+      raise InvalidBackend, "Backend #{backend} is not known: #{exc.class}: #{exc}"
     end
 
     def open_device

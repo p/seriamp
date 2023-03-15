@@ -53,6 +53,7 @@ module Seriamp
       @logger = Logger.new(STDERR)
 
       @client = mod.const_get(:Client).new(device: options[:device],
+        backend: options[:backend],
         logger: @logger, timeout: options[:timeout], thread_safe: true)
 
       @app_mod.set(:client, @client)
