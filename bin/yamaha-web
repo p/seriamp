@@ -1,37 +1,10 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'seriamp/yamaha/app'
+  require 'seriamp/app_cmd'
 rescue LoadError
   $: << File.join(File.dirname(__FILE__), '../lib')
-  require 'seriamp/yamaha/app'
+  require 'seriamp/app_cmd'
 end
-require 'optparse'
-require 'logger'
 
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: yamaha-web [-d device] [-- rackup-options...]"
-
-  opts.on("-d", "--device DEVICE", "TTY to use (default autodetect)") do |v|
-    options[:device] = v
-  end
-
-  opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
-    options[:timeout] = Float(v)
-  end
-
-  opts.separator ''
-  opts.separator 'To see rackup options: yamaha-web -- -h'
-end.parse!
-
-logger = Logger.new(STDERR)
-
-#Seriamp::Yamaha::App.set :device, options[:device]
-#Seriamp::Yamaha::App.set :logger, logger
-Seriamp::Yamaha::App.set :client, Seriamp::Yamaha::Client.new(
-  device: options[:device], timeout: options[:timeout],
-  logger: logger, thread_safe: true)
-
-options = Rack::Server::Options.new.parse!(ARGV)
-Rack::Server.start(options.merge(app: Seriamp::Yamaha::App))
+Seriamp::AppCmd.new(module_name: 'yamaha').run
