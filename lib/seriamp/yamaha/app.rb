@@ -5,15 +5,11 @@ require 'seriamp/utils'
 require 'seriamp/detect'
 require 'seriamp/yamaha/client'
 require 'seriamp/yamaha/executor'
+require 'seriamp/app_base'
 
 module Seriamp
   module Yamaha
-    class App < Sinatra::Base
-
-      set :device, nil
-      set :logger, nil
-      set :client, nil
-      set :retries, true
+    class App < AppBase
 
       get '/' do
         clear_cache
@@ -169,23 +165,8 @@ module Seriamp
         end
       end
 
-      def render_json(data)
-        headers['content-type'] = 'application/json'
-        data.to_json
-      end
-
-      def empty_response
-        [204, '']
-      end
-
-      def plain_response(data)
-        headers['content-type'] = 'text/plain'
-        data.to_s
-      end
-
       def standard_response
-        rs = request.env['HTTP_X_RETURN_STATUS']
-        if rs && Utils.parse_on_off(rs)
+        if request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
           render_json(client.status)
         else
           empty_response

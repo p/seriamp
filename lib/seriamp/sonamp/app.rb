@@ -5,15 +5,11 @@ require 'seriamp/utils'
 require 'seriamp/sonamp/client'
 require 'seriamp/sonamp/executor'
 require 'seriamp/detect'
+require 'seriamp/app_base'
 
 module Seriamp
   module Sonamp
-    class App < Sinatra::Base
-
-      set :device, nil
-      set :logger, nil
-      set :client, nil
-      set :retries, true
+    class App < AppBase
 
       ALLOWED_STATUS_FIELDS = Hash[Client::STATUS_FIELDS.map do |field|
         [field.to_s, true]
@@ -121,24 +117,6 @@ module Seriamp
         end
       end
 
-      def render_json(data)
-        headers['content-type'] = 'application/json'
-        data.to_json
-      end
-
-      def render_422(error)
-        headers['content-type'] = 'application/json'
-        [422, {error: error}.to_json]
-      end
-
-      def empty_response
-        [204, '']
-      end
-
-      error InvalidOnOffValue do |e|
-        headers['content-type'] = 'text/plain'
-        [422, "Error: #{e.class}: #{e}"]
-      end
     end
   end
 end
