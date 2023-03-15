@@ -13,6 +13,11 @@ module Seriamp
         def initialize(device, logger: nil)
           @logger = logger
           @io = SerialPort.open(device)
+          @io.baud = 9600
+          @io.data_bits = 8
+          @io.stop_bits = 1
+          @io.parity = SerialPort::NONE
+          @io.flow_control = SerialPort::HARD
 
           if block_given?
             begin
