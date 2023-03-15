@@ -266,9 +266,36 @@ of the data sent by the receiver), but returns the data one byte at a time
 requiring many more `read` calls to retrieve responses, especially larger
 ones.
 
-Now, one might think that this many `read` calls would take significantly
+Now, you might think that this many `read` calls would take significantly
 longer than the much fewer calls that FTDI-based adapters require, but
 surprisingly, it actually takes longer to receive the status from the
 receiver via an FTDI adapter than via a Prolific adapter. Measuring the
 `curl` command to get the status response, it takes 0.92-0.93 seconds via
 the FTDI adapter and 0.91-0.92 seconds via the Prolific adapter.
+
+## Serial Interface Identification
+
+If you plan on having multiple serial adapters in a single computer, for
+example to control a receiver and an amplifier or to control multiple
+receivers, be aware that some USB to serial adapters do not report serial
+numbers (at least via `udev`). Among adapters I own, Prolific PL2303-based
+ones do not report serial numbers, while FTDI FT232-based ones do.
+This means that if a computer has more than one PL2303-based adapter
+attached to it, there is no way to know which physical adapter corresponds
+to which TTY device.
+
+`udev` rules can match on the manufacturer of the device as well as on
+the serial number, if one is provided by the device. For example, I have
+the following rules in `/etc/udev/rules.d/91-serial.rules` to map
+`/dev/ttySonamp` to the Sonamp amplifer and `/dev/ttyYamaha` to the Yamaha
+receiver:
+
+    # FTDI FT232 - Sabrent
+    SUBSYSTEM=="tty", ACTION=="add", \
+      ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", \
+      SYMLINK+="ttyYamaha"
+
+    # Prolific PL2303 - Sabrent
+    SUBSYSTEM=="tty", ACTION=="add", \
+      ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", \
+      SYMLINK+="ttySonamp"
