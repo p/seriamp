@@ -58,6 +58,10 @@ module Seriamp
       @app_mod.set(:client, @client)
 
       @rack_options = Rack::Server::Options.new.parse!(args)
+
+      if @rack_options[:environment] == 'production'
+        @app_mod.set(:show_exceptions, false)
+      end
     end
 
     attr_reader :mod_name

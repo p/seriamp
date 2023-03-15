@@ -34,18 +34,26 @@ module Seriamp
       data.to_s
     end
 
-    def render_422(error)
+    def render_error(code, error)
       if accept_json?
         headers['content-type'] = 'application/json'
-        [422, {error: error}.to_json]
+        [code, {error: error}.to_json]
       else
         headers['content-type'] = 'text/plain'
-        [422, error]
+        [code, error]
       end
     end
 
+    def render_422(error)
+      render_error(422, error)
+    end
+
     error InvalidOnOffValue do |e|
-      render_422("Error: #{e.class}: #{e}")
+      render_error(422, "Error: #{e.class}: #{e}")
+    end
+
+    error NoDevice do |e|
+      render_error(500, "Error: #{e.class}: #{e}")
     end
   end
 end
