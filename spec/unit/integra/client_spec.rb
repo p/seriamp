@@ -13,9 +13,7 @@ describe Seriamp::Integra::Client do
   let(:extra_client_options) { {} }
   let(:client) { described_class.new(**{device: '/dev/bogus'}.update(extra_client_options)) }
   let(:device) do
-    double('tty device').tap do |device|
-      allow(device).to receive(:close)
-    end
+    tty_double
   end
 
   def setup_requests_responses(device, rr)
