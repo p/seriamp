@@ -1,11 +1,11 @@
 # Implementation Notes
 
-## Serial Interfaces
+## Broken Serial Interfaces
 
 Different serial interfaces produce different results, both in terms of
-correctness and in terms of performance. Below output is obtained by dumping
-every string given to a `write` call to the Ruby IO object for the serial
-device and every string obtained from a single `read` or `read_nonblock`
+correctness and in terms of performance. The below output is obtained by
+dumping every string given to a `write` call to the Ruby IO object for the
+serial device and every string obtained from a single `read` or `read_nonblock`
 call.
 
 Built-in serial interface on Optiplex 5050 SFF communicating with Yamaha
@@ -57,8 +57,10 @@ Despite the Optiplex coming with a built-in serial port, in order for
 receiver communication to be reliable, the built-in port cannot be used,
 and an external USB to serial adapter is required.
 
+## Serial Interface Performance
+
 FTDI FT232-based USB to serial adapter on the same Optiplex 5050 communicating
-with the same Yamaha RX-V2500:
+with the same Yamaha RX-V2500 produces the following I/O chunks:
 
     Write: \x11001\x03
     Read: \x12R0178F8B@E0190
@@ -259,8 +261,8 @@ communicating with the same Yamaha RX-V2500:
     Read: E
     Read: \x03
 
-This USB to serial adapter behaves correctly (i.e., is not dropping parts of
-the data sent by the receiver), but returns the data one byte at a time
+This USB to serial adapter also behaves correctly (i.e., is not dropping parts
+of the data sent by the receiver), but returns the data one byte at a time
 requiring many more `read` calls to retrieve responses, especially larger
 ones.
 
