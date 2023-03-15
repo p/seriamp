@@ -104,7 +104,14 @@ module Seriamp
           exit 3
         end
       else
-        format_output(executor.run_command(cmd, *args))
+        result = executor.run_command(cmd, *args)
+        meth = case cmd
+        when 'status'
+          :format_status
+        else
+          :format
+        end
+        puts formatter.public_send(meth, result)
       end
     end
 
@@ -116,6 +123,10 @@ module Seriamp
     def executor
       @executor ||= mod.const_get(:Executor).new(
         direct_client, timeout: options[:timeout])
+    end
+
+    def formatter
+      @formatter ||= mod.const_get(:Formatter).new
     end
 
     def format_output(result)
