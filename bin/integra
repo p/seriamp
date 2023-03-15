@@ -9,4 +9,7 @@ rescue LoadError
   require 'seriamp/cmd'
 end
 
+require 'seriamp/integra/executor'
+require 'seriamp/integra/formatter'
+
 Seriamp::Cmd.new(module_name: 'integra').run

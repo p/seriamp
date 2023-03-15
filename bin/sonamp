@@ -9,4 +9,7 @@ rescue LoadError
   require 'seriamp/cmd'
 end
 
+require 'seriamp/sonamp/executor'
+require 'seriamp/sonamp/formatter'
+
 Seriamp::Cmd.new(module_name: 'sonamp').run
