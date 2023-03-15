@@ -109,6 +109,19 @@ module Seriamp
 
     private
 
+    def backend
+      options[:backend] || :serial_port
+    end
+
+    def device_cls
+      backend = self.backend.to_s
+      Backend.const_get(
+        backend[0..0].upcase +
+          backend[1..].to_s.gsub(/_(.)/) { $1.upcase } +
+          'Backend'
+      ).const_get(:Device)
+    end
+
     def open_device
       if detect_device? && device.nil?
         logger&.debug("Detecting device")
@@ -121,7 +134,7 @@ module Seriamp
       end
 
       logger&.debug("Opening #{device}")
-      @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
+      @io = device_cls.new(device, logger: logger)
 
       buf = Utils.consume_data(@io.io, logger,
         "Serial device readable after opening - unread previous response?")

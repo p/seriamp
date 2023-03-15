@@ -190,50 +190,6 @@ module Seriamp
         end
       end
 
-      def open_device
-        if detect_device? && device.nil?
-          logger&.debug("Detecting device")
-          @device = Seriamp.detect_device(Sonamp, *glob, logger: logger, timeout: timeout)
-          if @device
-            logger&.info("Using #{device} as TTY device")
-          else
-            raise NoDevice, "No device specified and device could not be detected automatically"
-          end
-        end
-
-        logger&.debug("Opening #{device}")
-        @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
-
-        Utils.consume_data(@io.io, logger,
-          "Serial device readable after opening - unread previous response?")
-
-        begin
-          yield @io
-        ensure
-          @io.close rescue nil
-          @io = nil
-        end
-      end
-
-      def with_retry
-        try = 1
-        begin
-          yield
-        rescue Seriamp::Error, IOError, SystemCallError => exc
-          if try <= retries
-            logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
-            try += 1
-            if detect_device?
-              @device = nil
-            end
-            Utils.sleep_before_retry
-            retry
-          else
-            raise
-          end
-        end
-      end
-
       def dispatch(cmd, resp_lines_range_or_count = 1)
         resp_lines_range = if Range === resp_lines_range_or_count || Array === resp_lines_range_or_count
           resp_lines_range_or_count
@@ -402,6 +358,12 @@ module Seriamp
         else
           raise ArgumentError, "Invalid boolean value: #{value}"
         end
+      end
+
+      def report_unread_response(buf)
+        return if buf.nil?
+
+        logger&.warn("Unread response: #{buf}")
       end
     end
   end
