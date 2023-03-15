@@ -10,19 +10,31 @@ module Seriamp
       class Device < SerialPortBackend::Device
         def sysread(*args)
           super.tap do |result|
-            puts "Read: #{result}"
+            puts "Read: #{escape(result)}"
           end
         end
         
         def read_nonblock(*args)
           super.tap do |result|
-            puts "Read: #{result}"
+            puts "Read: #{escape(result)}"
           end
         end
         
         def syswrite(chunk)
-          puts "Write: #{chunk}"
+          puts "Write: #{escape(chunk)}"
           super
+        end
+        
+        private
+        
+        def escape(str)
+          str.split('').map do |c|
+            if (ord = c.ord) <= 32
+              "\\x#{'%02x' % ord}"
+            else
+              c
+            end
+          end.join
         end
       end
     end
