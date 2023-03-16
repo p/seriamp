@@ -24,9 +24,9 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
-  describe '#parse_main_volume' do
+  describe '#parse_half_db_volume' do
     let(:client) { described_class.new }
-    subject { client.send(:parse_main_volume, value) }
+    subject { client.send(:parse_half_db_volume, value) }
 
     context 'mute' do
       let(:value) { '00' }

@@ -43,7 +43,7 @@ module Seriamp
           end
           prefix = "set_#{which}"
           if value.nil?
-            puts client.send("#{which}_volume_db")
+            puts client.send("#{which}_volume")
             return
           end
           value = value.downcase
@@ -63,7 +63,7 @@ module Seriamp
               method = "#{prefix}_mute"
               value = false
             else
-              method = "#{prefix}_volume_db"
+              method = "#{prefix}_volume"
               if value[0] == ','
                 value = value[1..]
               end

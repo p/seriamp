@@ -52,7 +52,7 @@ module Seriamp
         # Sets main zone volume.
         #
         # @param [ Float ] volume The volume in decibels.
-        def set_main_volume_db(volume)
+        def set_main_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
           set_main_volume(value)
         end
@@ -67,7 +67,7 @@ module Seriamp
         # Sets zone 2 volume.
         #
         # @param [ Float ] volume The volume in decibels.
-        def set_zone2_volume_db(volume)
+        def set_zone2_volume(volume)
           value = Integer(volume + 33 + 39)
           set_zone2_volume(value)
         end

@@ -58,8 +58,8 @@ module Seriamp
       %i(
         model_code firmware_version system_status power main_power zone2_power
         zone3_power input input_name audio_select audio_select_name
-        main_volume main_volume_db zone2_volume zone2_volume_db
-        zone3_volume zone3_volume_db program program_name sleep night night_name
+        main_volume zone2_volume zone3_volume
+        program program_name sleep night night_name
         format sample_rate
       ).each do |meth|
         define_method(meth) do
@@ -199,7 +199,7 @@ module Seriamp
               audio_select: AUDIO_SELECT_GET.fetch(data[1]),
             }
           when '26'
-            {main_volume: parse_main_volume(data)}
+            {main_volume: parse_half_db_volume(data)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil
@@ -219,14 +219,27 @@ module Seriamp
         end
       end
 
-      def parse_main_volume(value)
+      def parse_half_db_volume(value)
         case i_value = Integer(value, 16)
         when 0
+          # Mute
           nil
-        when 39..232
-          (i_value - 39)/2.0 - 80
+        when 0x27..0xE8
+          (i_value - 0x27)/2.0 - 80
         else
-          raise UnexpectedResponse, "Main zone volume raw value out of range: #{value}"
+          raise UnexpectedResponse, "Volume raw value (0.5 dB step) out of range: #{value}"
+        end
+      end
+
+      def parse_full_db_volume(value)
+        case i_value = Integer(value, 16)
+        when 0
+          # Mute
+          nil
+        when 0x27..0x48
+          i_value - 0x27 - 33
+        else
+          raise UnexpectedResponse, "Volume raw value (1 dB step) out of range: #{value}"
         end
       end
 
@@ -321,12 +334,9 @@ module Seriamp
             # mute: 0
             # -33 dB (min): 39
             # 0 dB (max): 72
-            main_volume: volume = Integer(data[15..16], 16),
-            main_volume_db: int_to_half_db(volume),
-            zone2_volume: zone2_volume = Integer(data[17..18], 16),
-            zone2_volume_db: int_to_full_db(zone2_volume),
-            zone3_volume: zone3_volume = Integer(data[129..130], 16),
-            zone3_volume_db: int_to_full_db(zone3_volume),
+            main_volume: parse_half_db_volume(data[15..16]),
+            zone2_volume: parse_full_db_volume(data[17..18]),
+            zone3_volume: parse_full_db_volume(data[129..130]),
             program: program = data[19..20],
             program_name: PROGRAM_GET.fetch(program),
             # true: straight; false: effect
@@ -374,22 +384,6 @@ module Seriamp
       def extract_text(resp)
         # TODO: assert resp[0] == DC1, resp[-1] == ETX
         resp[0...-1]
-      end
-
-      def int_to_half_db(value)
-        if value == 0
-          :mute
-        else
-          (value - 39) / 2.0 - 80
-        end
-      end
-
-      def int_to_full_db(value)
-        if value == 0
-          :mute
-        else
-          (value - 39) - 33
-        end
       end
 
       def report_unread_response(buf)

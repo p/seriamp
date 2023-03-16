@@ -299,3 +299,10 @@ receiver:
     SUBSYSTEM=="tty", ACTION=="add", \
       ATTRS{idVendor}=="067b", ATTRS{idProduct}=="2303", \
       SYMLINK+="ttySonamp"
+
+## Yamaha Volume
+
+For the main zone on RX-V1500/RX-V2500, the volume
+is adjusted in 0.5 dB increments from -80 dB to 16.5 dB, giving the hex
+values the range of 0x27-0xE8. For zones 2 and 3 the volume is adjusted in whole
+dB increments from -33 dB to 0 dB, giving the hex range of 0x27-0x48.

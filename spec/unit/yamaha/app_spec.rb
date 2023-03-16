@@ -39,7 +39,7 @@ describe Seriamp::Yamaha::App do
     it 'works' do
       client.should receive(:main_volume_down)
       client.should receive(:main_volume_down)
-      client.should receive(:main_volume_db).and_return(42)
+      client.should receive(:main_volume).and_return(42)
 
       post '/main/volume/down', '2'
 

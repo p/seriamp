@@ -223,15 +223,6 @@ combination is assigned an independent value:
 | Off       | Off    | On     | 7     |         |
 | Off       | Off    | Off    | 0     | All off |
 
-### Yamaha Volume
-
-Volume level is set and reported as follows: 0 means muting is active,
-otherwise the minimum level for the zone is 39 and each step in the level is
-the next integer value up. For the main zone on RX-V1500/RX-V2500, the volume
-is adjusted in 0.5 dB increments from -80 dB to 14.5 dB, giving the integer
-values the range of 39-228. For zones 2 and 3 the volume is adjusted in whole
-dB increments from -33 dB to 0 dB, giving the integer range of 39-72.
-
 ### Integra Documentation
 
 When reading the protocol documentation, you should read the version that

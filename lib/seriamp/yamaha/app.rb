@@ -53,14 +53,14 @@ module Seriamp
 
         put "/#{zone}/volume" do
           value = Float(request.body.read)
-          client.public_send("set_#{zone}_volume_db", value)
+          client.public_send("set_#{zone}_volume", value)
           empty_response
         end
 
         post "/#{zone}/volume/up" do
           client.public_send("#{zone}_volume_up")
           client.public_send("#{zone}_volume_up")
-          plain_response client.main_volume_db
+          plain_response client.main_volume
         end
 
         post "/#{zone}/volume/up/:step" do |step|
@@ -68,13 +68,13 @@ module Seriamp
           step.to_i.times do
             client.public_send("#{zone}_volume_up")
           end
-          plain_response client.main_volume_db
+          plain_response client.main_volume
         end
 
         post "/#{zone}/volume/down" do
           client.public_send("#{zone}_volume_down")
           client.public_send("#{zone}_volume_down")
-          plain_response client.main_volume_db
+          plain_response client.main_volume
         end
 
         post "/#{zone}/volume/down/:step" do |step|
@@ -82,7 +82,7 @@ module Seriamp
           step.to_i.times do
             client.public_send("#{zone}_volume_down")
           end
-          plain_response client.main_volume_db
+          plain_response client.main_volume
         end
 
         put "/#{zone}/input" do
