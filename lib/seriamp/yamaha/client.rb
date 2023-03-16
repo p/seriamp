@@ -251,6 +251,14 @@ module Seriamp
         end
       end
 
+      def parse_zone2_volume(model_code, value)
+        if model_code >= 'R0210'
+          parse_half_db_volume(value)
+        else
+          parse_full_db_volume(value)
+        end
+      end
+
       MODEL_NAMES = {
         # RX-V1000
         # RX-V3000
@@ -343,8 +351,8 @@ module Seriamp
             # -33 dB (min): 39
             # 0 dB (max): 72
             main_volume: parse_half_db_volume(data[15..16]),
-            zone2_volume: parse_full_db_volume(data[17..18]),
-            zone3_volume: parse_full_db_volume(data[129..130]),
+            zone2_volume: parse_zone2_volume(model_code, data[17..18]),
+            zone3_volume: parse_zone2_volume(model_code, data[129..130]),
             program: program = data[19..20],
             program_name: PROGRAM_GET.fetch(program),
             # true: straight; false: effect
