@@ -19,7 +19,7 @@ module Seriamp
             puts device
             exit 0
           else
-            STDERR.puts("Yamaha receiver not found")
+            STDERR.puts("Sonamp amplifier not found")
             exit 3
           end
         when 'off'

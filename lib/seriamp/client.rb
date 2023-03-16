@@ -127,7 +127,8 @@ module Seriamp
     def open_device
       if detect_device? && device.nil?
         logger&.debug("Detecting device")
-        @device = Seriamp.detect_device(Yamaha, *glob, logger: logger, timeout: timeout)
+        mod = eval(self.class.name.sub(/::\w+\z/, ''))
+        @device = Seriamp.detect_device(mod, *glob, logger: logger, timeout: timeout)
         if @device
           logger&.info("Using #{device} as TTY device")
         else

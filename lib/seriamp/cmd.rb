@@ -18,6 +18,10 @@ module Seriamp
           options[:module] = v
         end
 
+        opts.on("-b", "--backend BACKEND", "Backend to use for communication") do |v|
+          options[:backend] = v
+        end
+
         opts.on("-d", "--device DEVICE", "TTY to use (default autodetect /dev/ttyUSB*)") do |v|
           options[:device] = v
         end
@@ -45,6 +49,7 @@ module Seriamp
         @service_client = Seriamp::FaradayFacade.new(url: url, timeout: options[:timeout])
       else
         @direct_client = mod.const_get(:Client).new(device: options[:device],
+          backend: options[:backend],
           logger: @logger, timeout: options[:timeout])
       end
 
