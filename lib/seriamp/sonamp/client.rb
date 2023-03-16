@@ -214,17 +214,31 @@ module Seriamp
               with_timeout do
                 @io.syswrite("#{cmd}\x0d")
               end
-              resp = resp_lines_range.map do
-                read_line(@io, cmd)
+              resp = ''
+              needed_lines = resp_lines_range.to_a.length
+              loop do
+                resp += read_line(@io, cmd)
+                if resp.count("\r") >= needed_lines
+                  break
+                end
               end
 
               Utils.consume_data(@io.io, logger,
                 "Serial device readable after completely reading status response - concurrent access?")
 
+              lines = resp.strip.split("\r")
+              lines.each do |line|
+                if line == 'ERR'
+                  raise InvalidCommand, "Invalid command: #{cmd}"
+                elsif line == 'N/A'
+                  raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
+                end
+              end
+
               if resp_lines_range_or_count == 1
-                resp.first
+                lines.first
               else
-                resp
+                lines
               end
             end
           end
@@ -276,12 +290,6 @@ module Seriamp
               end
               IO.select([f.io], nil, nil, budget)
             end
-          end
-          resp.strip!
-          if resp == 'ERR'
-            raise InvalidCommand, "Invalid command: #{cmd}"
-          elsif resp == 'N/A'
-            raise NotApplicable, "Command was recognized but could not be executed - is serial control enabled on the amplifier?"
           end
           resp
         end
