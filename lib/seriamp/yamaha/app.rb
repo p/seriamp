@@ -13,7 +13,7 @@ module Seriamp
 
       get '/' do
         clear_cache
-        render_json(client.last_status)
+        render_json(client.status)
       end
 
       post '/' do
@@ -26,12 +26,12 @@ module Seriamp
       end
 
       get '/power' do
-        render_json(client.last_status.fetch(:power) > 0)
+        render_json(client.status.fetch(:power) > 0)
       end
 
       %w(main zone2 zone3).each do |zone|
         get "/#{zone}/power" do
-          render_json(client.last_status.fetch(:"#{zone}_power"))
+          render_json(client.status.fetch(:"#{zone}_power"))
         end
 
         put "/#{zone}/power" do

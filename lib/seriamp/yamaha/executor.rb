@@ -43,7 +43,7 @@ module Seriamp
           end
           prefix = "set_#{which}"
           if value.nil?
-            puts client.send("last_#{which}_volume_db")
+            puts client.send("#{which}_volume_db")
             return
           end
           value = value.downcase
@@ -80,7 +80,7 @@ module Seriamp
             which = 'main'
           end
           if input.nil?
-            puts client.public_send("last_#{which}_input_name")
+            puts client.public_send("#{which}_input_name")
             return
           end
           client.public_send("set_#{which}_input", input)
@@ -107,9 +107,9 @@ module Seriamp
         when 'subwoofer-crossover'
           client.set_subwoofer_crossover(Integer(args.shift))
         when 'status'
-          pp client.last_status
+          pp client.status
         when 'dev-status'
-          status = client.last_status_string
+          status = client.status_string
           0.upto(status.length-1).each do |i|
             puts "%3d  %s" % [i, status[i]]
           end

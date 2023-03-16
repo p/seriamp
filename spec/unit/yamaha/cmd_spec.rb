@@ -32,7 +32,7 @@ describe 'yamaha commands' do
         let(:args) { %w(status) }
 
         it 'works' do
-          client.should_receive(:last_status)
+          client.should_receive(:status)
           client_cls.should receive(:new).and_return(client)
           cmd.run
         end
@@ -43,7 +43,7 @@ describe 'yamaha commands' do
           let(:stdin_c) { 'status' }
 
           it 'works' do
-            client.should_receive(:last_status)
+            client.should_receive(:status)
             client_cls.should receive(:new).and_return(client)
             cmd.run
           end
@@ -73,7 +73,7 @@ describe 'yamaha commands' do
           let(:stdin_c) { "status\npure-direct on" }
 
           it 'works' do
-            client.should_receive(:last_status)
+            client.should_receive(:status)
             client.should_receive(:set_pure_direct).with(true)
             client_cls.should receive(:new).and_return(client)
             cmd.run
