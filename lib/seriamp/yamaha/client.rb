@@ -12,6 +12,14 @@ module Seriamp
 
     class Client < Seriamp::Client
 
+      # Yamahas do not care what flow control is set to.
+      MODEM_PARAMS = {
+        baud: 9600,
+        data_bits: 8,
+        stop_bits: 1,
+        parity: 0, # SerialPort::NONE
+      }.freeze
+
       # The manual says response should be received in 500 ms.
       # However, the status response takes 850 ms to be received in my
       # environment (RX-V1500/1800/2500).

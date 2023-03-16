@@ -10,6 +10,17 @@ module Seriamp
 
     class Client < Seriamp::Client
 
+      # Sonamps do not work when HARD flow control is specified.
+      # NONE and SOFT are OK.
+      MODEM_PARAMS = {
+        baud: 9600,
+        data_bits: 8,
+        stop_bits: 1,
+        parity: 0, # SerialPort::NONE
+        # flow_control: 0, # SerialPort::NONE
+        # flow_control: 1, # SerialPort::SOFT
+      }.freeze
+
       DEFAULT_RS232_TIMEOUT = 3
 
       def present?
