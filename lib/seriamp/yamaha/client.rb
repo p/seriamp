@@ -198,6 +198,8 @@ module Seriamp
               decoder_mode: DECODER_MODE_GET.fetch(data[0]),
               audio_select: AUDIO_SELECT_GET.fetch(data[1]),
             }
+          when '26'
+            {main_volume: parse_main_volume(data)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil
@@ -214,6 +216,17 @@ module Seriamp
           map[value]
         else
           raise UnexpectedResponse, "#{error_msg}: #{value}"
+        end
+      end
+
+      def parse_main_volume(value)
+        case i_value = Integer(value, 16)
+        when 0
+          nil
+        when 39..232
+          (i_value - 39)/2.0 - 80
+        else
+          raise UnexpectedResponse, "Main zone volume raw value out of range: #{value}"
         end
       end
 

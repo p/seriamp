@@ -23,4 +23,37 @@ describe Seriamp::Yamaha::Client do
       end
     end
   end
+
+  describe '#parse_main_volume' do
+    let(:client) { described_class.new }
+    subject { client.send(:parse_main_volume, value) }
+
+    context 'mute' do
+      let(:value) { '00' }
+      it 'decodes to nil' do
+        subject.should be nil
+      end
+    end
+
+    context 'min' do
+      let(:value) { '27' }
+      it 'decodes to -80' do
+        subject.should be -80.0
+      end
+    end
+
+    context '0 dB' do
+      let(:value) { 'C7' }
+      it 'decodes to 0' do
+        subject.should be 0.0
+      end
+    end
+
+    context 'max' do
+      let(:value) { 'E8' }
+      it 'decodes to 16.5' do
+        subject.should be 16.5
+      end
+    end
+  end
 end
