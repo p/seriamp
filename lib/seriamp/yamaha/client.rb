@@ -22,44 +22,33 @@ module Seriamp
       include Protocol::Methods
 
       def present?
-        last_status
+        # TODO find a faster command to issue
+        status
         true
       end
 
-      def last_status
-        unless @status
-          with_lock do
-            with_retry do
-              with_device do
-                unless @status
-                  do_status
-                end
-              end
-            end
-          end
-        end
-        if @status.nil?
-          raise "This should not happen"
-        end
-        @status.dup
-      end
-
-      def last_status_string
-        unless @status_string
-          with_lock do
-            with_retry do
-              with_device do
-                status
-              end
-            end
-          end
-        end
-        @status_string.dup
-      end
-
       def status
-        do_status
-        last_status
+        with_lock do
+          with_retry do
+            with_device do
+              resp = nil
+              status = dispatch(STATUS_REQ)
+              # Device could have been closed by now.
+              # TODO keep the device open the entire time if thread safety
+              # (locking) is enabled.
+              if @io
+                buf = Utils.consume_data(@io.io, logger,
+                  "Serial device readable after completely reading status response - concurrent access?")
+                report_unread_response(buf)
+              end
+
+              @model_code, @version, @status_string =
+                status.fetch(:model_code), status.fetch(:firmware_version),
+                status.fetch(:raw_string)
+              @status = status
+            end
+          end
+        end
       end
 
       def clear_cache
@@ -76,24 +65,15 @@ module Seriamp
         define_method(meth) do
           status.fetch(meth)
         end
-
-        define_method("last_#{meth}") do
-          last_status.fetch(meth)
-        end
       end
 
       alias main_input_name input_name
-      alias last_main_input_name last_input_name
 
       %i(
         multi_ch_input effect pure_direct speaker_a speaker_b
       ).each do |meth|
         define_method("#{meth}?") do
           status.fetch(meth)
-        end
-
-        define_method("last_#{meth}?") do
-          last_status.fetch(meth)
         end
       end
 
@@ -360,26 +340,6 @@ module Seriamp
         end
         status.update(raw_string: data)
         status
-      end
-
-      def do_status
-        with_retry do
-          resp = nil
-          status = dispatch(STATUS_REQ)
-          # Device could have been closed by now.
-          # TODO keep the device open the entire time if thread safety
-          # (locking) is enabled.
-          if @io
-            buf = Utils.consume_data(@io.io, logger,
-              "Serial device readable after completely reading status response - concurrent access?")
-            report_unread_response(buf)
-          end
-
-          @model_code, @version, @status_string =
-            status.fetch(:model_code), status.fetch(:firmware_version),
-            status.fetch(:raw_string)
-          @status = status
-        end
       end
 
       def remote_command(cmd)
