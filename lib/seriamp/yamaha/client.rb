@@ -123,6 +123,22 @@ module Seriamp
         nil
       end
 
+      def remote_command(cmd)
+        with_lock do
+          with_retry do
+            dispatch("#{STX}0#{cmd}#{ETX}")
+          end
+        end
+      end
+
+      def system_command(cmd)
+        with_lock do
+          with_retry do
+            dispatch("#{STX}2#{cmd}#{ETX}")
+          end
+        end
+      end
+
       private
 
       include Protocol::GetConstants
@@ -394,22 +410,6 @@ module Seriamp
         end
         status.update(raw_string: data)
         status
-      end
-
-      def remote_command(cmd)
-        with_lock do
-          with_retry do
-            dispatch("#{STX}0#{cmd}#{ETX}")
-          end
-        end
-      end
-
-      def system_command(cmd)
-        with_lock do
-          with_retry do
-            dispatch("#{STX}2#{cmd}#{ETX}")
-          end
-        end
       end
 
       def extract_text(resp)

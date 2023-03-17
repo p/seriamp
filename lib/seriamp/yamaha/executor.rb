@@ -23,6 +23,9 @@ module Seriamp
             STDERR.puts("Yamaha receiver not found")
             exit 3
           end
+        when 'remote-command'
+          cmd = args.shift.upcase
+          client.remote_command(cmd)
         when 'power'
           which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)
