@@ -7,6 +7,69 @@ module Seriamp
 
         private
 
+        STATUS_HEAD_FIELDS = [
+          'DC2',
+          'Model',
+          'Model',
+          'Model',
+          'Model',
+          'Model',
+          'FW Version',
+          'Data length',
+          'Data length',
+        ]
+
+        STATUS_FIELDS = [
+          'Baud rate',
+          'Receive buffer',
+          'Receive buffer',
+          'Command timeout',
+          'Command timeout',
+          'Handshaking',
+          'Busy flag',
+          'Power boolean',
+          'Input',
+          'Multi-channel input',
+          'Input mode',
+          'Mute',
+          'Zone 2 input',
+          'Zone 2 mute',
+          'Master volume',
+          'Master volume',
+          'Zone 2 volume',
+          'Zone 2 volume',
+          'Program',
+          'Program',
+          'Effect',
+          '6.1/ES key status',
+          'OSD',
+          'Sleep timer',
+          'Tuner page',
+          'Tuner number',
+          'Night mode',
+          'N/A',
+          'Speaker A',
+          'Speaker B',
+          'Playback',
+          'Sample rate',
+          'EX/ES playback',
+          'Thr / bypass',
+          'RED DTS',
+          'Headphones',
+          'Tuner band',
+          'Tuner tuned',
+          'DC1 control out',
+          'N/A',
+          'N/A',
+          'DC1 trigger control',
+          'DTS 96/24',
+        ]
+
+        STATUS_TAIL_FIELDS = [
+          'Checksum',
+          'Checksum',
+        ]
+
         MAIN_INPUTS_GET = {
           '0' => 'PHONO',
           '1' => 'CD',

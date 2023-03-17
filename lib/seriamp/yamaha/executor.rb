@@ -110,8 +110,9 @@ module Seriamp
           pp client.status
         when 'dev-status'
           status = client.status_string
+          fields = Client::STATUS_HEAD_FIELDS + Client::STATUS_FIELDS
           0.upto(status.length-1).each do |i|
-            puts "%3d  %s" % [i, status[i]]
+            puts "%3d  %s # %s" % [i, status[i], fields[i]]
           end
         when 'test'
           client.set_power(false)
