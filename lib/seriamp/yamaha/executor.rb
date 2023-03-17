@@ -147,13 +147,21 @@ module Seriamp
       end
 
       def build_fields(fields, model_name)
+        stop = false
         fields.map do |field|
-          if Array === field
-            if model_name.public_send(field[0], field[1])
-              field[2]
-            end
+          if stop
+            nil
           else
-            field
+            if Array === field
+              if model_name.public_send(field[0], field[1])
+                if field[2].nil?
+                  stop = true
+                end
+                field[2]
+              end
+            else
+              field
+            end
           end
         end.compact
       end
