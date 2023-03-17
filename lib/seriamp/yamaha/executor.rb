@@ -110,9 +110,24 @@ module Seriamp
           pp client.status
         when 'dev-status'
           status = client.status_string
-          fields = Client::STATUS_HEAD_FIELDS + Client::STATUS_FIELDS
-          0.upto(status.length-1).each do |i|
-            puts "%3d  %s # %s" % [i, status[i], fields[i]]
+          fields = Client::STATUS_HEAD_FIELDS
+          0.upto(fields.length-1).each do |i|
+            puts "%3d %3s # %s" % [i, status[i], fields[i]]
+          end
+          model_name = status[1..5]
+          payload_length = Integer(status[7..8], 16)
+          puts '---'
+          start = fields.length
+          fields = build_fields(Client::STATUS_FIELDS, model_name)
+          #require'byebug';byebug
+          0.upto(payload_length-1).each do |i|
+            puts "%3d %3s # DT%-2d %s" % [start+i, status[start+i], i, fields[i]]
+          end
+          puts '---'
+          start += payload_length
+          fields = Client::STATUS_TAIL_FIELDS
+          start.upto(status.length-1).each do |i|
+            puts "%3d %3s # %s" % [i, status[i], fields[i-start]]
           end
         when 'test'
           client.set_power(false)
@@ -129,6 +144,18 @@ module Seriamp
         else
           raise ArgumentError, "Unknown command: #{cmd}"
         end
+      end
+
+      def build_fields(fields, model_name)
+        fields.map do |field|
+          if Array === field
+            if model_name.public_send(field[0], field[1])
+              field[2]
+            end
+          else
+            field
+          end
+        end.compact
       end
     end
   end
