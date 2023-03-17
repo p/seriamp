@@ -297,6 +297,8 @@ module Seriamp
         # RX-V3067
       }.freeze
 
+      MODEL_IDS = MODEL_NAMES.invert.freeze
+
       PURE_DIRECT_FIELD = {
         'R0177' => 28,
         'R0178' => 126,
