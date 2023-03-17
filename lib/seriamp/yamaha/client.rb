@@ -35,6 +35,16 @@ module Seriamp
         true
       end
 
+      def status_string
+        with_lock do
+          with_retry do
+            with_device do
+              bare_dispatch(STATUS_REQ)
+            end
+          end
+        end
+      end
+
       def status
         with_lock do
           with_retry do
@@ -128,7 +138,7 @@ module Seriamp
 
       ZERO_ORD = '0'.ord
 
-      def dispatch(cmd)
+      def bare_dispatch(cmd)
         start = Utils.monotime
         with_device do
           @io.syswrite(cmd.encode('ascii'))
@@ -139,16 +149,19 @@ module Seriamp
         end
       end
 
+      def dispatch(cmd)
+        resp = bare_dispatch(cmd)
+        parse_response(resp)
+      end
+
       def read_response
-        resp = super.tap do |resp|
+        super.tap do |resp|
           if resp.count(ETX) > 1
             logger&.warn("Multiple responses received: #{resp}")
           end
 
           logger&.debug("Received response: #{resp}")
         end
-
-        parse_response(resp)
       end
 
       def complete_response?(chunk)
