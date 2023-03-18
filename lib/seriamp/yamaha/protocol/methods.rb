@@ -44,17 +44,10 @@ module Seriamp
 
         # Sets main zone volume.
         #
-        # @param [ Integer ] value The raw volume value.
-        def set_main_volume(value)
-          system_command("30#{'%02x' % value}")
-        end
-
-        # Sets main zone volume.
-        #
         # @param [ Float ] volume The volume in decibels.
         def set_main_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          set_main_volume(value)
+          system_command("30#{'%02x' % value}")
         end
 
         # Sets zone 2 volume.
