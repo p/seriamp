@@ -85,5 +85,35 @@ describe Seriamp::Yamaha::Client do
         }
       end
     end
+
+    describe '#set_zone2_volume' do
+      let(:rr) do
+        [
+          %W(\x022313b\x03 \x0200273B\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_zone2_volume(-70).should == {
+          control_type: :rs232c,
+          state: {zone2_volume: -70.0},
+        }
+      end
+    end
+
+    describe '#set_zone3_volume' do
+      let(:rr) do
+        [
+          %W(\x022343b\x03 \x0200A23B\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_zone3_volume(-70).should == {
+          control_type: :rs232c,
+          state: {zone2_volume: -70.0},
+        }
+      end
+    end
   end
 end
