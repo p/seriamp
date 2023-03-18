@@ -16,15 +16,6 @@ describe Seriamp::Sonamp::Client do
     tty_double
   end
 
-  def setup_requests_responses(device, rr)
-    rr.each do |req, *resps|
-      expect(device).to receive(:syswrite).with("#{req}\r")
-      resps.each do |resp|
-        expect(device).to receive(:read_nonblock).and_return("#{resp}\r")
-      end
-    end
-  end
-
   describe '#status' do
     before do
       SerialPort.should receive(:open).and_return(device)
@@ -71,7 +62,7 @@ describe Seriamp::Sonamp::Client do
     end
 
     it 'works' do
-      setup_requests_responses(device, rr)
+      setup_sonamp_requests_responses(device, rr)
       client.status.should == expected_status
     end
 
@@ -79,7 +70,7 @@ describe Seriamp::Sonamp::Client do
       let(:extra_client_options) { {thread_safe: true} }
 
       it 'works' do
-        setup_requests_responses(device, rr)
+        setup_sonamp_requests_responses(device, rr)
         client.status.should == expected_status
       end
     end

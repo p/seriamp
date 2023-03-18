@@ -17,6 +17,24 @@ module InstanceMethods
       allow(device).to receive(:close)
     end
   end
+
+  def setup_requests_responses(device, rr)
+    rr.each do |req, *resps|
+      expect(device).to receive(:syswrite).with(req)
+      resps.each do |resp|
+        expect(device).to receive(:read_nonblock).and_return(resp)
+      end
+    end
+  end
+
+  def setup_sonamp_requests_responses(device, rr)
+    rr.each do |req, *resps|
+      expect(device).to receive(:syswrite).with("#{req}\r")
+      resps.each do |resp|
+        expect(device).to receive(:read_nonblock).and_return("#{resp}\r")
+      end
+    end
+  end
 end
 
 RSpec.configure do |rspec|

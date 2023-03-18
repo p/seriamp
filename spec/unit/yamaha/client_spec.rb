@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'serialport'
 
 describe Seriamp::Yamaha::Client do
   describe '#initialize' do
@@ -53,6 +54,35 @@ describe Seriamp::Yamaha::Client do
       let(:value) { 'E8' }
       it 'decodes to 16.5' do
         subject.should be 16.5
+      end
+    end
+  end
+
+  describe 'control methods' do
+    let(:extra_client_options) { {} }
+    let(:client) { described_class.new(**{device: '/dev/bogus'}.update(extra_client_options)) }
+    let(:device) do
+      tty_double
+    end
+
+    before do
+      setup_requests_responses(device, rr)
+      SerialPort.should receive(:open).and_return(device)
+      allow(IO).to receive(:select)
+    end
+
+    describe '#set_main_volume' do
+      let(:rr) do
+        [
+          %W(\x022303b\x03 \x0200263B\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_main_volume(-70).should == {
+          control_type: :rs232c,
+          state: {main_volume: -70.0},
+        }
       end
     end
   end
