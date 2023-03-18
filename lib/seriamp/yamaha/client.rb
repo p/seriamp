@@ -237,6 +237,10 @@ module Seriamp
             }
           when '26'
             {main_volume: parse_half_db_volume(data)}
+          when '27'
+            {zone2_volume: parse_half_db_volume(data)}
+          when 'A2'
+            {zone3_volume: parse_half_db_volume(data)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil

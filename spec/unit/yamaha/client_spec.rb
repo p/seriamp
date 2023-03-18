@@ -111,7 +111,7 @@ describe Seriamp::Yamaha::Client do
       it 'works' do
         client.set_zone3_volume(-70).should == {
           control_type: :rs232c,
-          state: {zone2_volume: -70.0},
+          state: {zone3_volume: -70.0},
         }
       end
     end
