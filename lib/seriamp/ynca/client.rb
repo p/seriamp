@@ -64,6 +64,8 @@ module Seriamp
         dispatch("@#{subunit}:#{function}=#{value}").fetch(:value)
       end
 
+      public :dispatch
+
       private
 
       def write_command(cmd)

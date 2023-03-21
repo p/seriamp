@@ -8,6 +8,8 @@ module Seriamp
       def run_command(cmd, *args)
         cmd = cmd.gsub('_', '-')
         case cmd
+        when 'raw'
+          p client.dispatch(*args)
         when 'model-name'
           p client.model_name
         else
