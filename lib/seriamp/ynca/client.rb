@@ -13,6 +13,7 @@ module Seriamp
             with_device do
               {
                 main_power: main_power,
+                main_volume: main_volume,
               }
             end
           end
@@ -20,28 +21,30 @@ module Seriamp
       end
 
       [
-        [:main_power, 'MAIN', 'PWR'],
-        [:main_volume, 'MAIN', 'VOL'],
-      ].each do |meth, _subunit, _function|
-        subunit, function = _subunit, _function
+        [:model_name, 'SYS', 'MODELNAME', :string],
+        [:main_power, 'MAIN', 'PWR', :boolean],
+        [:main_volume, 'MAIN', 'VOL', :volume],
+      ].each do |meth, _subunit, _function, _serializer|
+        subunit, function, serializer = _subunit, _function, _serializer
 
         define_method(meth) do
-          query(subunit, function)
+          send("deserialize_#{serializer}", query(subunit, function))
         end
 
         define_method("set_#{meth}") do |value|
-          set(subunit, function, value)
+          send("deserialize_#{serializer}",
+            set(subunit, function, send("serialize_#{serializer}", value)))
         end
       end
 
       [
-        [:main_volume_up, 'MAIN', 'VOL', 'Up'],
-        [:main_volume_down, 'MAIN', 'VOL', 'Down'],
-      ].each do |meth, _subunit, _function, _value|
-        subunit, function, value = _subunit, _function, _value
+        [:main_volume_up, 'MAIN', 'VOL', 'Up', :volume],
+        [:main_volume_down, 'MAIN', 'VOL', 'Down', :volume],
+      ].each do |meth, _subunit, _function, _value, _serializer|
+        subunit, function, value, serializer = _subunit, _function, _value, _serializer
 
         define_method(meth) do
-          set(subunit, function, value)
+          send("deserialize_#{serializer}", set(subunit, function, value))
         end
       end
 
@@ -69,21 +72,41 @@ module Seriamp
 
       def parse_response(resp)
         if resp =~ /\A@(\w+):(\w+)=(.+)\r\n\z/
-          {subunit: $1, function: $2, value: parse_value($3)}
+          {subunit: $1, function: $2, value: $3}
         else
           raise NotImplementedError, "Response format unknown: #{resp}"
         end
       end
 
-      def parse_value(value)
+      def deserialize_string(value)
+        value
+      end
+
+      def serialize_string(value)
+        value
+      end
+
+      def serialize_boolean(value)
+        value ? 'On' : 'Off'
+      end
+
+      def deserialize_boolean(value)
         case value
         when 'On'
           true
         when 'Off'
           false
         else
-          value
+          raise NotImplementedError, "Unknown boolean value: #{value}"
         end
+      end
+
+      def serialize_volume(value)
+        '%.1f' % Float(value)
+      end
+
+      def deserialize_volume(value)
+        Float(value)
       end
     end
   end

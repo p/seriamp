@@ -35,6 +35,15 @@ module InstanceMethods
       end
     end
   end
+
+  def setup_ynca_requests_responses(device, rr)
+    rr.each do |req, *resps|
+      expect(device).to receive(:syswrite).with("#{req}\r\n")
+      resps.each do |resp|
+        expect(device).to receive(:read_nonblock).and_return("#{resp}\r\n")
+      end
+    end
+  end
 end
 
 RSpec.configure do |rspec|
