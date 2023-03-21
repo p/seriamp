@@ -305,3 +305,11 @@ receiver:
 For all zones on RX-V1500/RX-V2500, the volume
 is adjusted in 0.5 dB increments from -80 dB to 16.5 dB, giving the hex
 values the range of 0x27-0xE8.
+
+## YNCA Remote Codes
+
+I thought that the YNCA remote code feature (`@SYS:REMOTECODE=xxxxxxxx`)
+would permit sending what the Yamaha serial protocol calls "remote commands",
+but this appears to not be the case: the serial protocol remote commands are
+4 characters long and the remote codes expected by YNCA are 8 characters long.
+I have been unable to locate any codes that would work.
