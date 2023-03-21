@@ -1,0 +1,15 @@
+In addition to commands for RX-A850:
+
+@TUN:RDSPRGTYPE=?
+@TUN:RDSPRGSERVICE=?
+@TUN:RDSTXTA=?
+@TUN:RDSTXTB=?
+@TUN:RDSCLOCK=?
+
+I have also found that
+@USB:ELAPSEDTIME=?
+@NETRADIO:ELAPSEDTIME=?
+@AIRPLAY:ELAPSEDTIME=?
+
+do not work. The machine returns '@UNDEFINED'. So far I haven't found the
+alternative for these.
