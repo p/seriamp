@@ -78,7 +78,7 @@ Connection options:
 - USB-serial adapter (male) <-> null-modem male to female adapter <->
   receiver
 
-### Yamaha RX-V**00
+### Yamaha RX-V**00 - RS-232
 
 - 5-pin cable required (with RTS pin connected)
 - Null-modem cable required
@@ -123,6 +123,32 @@ Ethernet port. Over time Yamaha has been adding networking functionality
 to lower tier models, for example it is present in RX-V867, RX-V671 and RX-V475.
 
 Models lower than 1000 level receivers have never had RS-232C to my knowledge.
+
+### Yamaha YNCA
+
+This protocol is implemented by Yamaha receivers that have a network port.
+The following devices should be compatible:
+
+- Aventage receivers (RX-Axxx)
+- RX-V671, RX-V871, RX-V1071, RX-V2071, RX-V3071 and newer
+- RX-V2600, RX-V2700, RX-V3800, RX-V3900
+- RX-V500D
+- TSR-5790 (reportedly uses port 49154)
+- HTR-4065
+
+It is claimed that receivers that implement MusicCast do not support the
+YNCA protocol. I haven't owned any of these thus cannot confirm or deny.
+
+The YNCA protocol can be used over the serial port (RS-232) and over the
+network. The serial port is generally found on the higher end receiver
+models, while the network connectivity has been migrating to lower end
+models over the years. For example, RX-A700 has a serial port whereas
+RX-A710 and newer do not; RX-A800 and newer and the higher end models
+(1000/2000/3000) appear to offer the serial port. In the RX-V line, the
+serial port is generally present in 2000 and higher models, absent in
+models below 1000, and is present in some but not all of the 1000 models.
+
+The default port for the YNCA protocol is 50000.
 
 ### Denon AVR-2308CI
 
