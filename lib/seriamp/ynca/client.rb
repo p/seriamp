@@ -19,8 +19,46 @@ module Seriamp
         end
       end
 
-      def main_power
-        dispatch('@MAIN:PWR=?').fetch(:value)
+      [
+        [:main_power, 'MAIN', 'PWR'],
+        [:main_volume, 'MAIN', 'VOL'],
+      ].each do |meth, _subunit, _function|
+        subunit, function = _subunit, _function
+
+        define_method(meth) do
+          query(subunit, function)
+        end
+
+        define_method("set_#{meth}") do |value|
+          set(subunit, function, value)
+        end
+      end
+
+      [
+        [:main_volume_up, 'MAIN', 'VOL', 'Up'],
+        [:main_volume_down, 'MAIN', 'VOL', 'Down'],
+      ].each do |meth, _subunit, _function, _value|
+        subunit, function, value = _subunit, _function, _value
+
+        define_method(meth) do
+          set(subunit, function, value)
+        end
+      end
+
+      def remote_command(cmd)
+        with_lock do
+          with_retry do
+            dispatch("@SYS:REMOTECODE=#{cmd}")
+          end
+        end
+      end
+
+      def query(subunit, function)
+        set(subunit, function, '?')
+      end
+
+      def set(subunit, function, value)
+        dispatch("@#{subunit}:#{function}=#{value}").fetch(:value)
       end
 
       private
