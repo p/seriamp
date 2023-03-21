@@ -157,12 +157,16 @@ module Seriamp
       def bare_dispatch(cmd)
         start = Utils.monotime
         with_device do
-          @io.syswrite(cmd.encode('ascii'))
+          write_command(cmd)
           read_response
         end.tap do
           elapsed = Utils.monotime - start
           logger&.debug("Yamaha: dispatched #{cmd} in #{'%.2f' % elapsed} s")
         end
+      end
+
+      def write_command(cmd)
+        @io.syswrite(cmd.encode('ascii'))
       end
 
       def dispatch(cmd)
@@ -172,7 +176,7 @@ module Seriamp
 
       def read_response
         super.tap do |resp|
-          if resp.count(ETX) > 1
+          if resp.count(self.class.const_get(:ETX)) > 1
             logger&.warn("Multiple responses received: #{resp}")
           end
 
@@ -181,7 +185,7 @@ module Seriamp
       end
 
       def complete_response?(chunk)
-        chunk[-1] == ETX
+        chunk.end_with?(self.class.const_get(:ETX))
       end
 
       def parse_response(resp)

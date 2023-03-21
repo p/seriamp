@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+begin
+  require 'seriamp/cmd'
+rescue LoadError
+  $: << File.join(File.dirname(__FILE__), '../lib')
+  require 'seriamp/cmd'
+end
+
+require 'seriamp/ynca/executor'
+require 'seriamp/ynca/formatter'
+
+Seriamp::Cmd.new(module_name: 'ynca').run

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'seriamp/backend/serial_port'
+require 'seriamp/backend/tcp'
 require 'seriamp/backend/logging'
 
 module Seriamp
   module Backend
-    module LoggingSerialPortBackend
+    module LoggingTcpBackend
 
-      class Device < SerialPortBackend::Device
+      class Device < TcpBackend::Device
         include Backend::Logging
       end
     end
