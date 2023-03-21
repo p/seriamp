@@ -330,7 +330,12 @@ Serial port communication in Ruby:
 
 Yamaha YNCA protocol:
 
+- [Command list](https://www.remotecentral.com/cgi-bin/mboard/rs232-ip/thread.cgi?694)
+- [ynca](https://github.com/mvdwetering/ynca)
 - [yamaha_ynca](https://github.com/mvdwetering/yamaha_ynca)
+- [yncactl](https://github.com/jtagg82/yncactl)
+- [node-red-contrib-avr-yamaha](https://flows.nodered.org/node/node-red-contrib-avr-yamaha)
+- [mpd-ynca](https://github.com/chewi/mpd-ynca)
 
 Integra serial control:
 
