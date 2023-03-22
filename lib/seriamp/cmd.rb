@@ -42,7 +42,9 @@ module Seriamp
       require "seriamp/#{mod_name}"
       require "seriamp/#{mod_name}/executor"
 
-      @mod = Seriamp.const_get(mod_name.sub(/(.)/) { $1.upcase })
+      @mod = Seriamp.const_get(
+        mod_name.sub(/(.)/) { $1.upcase }.gsub(/_(.)/) { $1.upcase }
+      )
 
       @logger = Logger.new(STDERR)
       if url = options[:service_url]
