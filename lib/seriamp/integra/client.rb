@@ -51,65 +51,16 @@ module Seriamp
 
       EOT = ?\x1a
 
-      def open_device
-        if detect_device? && device.nil?
-          logger&.debug("Detecting device")
-          @device = Seriamp.detect_device(Integra, *glob, logger: logger, timeout: timeout)
-          if @device
-            logger&.info("Using #{device} as TTY device")
-          else
-            raise NoDevice, "No device specified and device could not be detected automatically"
-          end
-        end
-
-        logger&.debug("Opening #{device}")
-        @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
-
-        Utils.consume_data(@io, logger,
-          "Serial device readable after opening - unread previous response?")
-
-        begin
-          yield @io
-        ensure
-          @io.close rescue nil
-          @io = nil
-        end
-      end
-
-      def dispatch(cmd)
-        start = Utils.monotime
-        with_device do
-          @io.syswrite(cmd.encode('ascii'))
-          resp = read_response
-          unless resp =~ /\A!1.+\x1a\z/
-            raise "Malformed response: #{resp}"
-          end
-          resp[2...-1]
-        end.tap do
-          elapsed = Utils.monotime - start
-          logger&.debug("Integra: dispatched #{cmd} in #{'%.2f' % elapsed} s")
-        end
+      def complete_response?(chunk)
+        chunk.end_with?(EOT)
       end
 
       def read_response
-        resp = +''
-        deadline = Utils.monotime + timeout
-        loop do
-          begin
-            chunk = @io.read_nonblock(1000)
-            if chunk
-              resp += chunk
-              break if chunk[-1] == EOT
-            end
-          rescue IO::WaitReadable
-            budget = deadline - Utils.monotime
-            if budget < 0
-              raise CommunicationTimeout
-            end
-            IO.select([@io.io], nil, nil, budget)
-          end
+        resp = super
+        unless resp =~ /\A!1.+\x1a\z/
+          raise "Malformed response: #{resp}"
         end
-        resp
+        resp[2...-1]
       end
 
       def question(cmd)
