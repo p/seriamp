@@ -223,7 +223,7 @@ module Seriamp
                 end
               end
 
-              Utils.consume_data(@io.io, logger,
+              Utils.consume_data(@io, logger,
                 "Serial device readable after completely reading status response - concurrent access?")
 
               lines = resp.strip.split("\r")

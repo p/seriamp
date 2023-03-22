@@ -55,7 +55,7 @@ module Seriamp
               # TODO keep the device open the entire time if thread safety
               # (locking) is enabled.
               if @io
-                buf = Utils.consume_data(@io.io, logger,
+                buf = Utils.consume_data(@io, logger,
                   "Serial device readable after completely reading status response - concurrent access?")
                 report_unread_response(buf)
               end

@@ -65,7 +65,7 @@ module Seriamp
         logger&.debug("Opening #{device}")
         @io = Backend::SerialPortBackend::Device.new(device, logger: logger)
 
-        Utils.consume_data(@io.io, logger,
+        Utils.consume_data(@io, logger,
           "Serial device readable after opening - unread previous response?")
 
         begin

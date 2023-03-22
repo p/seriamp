@@ -140,7 +140,7 @@ module Seriamp
       modem_params = self.class.const_get(:MODEM_PARAMS)
       @io = device_cls.new(device, logger: logger, modem_params: modem_params)
 
-      buf = Utils.consume_data(@io.io, logger,
+      buf = Utils.consume_data(@io, logger,
         "Serial device readable after opening - unread previous response?")
       report_unread_response(buf)
 

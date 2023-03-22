@@ -25,15 +25,18 @@ module Seriamp
       Process.clock_gettime(Process::CLOCK_MONOTONIC)
     end
 
-    module_function def consume_data(io, logger, msg)
+    module_function def consume_data(bio, logger, msg, wait: nil)
       warned = false
       buf = +''
-      while IO.select([io], nil, nil, 0)
+      while IO.select([bio.io], nil, nil, 0)
         unless warned
           logger&.warn(msg)
           warned = true
         end
-        buf += io.read_nonblock(1024)
+        buf += bio.read_nonblock(1024)
+        if wait
+          sleep(wait)
+        end
       end
       if buf.empty?
         nil
