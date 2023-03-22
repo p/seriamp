@@ -163,6 +163,7 @@ module Seriamp
           elapsed = Utils.monotime - start
           logger&.debug("Yamaha: dispatched #{cmd} in #{'%.2f' % elapsed} s")
         end
+        read_buf
       end
 
       def write_command(cmd)
@@ -170,8 +171,8 @@ module Seriamp
       end
 
       def dispatch(cmd)
-        resp = bare_dispatch(cmd)
-        parse_response(resp)
+        bare_dispatch(cmd)
+        parse_response
       end
 
       def read_response
@@ -184,11 +185,12 @@ module Seriamp
         end
       end
 
-      def complete_response?(chunk)
-        chunk.end_with?(self.class.const_get(:ETX))
+      def response_complete?
+        read_buf.end_with?(self.class.const_get(:ETX))
       end
 
-      def parse_response(resp)
+      def parse_response
+        resp = read_buf
         case first_byte = resp[0]
         when STX
           parse_stx_response(resp)

@@ -72,7 +72,8 @@ module Seriamp
         @io.syswrite(cmd.encode('ascii') + ETX)
       end
 
-      def parse_response(resp)
+      def parse_response
+        resp = read_buf
         if resp =~ /\A@(\w+):(\w+)=(.+)\r\n\z/
           {subunit: $1, function: $2, value: $3}
         else

@@ -11,6 +11,13 @@ module Seriamp
 
     class Client < Seriamp::Client
 
+      MODEM_PARAMS = {
+        baud: 9600,
+        data_bits: 8,
+        stop_bits: 1,
+        parity: 0, # SerialPort::NONE
+      }.freeze
+
       # When DTR-50.4 is in standby, it takes 1.55 seconds in my environment
       # to turn the power on.
       DEFAULT_RS232_TIMEOUT = 2
@@ -51,8 +58,8 @@ module Seriamp
 
       EOT = ?\x1a
 
-      def complete_response?(chunk)
-        chunk.end_with?(EOT)
+      def response_complete?
+        read_buf.end_with?(EOT)
       end
 
       def read_response

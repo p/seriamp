@@ -140,9 +140,9 @@ module Seriamp
       modem_params = self.class.const_get(:MODEM_PARAMS)
       @io = device_cls.new(device, logger: logger, modem_params: modem_params)
 
-      buf = Utils.consume_data(@io, logger,
+      @read_buf = Utils.consume_data(@io, logger,
         "Serial device readable after opening - unread previous response?")
-      report_unread_response(buf)
+      report_unread_responses
 
       begin
         yield @io
@@ -165,15 +165,30 @@ module Seriamp
       end
     end
 
+    def report_unread_responses
+      loop do
+        break if read_buf.empty?
+
+        resp = parse_response
+
+        logger&.warn("Unread response: #{resp}")
+      end
+    end
+
+    def parse_one_response
+    end
+
+    attr_reader :read_buf
+
     def read_response
-      resp = +''
+      @read_buf = +''
       deadline = [Utils.monotime + timeout, @next_earliest_deadline].max
       loop do
         begin
           chunk = @io.read_nonblock(1000)
           if chunk
-            resp += chunk
-            break if complete_response?(chunk)
+            @read_buf += chunk
+            break if response_complete?
           end
         rescue IO::WaitReadable
           budget = deadline - Utils.monotime
@@ -183,7 +198,7 @@ module Seriamp
           IO.select([@io.io], nil, nil, budget)
         end
       end
-      resp
+      parse_response
     end
 
     def with_retry

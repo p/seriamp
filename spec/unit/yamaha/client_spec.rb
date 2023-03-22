@@ -12,11 +12,12 @@ describe Seriamp::Yamaha::Client do
 
   describe '#parse_response' do
     let(:client) { described_class.new }
-    let(:parsed) { client.send(:parse_response, response) }
+    let(:parsed) { client.send(:parse_response) }
 
     context 'power on' do
       let(:response) { "\u0002002002\u0003" }
       it 'parses' do
+        client.should receive(:read_buf).and_return(response)
         parsed.should == {
           control_type: :rs232c,
           state: {main_power: true, zone2_power: false, zone3_power: false},
