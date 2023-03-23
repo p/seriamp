@@ -165,7 +165,7 @@ module Seriamp
 
     def dispatch_and_parse(cmd)
       dispatch(cmd)
-      parse_command_response
+      get_command_response
     end
 
     def dispatch(cmd)
@@ -214,7 +214,7 @@ module Seriamp
       end
     end
 
-    def parse_command_response
+    def get_command_response
       # TODO identify which are command responses and which are
       # status updates, handle accordingly.
       resp = extract_one_response!
@@ -227,7 +227,11 @@ module Seriamp
 
         resp = extract_one_response!
       end
-      resp
+      parse_response(resp)
+    end
+
+    def parse_response(resp)
+      raise NotImplementedError, 'Override in a subclass'
     end
 
     def reset_read_buf

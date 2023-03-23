@@ -166,8 +166,7 @@ module Seriamp
         extract_delimited_response(self.class.const_get(:ETX))
       end
 
-      def parse_response
-        resp = read_buf
+      def parse_response(resp)
         case first_byte = resp[0]
         when STX
           parse_stx_response(resp)
