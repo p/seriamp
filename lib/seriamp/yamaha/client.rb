@@ -163,7 +163,7 @@ module Seriamp
       end
 
       def extract_one_response
-        extract_delimited_response(ETX)
+        extract_delimited_response(self.class.const_get(:ETX))
       end
 
       def parse_response
