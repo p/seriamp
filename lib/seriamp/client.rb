@@ -5,6 +5,15 @@ require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/recursive_mutex'
 
+# I/O flow:
+# dispatch: writes bytes to the device
+# -> read_response: reads at least one complete response, may read
+#      multiple responses; the responses are stored in @read_buf
+# -> parse_one_response: parses responses in the read buffer, identifies
+#      command responses, returns the most recent command response.
+#      Warns if more than one response is in the read buffer.
+#      (Processing of server-pushed status updates is not implemented yet.)
+
 module Seriamp
 
   class Client
@@ -154,6 +163,11 @@ module Seriamp
       end
     end
 
+    def dispatch_and_parse(cmd)
+      dispatch(cmd)
+      parse_command_response
+    end
+
     def dispatch(cmd)
       start = Utils.monotime
       with_device do
@@ -175,13 +189,53 @@ module Seriamp
       end
     end
 
-    def parse_one_response
+    def extract_one_response
+      raise NotImplementedError, 'Override in a subclass'
+    end
+
+    def extract_one_response!
+      extract_one_response.tap do |resp|
+        if resp.empty?
+          raise "Empty response is unacceptable"
+        end
+        read_buf.replace(read_buf[resp.length..])
+      end
+    end
+
+    def extract_delimited_response(delimiter)
+      index = read_buf.index(delimiter)
+      if index
+        read_buf[0..index]
+      else
+        raise "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
+      end
+    end
+
+    def parse_command_response
+      # TODO identify which are command responses and which are
+      # status updates, handle accordingly.
+      resp = extract_one_response!
+      loop do
+        if read_buf.empty?
+          break
+        end
+
+        logger&.warn("Spurious response: #{resp}")
+
+        resp = extract_one_response!
+      end
+      resp
+    end
+
+    def reset_read_buf
+      @read_buf = +''
     end
 
     attr_reader :read_buf
 
+    # Reads at least one complete response into the read buffer.
     def read_response
-      @read_buf = +''
+      reset_read_buf
       deadline = [Utils.monotime + timeout, @next_earliest_deadline].max
       loop do
         begin
@@ -198,7 +252,7 @@ module Seriamp
           IO.select([@io.io], nil, nil, budget)
         end
       end
-      parse_response
+      nil
     end
 
     def with_retry

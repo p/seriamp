@@ -39,7 +39,7 @@ module Seriamp
         with_lock do
           with_retry do
             with_device do
-              bare_dispatch(STATUS_REQ)
+              dispatch(STATUS_REQ)
             end
           end
         end
@@ -50,7 +50,7 @@ module Seriamp
           with_retry do
             with_device do
               resp = nil
-              status = dispatch(STATUS_REQ)
+              status = dispatch_and_parse(STATUS_REQ)
               # Device could have been closed by now.
               # TODO keep the device open the entire time if thread safety
               # (locking) is enabled.
@@ -126,7 +126,7 @@ module Seriamp
       def remote_command(cmd)
         with_lock do
           with_retry do
-            dispatch("#{STX}0#{cmd}#{ETX}")
+            dispatch_and_parse("#{STX}0#{cmd}#{ETX}")
           end
         end
       end
@@ -134,7 +134,7 @@ module Seriamp
       def system_command(cmd)
         with_lock do
           with_retry do
-            dispatch("#{STX}2#{cmd}#{ETX}")
+            dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
           end
         end
       end
@@ -154,39 +154,16 @@ module Seriamp
 
       ZERO_ORD = '0'.ord
 
-      def bare_dispatch(cmd)
-        start = Utils.monotime
-        with_device do
-          write_command(cmd)
-          read_response
-        end.tap do
-          elapsed = Utils.monotime - start
-          logger&.debug("Yamaha: dispatched #{cmd} in #{'%.2f' % elapsed} s")
-        end
-        read_buf
-      end
-
       def write_command(cmd)
         @io.syswrite(cmd.encode('ascii'))
       end
 
-      def dispatch(cmd)
-        bare_dispatch(cmd)
-        parse_response
-      end
-
-      def read_response
-        super.tap do |resp|
-          if resp.count(self.class.const_get(:ETX)) > 1
-            logger&.warn("Multiple responses received: #{resp}")
-          end
-
-          logger&.debug("Received response: #{resp}")
-        end
-      end
-
       def response_complete?
         read_buf.end_with?(self.class.const_get(:ETX))
+      end
+
+      def extract_one_response
+        extract_delimited_response(ETX)
       end
 
       def parse_response

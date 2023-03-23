@@ -51,7 +51,7 @@ module Seriamp
       def remote_command(cmd)
         with_lock do
           with_retry do
-            dispatch("@SYS:REMOTECODE=#{cmd}")
+            dispatch("@SYS:REMOTECODE=#{cmd}#{ETX}")
           end
         end
       end
@@ -61,7 +61,7 @@ module Seriamp
       end
 
       def set(subunit, function, value)
-        dispatch("@#{subunit}:#{function}=#{value}").fetch(:value)
+        dispatch_and_parse("@#{subunit}:#{function}=#{value}#{ETX}").fetch(:value)
       end
 
       public :dispatch

@@ -62,8 +62,15 @@ module Seriamp
         read_buf.end_with?(EOT)
       end
 
-      def read_response
-        resp = super
+      def extract_one_response
+        if read_buf =~ /\A(.*\x1a)/
+          $1
+        else
+          raise "Could not find a valid response in the read buffer: #{read_buf}"
+        end
+      end
+
+      def parse_command_response(resp)
         unless resp =~ /\A!1.+\x1a\z/
           raise "Malformed response: #{resp}"
         end
