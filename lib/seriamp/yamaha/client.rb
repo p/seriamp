@@ -284,7 +284,8 @@ module Seriamp
         'R0132' => 'RX-V2300',
         'R0133' => 'RX-V3300',
         'R0161' => 'RX-V2400',
-        'R0177' => 'RX-V1500',
+        # RX-V1500 and HTR-5890 both identify themselves as R0177
+        'R0177' => 'RX-V1500/HTR-5890',
         'R0178' => 'RX-V2500',
         # RX-V1600
         # RX-V2600
