@@ -28,30 +28,64 @@ module Seriamp
           client.set_zone_power(3, false)
           client.set_zone_power(4, false)
         when 'power'
-          zone = Integer(args.shift)
+          zones = parse_zone(args.shift)
           state = Utils.parse_on_off(args.shift)
-          client.set_zone_power(zone, state)
+          zones.each do |zone|
+            client.set_zone_power(zone, state)
+          end
         when 'zvol'
-          zone = Integer(args.shift)
+          zones = parse_zone(args.shift)
           volume = Integer(args.shift)
-          client.set_zone_volume(zone, volume)
+          zones.each do |zone|
+            client.set_zone_volume(zone, volume)
+          end
         when 'cvol'
-          channel = Integer(args.shift)
+          channels = parse_channel(args.shift)
           volume = Integer(args.shift)
-          client.set_channel_volume(channel, volume)
+          channels.each do |channel|
+            client.set_channel_volume(channel, volume)
+          end
         when 'zmute'
-          zone = Integer(args.shift)
+          zones = parse_zone(args.shift)
           mute = Utils.parse_on_off(args.shift)
-          client.set_zone_mute(zone, mute)
+          zones.each do |zone|
+            client.set_zone_mute(zone, mute)
+          end
         when 'cmute'
-          channel = Integer(args.shift)
+          channels = parse_channel(args.shift)
           mute = Utils.parse_on_off(args.shift)
-          client.set_channel_mute(channel, mute)
+          channels.each do |channel|
+            client.set_channel_mute(channel, mute)
+          end
         when 'status'
           client.status
         else
           raise ArgumentError, "Unknown command: #{cmd}"
         end
+      end
+
+      private
+
+      def parse_zone(str)
+        parse_integer(str, 'zone', 4)
+      end
+
+      def parse_channel(str)
+        parse_integer(str, 'channel', 8)
+      end
+
+      def parse_integer(str, what, max)
+        str.downcase.split(',').map do |value|
+          if %w(. * all).include?(value)
+            1.upto(max).to_a
+          else
+            Integer(value).tap do |v|
+              if v < 1 || v > max
+                raise ArgumentError, "Invalid #{what}: #{v}"
+              end
+            end
+          end
+        end.flatten.uniq
       end
     end
   end
