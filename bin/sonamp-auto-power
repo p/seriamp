@@ -11,7 +11,7 @@ require 'logger'
 
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: sonamp-auto-power [-l log-path] [-D]"
+  opts.banner = "Usage: sonamp-auto-power options"
 
   opts.on("--daemonize", "-D", "Daemonize") do
     options[:daemonize] = true
