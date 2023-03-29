@@ -44,7 +44,7 @@ module Seriamp
         render_json(client.get_zone_power)
       end
 
-      get '/auto-trigger-input' do
+      get '/auto_trigger_input' do
         render_json(client.get_auto_trigger_input)
       end
 
