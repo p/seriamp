@@ -64,7 +64,7 @@ module Seriamp
         # A multi-zone installation however would likely need different
         # rules for how to turn the amplifier on (perhaps, for example,
         # based on simply auto trigger input for each zone).
-        sonamp_client.get_auto_trigger_input.any? { |v| v == true }
+        sonamp_client.get_json('auto_trigger_input').values.any? { |v| v == true }
       end
 
       private
@@ -112,6 +112,8 @@ module Seriamp
           prev_sonamp_on = prev_sonamp_power.values.any? { |v| v == true }
         end
 
+        wait_for_next_iteration(5)
+
         loop do
           sonamp_power = nil
           sonamp_on = nil
@@ -143,7 +145,7 @@ module Seriamp
           end
 
           delta = (@alive_through - Utils.monotime).to_i
-          if delta < 0 && sonamp_on
+          if delta <= 0 && sonamp_on
             logger&.info("Turning amplifier off")
             handle_exceptions do
               sonamp_client.post!('off')
@@ -152,7 +154,7 @@ module Seriamp
             puts "TTL: #{delta / 60}:#{'%02d' % (delta % 60)}"
           end
 
-          sleep 20
+          wait_for_next_iteration(20)
         end
       end
 
@@ -160,6 +162,10 @@ module Seriamp
 
       attr_reader :stored_sonamp_power
       attr_reader :detector
+
+      def wait_for_next_iteration(delay)
+        sleep delay
+      end
 
       def handle_exceptions
         yield
