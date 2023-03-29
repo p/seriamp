@@ -5,6 +5,33 @@ require 'seriamp/utils'
 
 module Seriamp
   module Sonamp
+    class ReceiverDetector
+      def initialize(**options)
+        @options = options.dup.freeze
+      end
+
+      def on?
+        case resp = yamaha_client.get!('power')
+          when 'true'
+            true
+          when 'false'
+            false
+          else
+            raise "Unknown yamaha power response: #{resp}"
+          end
+      end
+
+      def yamaha_client
+        @yamaha_client ||= FaradayFacade.new(
+          url: options.fetch(:yamaha_url),
+          timeout: options[:yamaha_timeout] || 5,
+        )
+      end
+    end
+
+    class SonampDetector
+    end
+
     class AutoPower
       def initialize(**opts)
         @options = opts.dup.freeze
@@ -15,6 +42,8 @@ module Seriamp
         unless options[:yamaha_url]
           raise ArgumentError, 'Yamaha URL is required'
         end
+
+        @detector = ReceiverDetector.new(**opts)
       end
 
       attr_reader :options
@@ -24,15 +53,7 @@ module Seriamp
       end
 
       def run
-        if (state_path = options[:state_path]) && File.exist?(state_path)
-          begin
-            @stored_sonamp_power = File.open(state_path) do |f|
-              JSON.load(f)
-            end
-          rescue JSON::ParserError => exc
-            logger&.warn("Failed to load state: #{exc.class}: #{exc}")
-          end
-        end
+        load_sonamp_power
 
         bump('application start')
 
@@ -60,16 +81,8 @@ module Seriamp
 
           # If we cannot query the receiver, assume it is on to prevent unintended
           # turn-offs.
-          receiver_power = nil
-          handle_exceptions do
-            receiver_power = case resp = yamaha_client.get!('power')
-              when 'true'
-                true
-              when 'false'
-                false
-              else
-                raise "Unknown yamaha power response: #{resp}"
-              end
+          receiver_power = handle_exceptions do
+            detector.on?
           end
           case receiver_power
           when true
@@ -99,6 +112,7 @@ module Seriamp
       private
 
       attr_reader :stored_sonamp_power
+      attr_reader :detector
 
       def handle_exceptions
         yield
@@ -106,6 +120,7 @@ module Seriamp
         raise
       rescue => exc
         logger&.warn("Unhandled exception: #{exc.class}: #{exc}")
+        nil
       end
 
       def bump(reason)
@@ -122,16 +137,21 @@ module Seriamp
         )
       end
 
-      def yamaha_client
-        @yamaha_client ||= FaradayFacade.new(
-          url: options.fetch(:yamaha_url),
-          timeout: options[:yamaha_timeout] || 5,
-        )
-      end
-
       def ttl
         @ttl ||= begin
           options[:ttl] || 0
+        end
+      end
+
+      def load_sonamp_power
+        if (state_path = options[:state_path]) && File.exist?(state_path)
+          begin
+            @stored_sonamp_power = File.open(state_path) do |f|
+              JSON.load(f)
+            end
+          rescue JSON::ParserError => exc
+            logger&.warn("Failed to load state: #{exc.class}: #{exc}")
+          end
         end
       end
 
