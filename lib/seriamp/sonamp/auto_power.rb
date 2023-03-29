@@ -5,6 +5,10 @@ require 'seriamp/utils'
 
 module Seriamp
   module Sonamp
+    # Queries receiver for power status.
+    #
+    # Requires giving the auto power daemon the receiver daemon address,
+    # and requires the receiver daemon to be running.
     class ReceiverDetector
       def initialize(**options)
         @options = options.dup.freeze
@@ -29,6 +33,14 @@ module Seriamp
       end
     end
 
+    # Determines receiver power status by inspecting signal sensing
+    # state of the amplifier. Essentially this mirrors how the amplifier
+    # itself handles the automatic power management.
+    #
+    # This may not work when amplifier is set to high gain and input
+    # signal level is low - the amplifier may not consider the input
+    # signal to be above threshold. You can use the receiver detector
+    # in this case.
     class SonampDetector
     end
 
