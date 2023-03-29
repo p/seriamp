@@ -79,19 +79,18 @@ module Seriamp
         unless options[:sonamp_url]
           raise ArgumentError, 'Sonamp URL is required'
         end
-        unless options[:yamaha_url]
-          raise ArgumentError, 'Yamaha URL is required'
-        end
 
         @detector = case opts[:detector]
           when :yamaha
+            unless options[:yamaha_url]
+              raise ArgumentError, 'Yamaha URL is required'
+            end
             YamahaDetector.new(**opts)
           when nil, :sonamp
             SonampDetector.new(sonamp_client: sonamp_client)
           else
             raise "Invalid detector option: #{opts[:detector]}"
           end
-        end
       end
 
       attr_reader :options
