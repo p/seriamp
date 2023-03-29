@@ -155,4 +155,19 @@ describe Seriamp::Sonamp::App do
       JSON.parse(last_response.body).should == {'1' => true, '2' => true, '3' => false, '4' => false}
     end
   end
+
+  describe 'get /auto-trigger-input' do
+    let(:input_state) do
+      {1 => true, 2 => true, 3 => false, 4 => false}
+    end
+
+    it 'works' do
+      client.should receive(:get_auto_trigger_input).and_return(input_state)
+
+      get '/auto-trigger-input'
+
+      last_response.status.should == 200
+      JSON.parse(last_response.body).should == {'1' => true, '2' => true, '3' => false, '4' => false}
+    end
+  end
 end

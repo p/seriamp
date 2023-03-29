@@ -25,4 +25,28 @@ describe 'Sonamp integration' do
       end
     end
   end
+
+  shared_examples 'zone boolean-valued command' do
+    it 'works' do
+      result.should be_a(Hash)
+      result.length.should == 4
+      result.keys.should == [1, 2, 3, 4]
+      result.values.each do |v|
+        [true, false].should include(v)
+      end
+      result.values.all? { |v| v == true || v == false }.should be true
+    end
+  end
+
+  describe 'zone power' do
+    let(:result) { client.get_zone_power }
+
+    include_examples 'zone boolean-valued command'
+  end
+
+  describe 'auto trigger input' do
+    let(:result) { client.get_auto_trigger_input }
+
+    include_examples 'zone boolean-valued command'
+  end
 end
