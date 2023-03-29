@@ -9,9 +9,9 @@ module Seriamp
     #
     # Requires giving the auto power daemon the receiver daemon address,
     # and requires the receiver daemon to be running.
-    class ReceiverDetector
-      def initialize(**options)
-        @options = options.dup.freeze
+    class YamahaDetector
+      def initialize(**opts)
+        @options = opts.dup.freeze
       end
 
       def on?
@@ -24,6 +24,8 @@ module Seriamp
             raise "Unknown yamaha power response: #{resp}"
           end
       end
+
+      private
 
       def yamaha_client
         @yamaha_client ||= FaradayFacade.new(
@@ -42,6 +44,32 @@ module Seriamp
     # signal to be above threshold. You can use the receiver detector
     # in this case.
     class SonampDetector
+      def initialize(**opts)
+        @options = opts.dup.freeze
+
+        # The daemon needs the sonamp client anyway to turn the power
+        # on and off, thus require the client to be passed to this
+        # detector.
+        @sonamp_client = opts.fetch(:sonamp_client)
+      end
+
+      def on?
+        # There isn't an "all" auto trigger input return - sonamp
+        # only returns per-zone auto triggers.
+        # If any of the zones have audio signal, consider the amplifier
+        # to be receiving audio from the receiver.
+        # This seems like reasonable behavior when the amplifier is
+        # connected to a single receiver outputting one zone of audio,
+        # but perhaps wouldn't work well in a multi-zone installation.
+        # A multi-zone installation however would likely need different
+        # rules for how to turn the amplifier on (perhaps, for example,
+        # based on simply auto trigger input for each zone).
+        sonamp_client.get_auto_trigger_input.any? { |v| v == true }
+      end
+
+      private
+
+      attr_reader :sonamp_client
     end
 
     class AutoPower
@@ -55,7 +83,15 @@ module Seriamp
           raise ArgumentError, 'Yamaha URL is required'
         end
 
-        @detector = ReceiverDetector.new(**opts)
+        @detector = case opts[:detector]
+          when :yamaha
+            YamahaDetector.new(**opts)
+          when nil, :sonamp
+            SonampDetector.new(sonamp_client: sonamp_client)
+          else
+            raise "Invalid detector option: #{opts[:detector]}"
+          end
+        end
       end
 
       attr_reader :options
