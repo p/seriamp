@@ -196,7 +196,7 @@ module Seriamp
             @stored_sonamp_power = File.open(state_path) do |f|
               JSON.load(f)
             end
-          rescue JSON::ParserError => exc
+          rescue IOError, SystemCallError, JSON::ParserError => exc
             logger&.warn("Failed to load state: #{exc.class}: #{exc}")
           end
         end
