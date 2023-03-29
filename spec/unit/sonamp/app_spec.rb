@@ -140,4 +140,19 @@ describe Seriamp::Sonamp::App do
       last_response.body.should == ''
     end
   end
+
+  describe 'get /power' do
+    let(:power_state) do
+      {1 => true, 2 => true, 3 => false, 4 => false}
+    end
+
+    it 'works' do
+      client.should receive(:get_zone_power).and_return(power_state)
+
+      get '/power'
+
+      last_response.status.should == 200
+      JSON.parse(last_response.body).should == {'1' => true, '2' => true, '3' => false, '4' => false}
+    end
+  end
 end
