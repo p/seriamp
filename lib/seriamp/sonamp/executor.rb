@@ -33,30 +33,35 @@ module Seriamp
           zones.each do |zone|
             client.set_zone_power(zone, state)
           end
+          nil
         when 'zvol'
           zones = parse_zone(args.shift)
           volume = Integer(args.shift)
           zones.each do |zone|
             client.set_zone_volume(zone, volume)
           end
+          nil
         when 'cvol'
           channels = parse_channel(args.shift)
           volume = Integer(args.shift)
           channels.each do |channel|
             client.set_channel_volume(channel, volume)
           end
+          nil
         when 'zmute'
           zones = parse_zone(args.shift)
           mute = Utils.parse_on_off(args.shift)
           zones.each do |zone|
             client.set_zone_mute(zone, mute)
           end
+          nil
         when 'cmute'
           channels = parse_channel(args.shift)
           mute = Utils.parse_on_off(args.shift)
           channels.each do |channel|
             client.set_channel_mute(channel, mute)
           end
+          nil
         when 'status'
           client.status
         else

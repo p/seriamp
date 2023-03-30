@@ -18,6 +18,16 @@ describe Seriamp::Sonamp::Executor do
     end
   end
 
+  describe 'off' do
+    it 'works' do
+      client.should receive(:set_zone_power).with(1, false)
+      client.should receive(:set_zone_power).with(2, false)
+      client.should receive(:set_zone_power).with(3, false)
+      client.should receive(:set_zone_power).with(4, false)
+      executor.run_command('off').should be nil
+    end
+  end
+
   describe 'zvol' do
     it 'works' do
       client.should receive(:set_zone_volume).with(2, 50)
