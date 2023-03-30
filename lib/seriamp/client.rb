@@ -170,12 +170,19 @@ module Seriamp
 
     def dispatch(cmd)
       start = Utils.monotime
-      with_device do
-        @io.syswrite(cmd.encode('ascii'))
-        read_response
-      end.tap do
+      sanitized_cmd = cmd.gsub(/[\r\n]/, ' ').strip
+      begin
+        with_device do
+          @io.syswrite(cmd.encode('ascii'))
+          read_response
+        end.tap do
+          elapsed = Utils.monotime - start
+          logger&.debug("#{self.class.name}: #{sanitized_cmd} succeeded in #{'%.2f' % elapsed} s")
+        end
+      rescue => e
         elapsed = Utils.monotime - start
-        logger&.debug("#{self.class.name}: dispatched #{cmd} in #{'%.2f' % elapsed} s")
+        logger&.debug("#{self.class.name}: #{sanitized_cmd} failed after #{'%.2f' % elapsed} s: #{e.class}: #{e}")
+        raise
       end
     end
 
@@ -183,7 +190,8 @@ module Seriamp
       loop do
         break if read_buf.empty?
 
-        resp = parse_response
+        resp = extract_one_response!
+        resp = parse_response(resp)
 
         logger&.warn("Unread response: #{resp}")
       end
@@ -243,7 +251,8 @@ module Seriamp
     # Reads at least one complete response into the read buffer.
     def read_response
       reset_read_buf
-      deadline = [Utils.monotime + timeout, @next_earliest_deadline].max
+      started = Utils.monotime
+      deadline = [started + timeout, @next_earliest_deadline].max
       loop do
         begin
           chunk = @io.read_nonblock(1000)
@@ -254,7 +263,7 @@ module Seriamp
         rescue IO::WaitReadable
           budget = deadline - Utils.monotime
           if budget < 0
-            raise CommunicationTimeout
+            raise CommunicationTimeout, "Timeout waiting for a response from receiver (waited #{'%.1f' % (Utils.monotime - started)} seconds)"
           end
           IO.select([@io.io], nil, nil, budget)
         end

@@ -49,7 +49,7 @@ module Seriamp
       end
 
       def command(cmd)
-        dispatch("!1#{cmd}\r")
+        dispatch_and_parse("!1#{cmd}\r")
       end
 
       private
@@ -70,7 +70,7 @@ module Seriamp
         end
       end
 
-      def parse_command_response(resp)
+      def parse_response(resp)
         unless resp =~ /\A!1.+\x1a\z/
           raise "Malformed response: #{resp}"
         end
@@ -78,7 +78,7 @@ module Seriamp
       end
 
       def question(cmd)
-        resp = dispatch("!1#{cmd}QSTN\r")
+        resp = dispatch_and_parse("!1#{cmd}QSTN\r")
         if resp.start_with?(cmd)
           resp[cmd.length...]
         else
