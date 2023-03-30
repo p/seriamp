@@ -35,6 +35,13 @@ describe Seriamp::Sonamp::Executor do
     end
   end
 
+  describe 'cvol' do
+    it 'works' do
+      client.should receive(:set_channel_volume).with(2, 50)
+      executor.run_command('cvol', *%w(2 50)).should be nil
+    end
+  end
+
   describe 'zmute' do
     it 'works' do
       client.should receive(:set_zone_mute).with(1, true)
