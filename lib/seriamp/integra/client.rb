@@ -51,9 +51,15 @@ module Seriamp
       end
 
       def command(cmd)
-        dispatch_and_parse("!1#{cmd}\r").tap do |resp|
-          if resp.response[0..2] != cmd[0..2]
-            #raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
+        with_lock do
+          with_retry do
+            with_device do
+              dispatch_and_parse("!1#{cmd}\r", cmd[0..2]).tap do |resp|
+                if resp.response[0..2] != cmd[0..2]
+                  #raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
+                end
+              end
+            end
           end
         end
       end
@@ -64,6 +70,28 @@ module Seriamp
 
       EOT = ?\x1a
 
+      def dispatch_and_parse(cmd, expected_resp_cmd)
+        if expected_resp_cmd.length != 3
+          raise ArgumentError, "Command should be 3 characters: #{expected_resp_cmd}"
+        end
+
+        dispatch(cmd)
+
+        loop do
+          if read_buf.empty?
+            read_response
+          end
+
+          resp = extract_one_response!
+          resp = parse_response(resp)
+          if resp.command == expected_resp_cmd
+            return resp
+          else
+            logger&.warn("Spurious response: #{resp}")
+          end
+        end
+      end
+
       def response_complete?
         read_buf.end_with?(EOT)
       end
@@ -72,7 +100,7 @@ module Seriamp
         if read_buf =~ /\A(.+?\x1a)/
           $1
         else
-          raise "Could not find a valid response in the read buffer: #{read_buf}"
+          raise UnexpectedResponse, "Could not find a valid response in the read buffer: #{read_buf}"
         end
       end
 
@@ -92,11 +120,17 @@ module Seriamp
       end
 
       def question(cmd)
-        resp = dispatch_and_parse("!1#{cmd}QSTN\r")
-        if resp.command == cmd
-          RESPONSE_VALUES.fetch(cmd).fetch(resp.value)
-        else
-          raise UnexpectedResponse, "Bad response #{resp} for #{cmd}"
+        with_lock do
+          with_retry do
+            with_device do
+              resp = dispatch_and_parse("!1#{cmd}QSTN\r", cmd[0..2])
+              if resp.command == cmd
+                RESPONSE_VALUES.fetch(cmd).fetch(resp.value)
+              else
+                raise UnexpectedResponse, "Bad response #{resp} for #{cmd}"
+              end
+            end
+          end
         end
       end
 
