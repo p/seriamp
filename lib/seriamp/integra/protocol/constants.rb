@@ -23,11 +23,11 @@ module Seriamp
         VOLUME_1DB_STEP.freeze
 
         RESPONSE_VALUES = {
-          'PWR' => BOOLEAN_QUESTION,
-          'ZPW' => BOOLEAN_QUESTION,
-          'PW3' => BOOLEAN_QUESTION,
-          'PW4' => BOOLEAN_QUESTION,
-          'MVL' => VOLUME_1DB_STEP,
+          'PWR' => [:power, BOOLEAN_QUESTION],
+          'ZPW' => [:zone2_power, BOOLEAN_QUESTION],
+          'PW3' => [:zone3_power, BOOLEAN_QUESTION],
+          'PW4' => [:zone3_power, BOOLEAN_QUESTION],
+          'MVL' => [:main_volume, VOLUME_1DB_STEP],
         }.freeze
 
       end

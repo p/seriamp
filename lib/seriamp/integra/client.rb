@@ -4,12 +4,11 @@ require 'timeout'
 require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/integra/protocol/methods'
+require 'seriamp/integra/command_response'
 require 'seriamp/client'
 
 module Seriamp
   module Integra
-
-    CommandResponse = Struct.new(:response, :command, :value)
 
     class Client < Seriamp::Client
 
@@ -84,7 +83,7 @@ module Seriamp
 
           resp = extract_one_response!
           resp = parse_response(resp)
-          if resp.command == expected_resp_cmd
+          if resp.raw_setting == expected_resp_cmd
             return resp
           else
             logger&.warn("Spurious response: #{resp}")
@@ -113,7 +112,10 @@ module Seriamp
           raise NotApplicable, "Command is not supported by the receiver or cannot be executed given the receiver's present state"
         end
         if resp =~ /\A([A-Z0-9]{3})([0-9A-F]{2})\z/
-          CommandResponse.new(resp, $1, $2)
+          cmd, raw_value = $1, $2
+          setting, values_map = Protocol::Constants::RESPONSE_VALUES.fetch(cmd)
+          value = values_map.fetch(raw_value)
+          CommandResponse.new(resp, cmd, setting, value)
         else
           raise NotImplementedError, "Unknown response: #{resp}"
         end
