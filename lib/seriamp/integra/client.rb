@@ -81,6 +81,9 @@ module Seriamp
           raise "Malformed response: #{resp}"
         end
         resp = resp[2...-1]
+        if resp =~ %r,\A([A-Z0-9]{3})N/A\z,
+          raise NotApplicable, "Command is not supported by the receiver or cannot be executed given the receiver's present state"
+        end
         if resp =~ /\A([A-Z0-9]{3})([0-9A-F]{2})\z/
           CommandResponse.new(resp, $1, $2)
         else

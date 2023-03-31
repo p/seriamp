@@ -78,7 +78,7 @@ module Seriamp
           end
 
           define_method("#{which}_raw_volume") do
-            hex_integer_question(_cmd)
+            question(_cmd)
           end
 
           define_method("set_#{which}_volume") do |value|
