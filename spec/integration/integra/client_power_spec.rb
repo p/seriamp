@@ -9,7 +9,8 @@ describe 'Integra integration - power' do
 
   let(:device) { ENV.fetch('SERIAMP_INTEGRATION_INTEGRA') }
   let(:logger) { Logger.new(STDERR) }
-  let(:client) { Seriamp::Integra::Client.new(device: device, logger: logger, retry: true) }
+  let(:client) { Seriamp::Integra::Client.new(device: device,
+    logger: logger, backend: :logging_serial_port, retry: true) }
 
   after do
     client.close
@@ -18,7 +19,6 @@ describe 'Integra integration - power' do
   describe 'power on' do
     before do
       client.set_main_power(false)
-      sleep 3
     end
 
     it 'works' do

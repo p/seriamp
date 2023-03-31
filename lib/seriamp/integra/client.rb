@@ -9,6 +9,8 @@ require 'seriamp/client'
 module Seriamp
   module Integra
 
+    CommandResponse = Struct.new(:response, :command, :value)
+
     class Client < Seriamp::Client
 
       MODEM_PARAMS = {
@@ -49,7 +51,11 @@ module Seriamp
       end
 
       def command(cmd)
-        dispatch_and_parse("!1#{cmd}\r")
+        dispatch_and_parse("!1#{cmd}\r").tap do |resp|
+          if resp.response != cmd
+            raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
+          end
+        end
       end
 
       private
@@ -74,13 +80,18 @@ module Seriamp
         unless resp =~ /\A!1.+\x1a\z/
           raise "Malformed response: #{resp}"
         end
-        resp[2...-1]
+        resp = resp[2...-1]
+        if resp =~ /\A([A-Z]{3})([0-9A-F]{2})\z/
+          CommandResponse.new(resp, $1, $2)
+        else
+          raise NotImplementedError, "Unknown response: #{resp}"
+        end
       end
 
       def question(cmd)
         resp = dispatch_and_parse("!1#{cmd}QSTN\r")
-        if resp.start_with?(cmd)
-          resp[cmd.length...]
+        if resp.command == cmd
+          RESPONSE_VALUES.fetch(cmd).fetch(resp.value)
         else
           raise UnexpectedResponse, "Bad response #{resp} for #{cmd}"
         end

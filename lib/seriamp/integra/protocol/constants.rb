@@ -7,6 +7,13 @@ module Seriamp
 
         private
 
+        RESPONSE_VALUES = {
+          'PWR' => {
+            '00' => false,
+            '01' => true,
+          },
+        }.freeze
+
       end
     end
   end
