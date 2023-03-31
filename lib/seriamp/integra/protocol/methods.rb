@@ -56,10 +56,6 @@ module Seriamp
           command("PW40#{state ? 1 : 0}")
         end
 
-        def main_volume
-          Integer(question('MVL'), 16)
-        end
-
         {
           main: 'MVL',
           zone2: 'ZVL',
@@ -69,12 +65,7 @@ module Seriamp
           _which, _cmd = which, cmd
 
           define_method("#{which}_volume") do
-            case value = public_send("#{_which}_raw_volume")
-            when 0
-              nil
-            else
-              value - 82
-            end
+            question(_cmd)
           end
 
           define_method("#{which}_raw_volume") do
