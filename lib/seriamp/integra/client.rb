@@ -53,7 +53,7 @@ module Seriamp
       def command(cmd)
         dispatch_and_parse("!1#{cmd}\r").tap do |resp|
           if resp.response[0..2] != cmd[0..2]
-            raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
+            #raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
           end
         end
       end
@@ -69,7 +69,7 @@ module Seriamp
       end
 
       def extract_one_response
-        if read_buf =~ /\A(.*\x1a)/
+        if read_buf =~ /\A(.+?\x1a)/
           $1
         else
           raise "Could not find a valid response in the read buffer: #{read_buf}"
