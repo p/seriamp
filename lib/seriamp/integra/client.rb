@@ -81,7 +81,7 @@ module Seriamp
           raise "Malformed response: #{resp}"
         end
         resp = resp[2...-1]
-        if resp =~ /\A([A-Z]{3})([0-9A-F]{2})\z/
+        if resp =~ /\A([A-Z0-9]{3})([0-9A-F]{2})\z/
           CommandResponse.new(resp, $1, $2)
         else
           raise NotImplementedError, "Unknown response: #{resp}"
@@ -98,12 +98,10 @@ module Seriamp
       end
 
       def boolean_question(cmd)
-        resp = integer_question(cmd)
+        resp = question(cmd)
         case resp
-        when 1
-          true
-        when 0
-          false
+        when true, false
+          resp
         else
           raise "Bad response #{resp} for boolean question #{cmd}"
         end

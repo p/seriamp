@@ -7,11 +7,16 @@ module Seriamp
 
         private
 
+        BOOLEAN_QUESTION = {
+          '00' => false,
+          '01' => true,
+        }
+
         RESPONSE_VALUES = {
-          'PWR' => {
-            '00' => false,
-            '01' => true,
-          },
+          'PWR' => BOOLEAN_QUESTION,
+          'ZPW' => BOOLEAN_QUESTION,
+          'PW3' => BOOLEAN_QUESTION,
+          'PW4' => BOOLEAN_QUESTION,
         }.freeze
 
       end
