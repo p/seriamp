@@ -51,7 +51,7 @@ module Seriamp
         @service_client = Seriamp::FaradayFacade.new(url: url, timeout: options[:timeout])
       else
         @direct_client = mod.const_get(:Client).new(device: options[:device],
-          backend: options[:backend], retries: true, lock: true,
+          backend: options[:backend], retries: true, lock: true, persistent: true,
           logger: @logger, timeout: options[:timeout])
       end
 
