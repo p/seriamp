@@ -52,7 +52,7 @@ module Seriamp
 
       def command(cmd)
         dispatch_and_parse("!1#{cmd}\r").tap do |resp|
-          if resp.response != cmd
+          if resp.response[0..2] != cmd[0..2]
             raise UnexpectedResponse, "Expected #{cmd} as response but received #{resp.response}"
           end
         end
