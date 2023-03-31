@@ -17,7 +17,7 @@ module Seriamp
         }
 
         1.upto(100) do |value|
-          VOLUME_1DB_STEP['%02x' % value] = -80 + value
+          VOLUME_1DB_STEP['%02X' % value] = -80 + value
         end
 
         VOLUME_1DB_STEP.freeze

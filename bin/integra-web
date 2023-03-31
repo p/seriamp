@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+begin
+  require 'seriamp/app_cmd'
+rescue LoadError
+  $: << File.join(File.dirname(__FILE__), '../lib')
+  require 'seriamp/app_cmd'
+end
+
+Seriamp::AppCmd.new(module_name: 'integra').run

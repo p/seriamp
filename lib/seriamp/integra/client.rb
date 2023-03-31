@@ -126,11 +126,14 @@ module Seriamp
           with_retry do
             with_device do
               resp = dispatch_and_parse("!1#{cmd}QSTN\r", cmd[0..2])
-              if resp.command == cmd
+              resp.value
+=begin
+              if resp.raw_setting == cmd
                 RESPONSE_VALUES.fetch(cmd).fetch(resp.value)
               else
                 raise UnexpectedResponse, "Bad response #{resp} for #{cmd}"
               end
+=end
             end
           end
         end
