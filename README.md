@@ -343,6 +343,9 @@ to open a TTY in Python, buffering must be disabled.
 
 ## Other Libraries & Tools
 
+- [RS232 protocol documentation](https://files.remotecentral.com/library/22-1/index.html)
+for many receivers and other devices
+
 Yamaha RS232/serial protocol:
 
 - [YRXV1500-MQTT](https://github.com/FireFrei/yrxv1500-mqtt)
