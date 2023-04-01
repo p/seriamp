@@ -139,6 +139,17 @@ module Seriamp
         end
       end
 
+      def extended_command(cmd)
+        payload = "20#{'%02X' % cmd.length}#{cmd}"
+        sum = payload.each_byte.map(&:ord).inject(0) { |sum, i| sum + i } % 0x100
+        with_lock do
+          with_retry do
+            resp = dispatch_and_parse("#{DC4}#{payload}#{'%02X' % sum}#{ETX}")
+            p resp
+          end
+        end
+      end
+
       private
 
       include Protocol::GetConstants
@@ -146,6 +157,7 @@ module Seriamp
       # ASCII table: https://www.asciitable.com/
       DC1 = ?\x11
       DC2 = ?\x12
+      DC4 = ?\x14
       ETX = ?\x03
       STX = ?\x02
       DEL = ?\x7f
@@ -172,6 +184,9 @@ module Seriamp
           parse_stx_response(resp)
         when DC2
           parse_status_response(resp)
+        when DC4
+          #parse_status_response(resp)
+          resp[1..]
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end

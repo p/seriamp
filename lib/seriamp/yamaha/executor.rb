@@ -26,6 +26,9 @@ module Seriamp
         when 'remote-command'
           cmd = args.shift.upcase
           client.remote_command(cmd)
+        when 'ext-command'
+          cmd = args.shift.upcase
+          client.extended_command(cmd)
         when 'power'
           which = args.shift&.downcase
           if %w(main zone2 zone3).include?(which)

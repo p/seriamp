@@ -352,6 +352,7 @@ Yamaha RS232/serial protocol:
 - [YamahaController](https://github.com/mrworf/yamahacontroller)
 - [Homie ESP8266 Yamaha RX-Vxxxx Control](https://github.com/memphi2/homie-yamaha-rs232)
 - [Here](https://www.avsforum.com/threads/enhancing-yamaha-avrs-via-rs-232.1066484/)
+- [Doc archive URL](https://web.archive.org/web/20060321133107/http://www.yamaha.com/yec/customer/codes/RX-V2400_RS232C_Standard.pdf)
 
 Serial port communication in Ruby:
 
