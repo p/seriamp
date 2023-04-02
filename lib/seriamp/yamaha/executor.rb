@@ -125,7 +125,6 @@ module Seriamp
           puts '---'
           start = fields.length
           fields = build_fields(Client::STATUS_FIELDS, model_name)
-          #require'byebug';byebug
           0.upto(payload_length-1).each do |i|
             puts "%3d %3s # DT%-2d %s" % [start+i, status[start+i], i, fields[i]]
           end
@@ -135,6 +134,7 @@ module Seriamp
           start.upto(status.length-1).each do |i|
             puts "%3d %3s # %s" % [i, status[i], fields[i-start]]
           end
+          nil
         when 'test'
           client.set_power(false)
           [true, false].each do |main_state|

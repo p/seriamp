@@ -40,6 +40,9 @@ module Seriamp
           with_retry do
             with_device do
               dispatch(STATUS_REQ)
+              # There could potentialy be multiple responses here if
+              # receiver is sending status updates to host?
+              extract_one_response!
             end
           end
         end
