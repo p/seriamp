@@ -367,6 +367,12 @@ module Seriamp
         unless data.start_with?('@E01900')
           raise HandshakeFailure, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
         end
+        received_checksum = payload[-2..]
+        calculated_checksum = calculate_checksum(payload[...-2])
+        if received_checksum != calculated_checksum
+          raise HandshakeFailure, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
+        end
+
         status = {
           model_code: model_code,
           model_name: MODEL_NAMES[model_code],
@@ -423,6 +429,11 @@ module Seriamp
         end
         status.update(raw_string: data)
         status
+      end
+
+      def calculate_checksum(str)
+        sum = str.each_byte.map(&:ord).inject(0) { |sum, c| sum + c }
+        '%02X' % (sum & 0xFF)
       end
 
       def extract_text(resp)
