@@ -141,7 +141,7 @@ and which do not:
 | RX-Vx800 | RX-V3800, RX-V1800           |                |
 |          | HTR-6190                     | HTR-6180       |
 | RX-Vx900 | RX-V3900, RX-V1900           |                |
-|          |                              | HTR-6290       |
+|          | HTR-6295, HTR-6290           | HTR-6280       |
 | RX-Vx67  | RX-V3067, RX-V2067, RX-V1067 | RX-V867        |
 
 RX-V2700, RX-V3800 and RX-V3900 have an Ethernet port in addition to
