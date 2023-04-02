@@ -144,10 +144,10 @@ module Seriamp
 
       def extended_command(cmd)
         payload = "20#{'%02X' % cmd.length}#{cmd}"
-        sum = payload.each_byte.map(&:ord).inject(0) { |sum, i| sum + i } % 0x100
+        checksum = calculate_checksum(payload)
         with_lock do
           with_retry do
-            resp = dispatch_and_parse("#{DC4}#{payload}#{'%02X' % sum}#{ETX}")
+            resp = dispatch_and_parse("#{DC4}#{payload}#{checksum}#{ETX}")
             p resp
           end
         end
@@ -188,11 +188,46 @@ module Seriamp
         when DC2
           parse_status_response(resp)
         when DC4
-          #parse_status_response(resp)
+          parse_extended_response(resp[1...-1])
           resp[1..]
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end
+      end
+
+      def parse_extended_response(resp)
+        unless resp[..1] == '20'
+          raise UnexpectedResponse, "Invalid response: expected to start with 20: #{resp} #{resp[0].ord}"
+        end
+        length = Integer(resp[2..3], 16)
+        received_checksum = resp[-2..]
+        calculated_checksum = calculate_checksum(resp[...-2])
+        if received_checksum != calculated_checksum
+          raise UnexpectedResponse, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
+        end
+        data = resp[4...-2]
+
+        command_id = data[...3]
+        status = data[3]
+        command_data = data[4..]
+
+        case status
+        when '0'
+          # OK
+        when '1'
+          raise UnexpectedResponse, "Guard by system: #{data}"
+        when '2'
+          raise UnexpectedResponse, "Guard by setting: #{data}"
+        when '3'
+          raise InvalidCommand, "Unrecognized command: #{data}"
+        when '4'
+          raise InvalidCommand, "Command parameter error: #{data}"
+        else
+          raise UnexpectedResponse, "Unexpected status byte: #{status}: #{data}"
+        end
+
+        p [command_id,status,command_data]
+        status = resp[5]
       end
 
       def parse_stx_response(resp)
