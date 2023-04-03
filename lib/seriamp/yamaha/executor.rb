@@ -112,6 +112,12 @@ module Seriamp
           client.set_subwoofer_phase(args.shift)
         when 'subwoofer-crossover'
           client.set_subwoofer_crossover(Integer(args.shift))
+        when 'main-tone-bass-speaker'
+          if args.any?
+            client.set_main_tone_bass_speaker(Float(args.shift))
+          else
+            client.main_tone_bass_speaker
+          end
         when 'status'
           pp client.status
         when 'dev-status'

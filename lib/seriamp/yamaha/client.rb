@@ -5,6 +5,8 @@ require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
+require 'seriamp/yamaha/protocol/extended/generic_response'
+require 'seriamp/yamaha/protocol/extended/main_tone_response'
 require 'seriamp/client'
 
 module Seriamp
@@ -148,7 +150,6 @@ module Seriamp
         with_lock do
           with_retry do
             resp = dispatch_and_parse("#{DC4}#{payload}#{checksum}#{ETX}")
-            p resp
           end
         end
       end
@@ -189,7 +190,6 @@ module Seriamp
           parse_status_response(resp)
         when DC4
           parse_extended_response(resp[1...-1])
-          resp[1..]
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end
@@ -226,8 +226,13 @@ module Seriamp
           raise UnexpectedResponse, "Unexpected status byte: #{status}: #{data}"
         end
 
-        p [command_id,status,command_data]
-        status = resp[5]
+        cls = case command_id
+        when '033'
+          Protocol::Extended::MainToneResponse
+        else
+          Protocol::Extended::Generic
+        end
+        cls.new(command_id, command_data)
       end
 
       def parse_stx_response(resp)

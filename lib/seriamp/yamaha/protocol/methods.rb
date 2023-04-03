@@ -196,6 +196,14 @@ module Seriamp
           end
           system_command("7E#{value}")
         end
+
+        {bass: 0, treble: 1}.each do |tone, tone_value|
+          {speaker: '0', headphone: '1'}.each do |output, output_value|
+            define_method("main_tone_#{tone}_#{output}") do
+              extended_command("0330#{output_value}#{tone_value}")
+            end
+          end
+        end
       end
     end
   end

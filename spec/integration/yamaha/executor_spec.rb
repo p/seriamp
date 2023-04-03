@@ -24,4 +24,16 @@ describe 'Yamaha integration' do
       result.should be nil
     end
   end
+
+  describe 'main-tone-bass-speaker' do
+    before do
+      client.main_power.should be true
+    end
+
+    #let(:result) { executor.run_command('main-tone-bass-speaker') }
+
+    it 'works' do
+      p executor.run_command('main-tone-bass-speaker')
+    end
+  end
 end
