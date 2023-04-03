@@ -193,7 +193,7 @@ describe Seriamp::Yamaha::Executor do
     end
 
     context 'RX-V2400' do
-      let(:model_name) { 'RX-V2400' }
+      let(:model_name) { 'RX-V2400/RX-Z9' }
 
       it 'returns correct fields' do
         executor.send(:build_fields, status_fields, model_id).should == [
