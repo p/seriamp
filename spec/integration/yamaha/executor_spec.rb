@@ -39,25 +39,27 @@ describe 'Yamaha integration' do
       it 'works' do
         executor.run_command('main-tone-bass-speaker', '0').should be nil
         resp = executor.run_command('main-tone-bass-speaker')
-        resp.gain.should == 0
+        resp.fetch(:gain).should == 0
 
         executor.run_command('main-tone-bass-speaker', '-2.5').should be nil
         resp = executor.run_command('main-tone-bass-speaker')
-        resp.gain.should == -2.5
+        resp.fetch(:gain).should == -2.5
       end
     end
 
     context 'gain + frequency' do
       it 'works' do
+        skip 'requires RX-V3xxx'
+
         executor.run_command('main-tone-bass-speaker', '0', '125').should be nil
         resp = executor.run_command('main-tone-bass-speaker')
-        resp.gain.should == 0
-        resp.frequency.should == 125
+        resp.fetch(:gain).should == 0
+        resp.fetch(:frequency).should == 125
 
         executor.run_command('main-tone-bass-speaker', '-2.5', '500').should be nil
         resp = executor.run_command('main-tone-bass-speaker')
-        resp.gain.should == -2.5
-        resp.frequency.should == 500
+        resp.fetch(:gain).should == -2.5
+        resp.fetch(:frequency).should == 500
       end
     end
   end

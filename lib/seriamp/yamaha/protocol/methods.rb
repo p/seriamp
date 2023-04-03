@@ -215,7 +215,7 @@ module Seriamp
                 gain = value
               end
               if freq.nil?
-                freq = send("main_tone_#{tone}_#{output}").frequency
+                freq = send("main_tone_#{tone}_#{output}").fetch(:frequency)
               end
               # Round to 0.5 dB
               use_gain = (gain * 2).round / 2.0
