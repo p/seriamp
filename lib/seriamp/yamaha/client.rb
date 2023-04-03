@@ -211,6 +211,8 @@ module Seriamp
         status = data[3]
         command_data = data[4..]
 
+        #p [command_id,status,command_data]
+
         case status
         when '0'
           # OK
