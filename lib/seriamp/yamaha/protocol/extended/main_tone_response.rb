@@ -3,6 +3,8 @@ module Seriamp
     module Protocol
       module Extended
         class MainToneResponse < GenericResponse
+          include Yamaha::Helpers
+
           def initialize(cmd, value)
             super
 
@@ -12,9 +14,14 @@ module Seriamp
 
             @output = OUTPUT_MAP.fetch(value[0])
             @tone = TONE_MAP.fetch(value[1])
-            @turn_over_frequency = TURN_OVER_MAP.fetch(@tone).fetch(value[2])
-            @gain = value[3..4]
+            @frequency = TURN_OVER_MAP.fetch(@tone).fetch(value[2])
+            @gain = parse_volume(value[3..4], '00', -6, 6, 0.5)
           end
+
+          attr_reader :output
+          attr_reader :tone
+          attr_reader :frequency
+          attr_reader :gain
 
           private
 

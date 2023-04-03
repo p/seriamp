@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 require 'seriamp/yamaha/protocol/set_constants'
+require 'seriamp/yamaha/helpers'
 
 module Seriamp
   module Yamaha
     module Protocol
       module Methods
         include SetConstants
+        include Yamaha::Helpers
 
         # Turns the receiver on or off.
         #
@@ -197,10 +199,31 @@ module Seriamp
           system_command("7E#{value}")
         end
 
-        {bass: 0, treble: 1}.each do |tone, tone_value|
+        {bass: '0', treble: '1'}.each do |tone, tone_value|
           {speaker: '0', headphone: '1'}.each do |output, output_value|
             define_method("main_tone_#{tone}_#{output}") do
               extended_command("0330#{output_value}#{tone_value}")
+            end
+
+            define_method("set_main_tone_#{tone}_#{output}") do |value|
+              if Hash === value
+                freq = value.fetch(:frequency)
+                gain = value.fetch(:gain)
+              else
+                freq = nil
+                gain = value
+              end
+              if freq.nil?
+                freq = send("main_tone_#{tone}_#{output}").frequency
+              end
+              # Round to 0.5 dB
+              use_gain = (gain * 2).round / 2.0
+              if use_gain < -6 || use_gain > 6
+                raise ArgumentError, "Gain out of range: must be -6..6: #{gain}"
+              end
+              gain_enc = serialize_volume(gain, -6, 0, 0.5)
+              frequency_enc = 0
+              extended_command("0331#{output_value}#{tone_value}#{frequency_enc}#{gain_enc}")
             end
           end
         end

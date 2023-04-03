@@ -228,11 +228,15 @@ module Seriamp
 
         cls = case command_id
         when '033'
-          Protocol::Extended::MainToneResponse
+          if command_data.empty?
+            nil
+          else
+            Protocol::Extended::MainToneResponse
+          end
         else
           Protocol::Extended::Generic
         end
-        cls.new(command_id, command_data)
+        cls&.new(command_id, command_data)
       end
 
       def parse_stx_response(resp)

@@ -9,7 +9,8 @@ describe 'Yamaha integration' do
 
   let(:device) { ENV.fetch('SERIAMP_INTEGRATION_YAMAHA') }
   let(:logger) { Logger.new(STDERR) }
-  let(:client) { Seriamp::Yamaha::Client.new(device: device, logger: logger) }
+  let(:client) { Seriamp::Yamaha::Client.new(device: device, logger: logger,
+    backend: :logging_serial_port) }
   let(:executor) { Seriamp::Yamaha::Executor.new(client) }
 
   describe 'dev-status' do
@@ -33,7 +34,13 @@ describe 'Yamaha integration' do
     #let(:result) { executor.run_command('main-tone-bass-speaker') }
 
     it 'works' do
-      p executor.run_command('main-tone-bass-speaker')
+      executor.run_command('main-tone-bass-speaker', '0').should be nil
+      resp = executor.run_command('main-tone-bass-speaker')
+      resp.gain.should == 0
+
+      executor.run_command('main-tone-bass-speaker', '-3').should be nil
+      resp = executor.run_command('main-tone-bass-speaker')
+      resp.gain.should == -3
     end
   end
 end
