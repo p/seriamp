@@ -114,7 +114,15 @@ module Seriamp
           client.set_subwoofer_crossover(Integer(args.shift))
         when 'main-tone-bass-speaker'
           if args.any?
-            client.set_main_tone_bass_speaker(Float(args.shift))
+            if args.length == 1
+              args = [Float(args.shift)]
+            else
+              args = [
+                gain: Float(args.shift),
+                frequency: Float(args.shift),
+              ]
+            end
+            client.set_main_tone_bass_speaker(*args)
           else
             client.main_tone_bass_speaker
           end

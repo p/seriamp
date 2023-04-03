@@ -7,10 +7,14 @@ describe 'Yamaha integration' do
     end
   end
 
+  let(:logging_options) do
+    {logger: logger, backend: :logging_serial_port}.freeze
+  end
+  let(:logging_options) { {}.freeze }
+
   let(:device) { ENV.fetch('SERIAMP_INTEGRATION_YAMAHA') }
   let(:logger) { Logger.new(STDERR) }
-  let(:client) { Seriamp::Yamaha::Client.new(device: device, logger: logger,
-    backend: :logging_serial_port) }
+  let(:client) { Seriamp::Yamaha::Client.new(**logging_options.merge(device: device)) }
   let(:executor) { Seriamp::Yamaha::Executor.new(client) }
 
   describe 'dev-status' do
@@ -31,16 +35,30 @@ describe 'Yamaha integration' do
       client.main_power.should be true
     end
 
-    #let(:result) { executor.run_command('main-tone-bass-speaker') }
+    context 'gain only' do
+      it 'works' do
+        executor.run_command('main-tone-bass-speaker', '0').should be nil
+        resp = executor.run_command('main-tone-bass-speaker')
+        resp.gain.should == 0
 
-    it 'works' do
-      executor.run_command('main-tone-bass-speaker', '0').should be nil
-      resp = executor.run_command('main-tone-bass-speaker')
-      resp.gain.should == 0
+        executor.run_command('main-tone-bass-speaker', '-2.5').should be nil
+        resp = executor.run_command('main-tone-bass-speaker')
+        resp.gain.should == -2.5
+      end
+    end
 
-      executor.run_command('main-tone-bass-speaker', '-3').should be nil
-      resp = executor.run_command('main-tone-bass-speaker')
-      resp.gain.should == -3
+    context 'gain + frequency' do
+      it 'works' do
+        executor.run_command('main-tone-bass-speaker', '0', '125').should be nil
+        resp = executor.run_command('main-tone-bass-speaker')
+        resp.gain.should == 0
+        resp.frequency.should == 125
+
+        executor.run_command('main-tone-bass-speaker', '-2.5', '500').should be nil
+        resp = executor.run_command('main-tone-bass-speaker')
+        resp.gain.should == -2.5
+        resp.frequency.should == 500
+      end
     end
   end
 end

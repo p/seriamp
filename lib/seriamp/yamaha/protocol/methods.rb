@@ -202,7 +202,8 @@ module Seriamp
         {bass: '0', treble: '1'}.each do |tone, tone_value|
           {speaker: '0', headphone: '1'}.each do |output, output_value|
             define_method("main_tone_#{tone}_#{output}") do
-              extended_command("0330#{output_value}#{tone_value}")
+              result = extended_command("0330#{output_value}#{tone_value}")
+              {frequency: result.frequency, gain: result.gain}
             end
 
             define_method("set_main_tone_#{tone}_#{output}") do |value|
