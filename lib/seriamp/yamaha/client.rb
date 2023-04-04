@@ -240,7 +240,7 @@ module Seriamp
             Protocol::Extended::MainToneResponse
           end
         else
-          Protocol::Extended::Generic
+          Protocol::Extended::GenericResponse
         end
         cls&.new(command_id, command_data)
       end
