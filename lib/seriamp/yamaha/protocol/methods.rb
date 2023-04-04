@@ -233,6 +233,11 @@ module Seriamp
           end
         end
 
+        # RX-V1700, RX-V1800, probably RX-V1900 also?
+        # RX-V2700 does not support this apparently and instead offers
+        # the "parametric EQ".
+        # RX-V4600 has "parametric EQ" which is different from this,
+        # does not support graphic EQ according to documentation.
         GRAPHIC_EQ_CHANNEL_MAP.invert.each do |channel, channel_value|
           GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).invert.each do |band, band_value|
             define_method("#{channel}_graphic_eq_#{band}") do
