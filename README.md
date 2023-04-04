@@ -387,6 +387,11 @@ Harman/Kardon serial control:
 - [avr_control](https://github.com/Teque5/avr_control)
 - [hifictl](https://github.com/jherland/hifictl)
 
+Other Yamaha software:
+
+- RAVedit
+- "Receiver editor"
+
 ## Helpful Links
 
 - [Serial port programming in Ruby](https://www.thegeekdiary.com/serial-port-programming-reading-writing-status-of-control-lines-dtr-rts-cts-dsr/)
