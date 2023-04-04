@@ -377,6 +377,7 @@ Integra serial control:
 - [ISCP/eISCP](https://habr.com/en/post/427985/)
 - [Decrypting Onkyo firmware](http://divideoverflow.com/2014/04/decrypting-onkyo-firmware-files/)
 - [Post](https://robotskirts.com/2012/04/28/controlling-onkyo-integra-receivers-via-rs-232/)
+- [integra](https://github.com/jhesch/integra)
 
 Pioneer serial control:
 
