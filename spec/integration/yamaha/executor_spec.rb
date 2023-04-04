@@ -30,6 +30,27 @@ describe 'Yamaha integration' do
     end
   end
 
+  describe 'volume' do
+    before do
+      client.main_power.should be true
+    end
+
+    context 'get' do
+      it 'works' do
+        executor.run_command('volume').should be_a(Float)
+      end
+    end
+
+    context 'set' do
+      it 'works' do
+        executor.run_command('volume', '-79.5').should == -79.5
+        executor.run_command('volume').should == -79.5
+        executor.run_command('volume', '-79').should == -79.0
+        executor.run_command('volume').should == -79.0
+      end
+    end
+  end
+
   describe 'main-tone-bass-speaker' do
     before do
       client.main_power.should be true

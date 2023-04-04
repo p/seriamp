@@ -49,7 +49,8 @@ module Seriamp
         # @param [ Float ] volume The volume in decibels.
         def set_main_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          system_command("30#{'%02x' % value}")
+          # TODO verify the received value is the value we requested?
+          system_command("30#{'%02x' % value}").fetch(:main_volume)
         end
 
         # Sets zone 2 volume.
@@ -57,7 +58,8 @@ module Seriamp
         # @param [ Float ] volume The volume in decibels.
         def set_zone2_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          system_command("31#{'%02x' % value}")
+          # TODO verify the received value is the value we requested?
+          system_command("31#{'%02x' % value}").fetch(:zone2_volume)
         end
 
         def main_volume_up

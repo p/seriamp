@@ -49,8 +49,7 @@ module Seriamp
           end
           prefix = "set_#{which}"
           if value.nil?
-            puts client.send("#{which}_volume")
-            return
+            return client.send("#{which}_volume")
           end
           value = value.downcase
           if value == 'up'

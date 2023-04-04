@@ -139,7 +139,11 @@ module Seriamp
       def system_command(cmd)
         with_lock do
           with_retry do
-            dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
+            resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
+            if resp.fetch(:control_type) != :rs232c
+              raise "Wrong control type: #{resp[:control_type]}"
+            end
+            resp.fetch(:state)
           end
         end
       end
@@ -488,7 +492,11 @@ module Seriamp
       end
 
       def report_unread_response(buf)
-        return if buf.nil?
+        if buf.nil?
+          raise ArgumentError, 'buffer should not be nil here'
+        end
+
+        return if buf.empty?
 
         if buf.count(ETX) > 1
           logger&.warn("Multiple unread responses: #{buf}")
