@@ -238,6 +238,11 @@ module Seriamp
             define_method("#{channel}_graphic_eq_#{band}") do
               extended_command("0300#{channel_value}#{band_value}")
             end
+
+            define_method("set_#{channel}_graphic_eq_#{band}") do |gain|
+              gain_enc = serialize_volume(gain, -6, 3, 0.5)
+              extended_command("0301#{channel_value}#{band_value}#{gain_enc}")
+            end
           end
 
           define_method("#{channel}_graphic_eq") do

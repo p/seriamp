@@ -129,6 +129,10 @@ module Seriamp
           case args.length
           when 3
             # set value
+            channel = args.shift.to_sym
+            band = Integer(args.shift)
+            value = Float(args.shift)
+            client.public_send("set_#{channel}_graphic_eq_#{band}", value)
           when 2
             # get channel & band
             channel = args.shift.to_sym
