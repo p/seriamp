@@ -212,7 +212,7 @@ module Seriamp
         end
         data = resp[4...-2]
 
-        if length != 0 && data.length
+        if length != data.length
           raise UnexpectedResponse, "Advertised data length does not match actual data received: #{length} vs #{data.length}"
         end
 
