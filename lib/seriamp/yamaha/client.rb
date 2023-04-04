@@ -6,6 +6,7 @@ require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
 require 'seriamp/yamaha/protocol/extended/generic_response'
+require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
 require 'seriamp/client'
 
@@ -238,6 +239,12 @@ module Seriamp
             nil
           else
             Protocol::Extended::MainToneResponse
+          end
+        when '030'
+          if command_data.empty?
+            nil
+          else
+            Protocol::Extended::GraphicEqResponse
           end
         else
           Protocol::Extended::GenericResponse
