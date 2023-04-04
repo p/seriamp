@@ -23,6 +23,10 @@ module Seriamp
           attr_reader :frequency
           attr_reader :gain
 
+          def to_s
+            "#<#{self.class.name}: #{output} #{tone} freq=#{frequency} gain=#{gain}"
+          end
+
           private
 
           OUTPUT_MAP = {
