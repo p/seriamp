@@ -316,7 +316,7 @@ I have been unable to locate any codes that would work.
 
 ## YNCA Volume
 
-The parser for volume level, at least in the RX-A710 that I tested with,-
+The parser for volume level, at least in the RX-A710 that I tested with,
 is absolutely braindamaged. Witness the following table of the input and
 the receiver's interpretation of it:
 
