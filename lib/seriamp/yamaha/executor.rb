@@ -126,7 +126,24 @@ module Seriamp
             client.main_tone_bass_speaker
           end
         when 'graphic-eq'
-          client.graphic_eq
+          case args.length
+          when 3
+            # set value
+          when 2
+            # get channel & band
+            channel = args.shift.to_sym
+            band = Integer(args.shift)
+            client.public_send("#{channel}_graphic_eq_#{band}")
+          when 1
+            # get channel all
+            channel = args.shift.to_sym
+            client.public_send("#{channel}_graphic_eq")
+          when 0
+            # get all
+            client.graphic_eq
+          else
+            raise "Wrong number of arguments: #{args}"
+          end
         when 'status'
           pp client.status
         when 'dev-status'

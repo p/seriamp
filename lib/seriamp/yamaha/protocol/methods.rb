@@ -239,16 +239,21 @@ module Seriamp
               extended_command("0300#{channel_value}#{band_value}")
             end
           end
+
+          define_method("#{channel}_graphic_eq") do
+            {}.tap do |result|
+              GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).each_value do |band|
+                res = send("#{channel}_graphic_eq_#{band}")
+                result[band] = res.gain
+              end
+            end
+          end
         end
 
         def graphic_eq
           {}.tap do |result|
             GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
-              GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).each_value do |band|
-                result[channel] ||= {}
-                res = send("#{channel}_graphic_eq_#{band}")
-                result[channel][band] = res.gain
-              end
+              result[channel] = send("#{channel}_graphic_eq")
             end
           end
         end
