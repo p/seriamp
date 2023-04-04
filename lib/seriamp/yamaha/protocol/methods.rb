@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'seriamp/yamaha/protocol/set_constants'
+require 'seriamp/yamaha/protocol/extended/constants'
 require 'seriamp/yamaha/helpers'
 
 module Seriamp
@@ -9,6 +10,7 @@ module Seriamp
       module Methods
         include SetConstants
         include Yamaha::Helpers
+        include Extended::Constants
 
         # Turns the receiver on or off.
         #
