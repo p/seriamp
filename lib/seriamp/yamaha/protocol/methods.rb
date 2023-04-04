@@ -236,7 +236,7 @@ module Seriamp
         GRAPHIC_EQ_CHANNEL_MAP.invert.each do |channel, channel_value|
           GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).invert.each do |band, band_value|
             define_method("#{channel}_graphic_eq_#{band}") do
-              extended_command("0300#{channel_value}#{band_value}")
+              extended_command("0300#{channel_value}#{band_value}").gain
             end
 
             define_method("set_#{channel}_graphic_eq_#{band}") do |gain|
@@ -249,7 +249,7 @@ module Seriamp
             {}.tap do |result|
               GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).each_value do |band|
                 res = send("#{channel}_graphic_eq_#{band}")
-                result[band] = res.gain
+                result[band] = res
               end
             end
           end

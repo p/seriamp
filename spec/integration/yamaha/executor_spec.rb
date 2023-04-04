@@ -84,4 +84,38 @@ describe 'Yamaha integration' do
       end
     end
   end
+
+  describe 'graphic eq' do
+    before do
+      client.main_power.should be true
+    end
+
+    context 'get channel + band' do
+      it 'works' do
+        executor.run_command('graphic-eq', 'center', '1000').should be_a(Float)
+      end
+    end
+
+    context 'get channel' do
+      let(:result) do
+        executor.run_command('graphic-eq', 'center')
+      end
+
+      it 'works' do
+        result.should be_a(Hash)
+        result.keys.map(&:class).uniq.should == [Integer]
+        result.values.map(&:class).uniq.should == [Float]
+      end
+    end
+
+    context 'set' do
+      it 'works' do
+        executor.run_command('graphic-eq', 'center', '1000', '-2').should be nil
+        executor.run_command('graphic-eq', 'center', '1000').should == -2.0
+
+        executor.run_command('graphic-eq', 'center', '1000', '-1.5').should be nil
+        executor.run_command('graphic-eq', 'center', '1000').should == -1.5
+      end
+    end
+  end
 end
