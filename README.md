@@ -250,32 +250,6 @@ As far as I can tell this behavior is not documented.
 Some of the other parameters are not changeable in standby - for example,
 input name and pure direct setting.
 
-### Yamaha Receiver Documentation
-
-I have RX-V1500 and RX-V2500, however I couldn't locate RS232 protocol manuals
-for these receivers. I am primarily using RX-V1700/RX-V2700 manual with some
-references to RX-V1000/RX-V3000 manual. The commands are mostly or completely
-identical, with RX-V1700/RX-V2700 manual describing most or all of what
-RX-V1500/RX-V2500 support, but the status responses are very different.
-For my RX-V1500/RX-V2500 I had to reverse-engineer the status responses, and
-because of this they only have a limited number of fields decoded.
-
-### RX-V1500 Power Values
-
-You might expect the power state to be a bit field, but it isn't - each
-combination is assigned an independent value:
-
-| Main zone | Zone 2 | Zone 3 | Value | Notes   |
-| --------- | ------ | ------ | ----- | ------- |
-| On        | On     | On     | 1     | All on  |
-| On        | On     | Off    | 4     |         |
-| On        | Off    | On     | 5     |         |
-| On        | Off    | Off    | 2     |         |
-| Off       | On     | On     | 3     |         |
-| Off       | On     | Off    | 6     |         |
-| Off       | Off    | On     | 7     |         |
-| Off       | Off    | Off    | 0     | All off |
-
 ### Integra Documentation
 
 When reading the protocol documentation, you should read the version that
