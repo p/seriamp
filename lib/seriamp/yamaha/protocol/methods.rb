@@ -85,7 +85,7 @@ module Seriamp
         # @param [ Integer ] volume The raw volume value.
         def set_zone3_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          system_command("34#{'%02x' % value}")
+          system_command("34#{'%02x' % value}").fetch(:zone3_volume)
         end
 
         def zone3_volume_up
