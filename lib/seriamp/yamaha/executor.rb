@@ -125,6 +125,8 @@ module Seriamp
           else
             client.main_tone_bass_speaker
           end
+        when 'graphic-eq'
+          client.graphic_eq
         when 'status'
           pp client.status
         when 'dev-status'

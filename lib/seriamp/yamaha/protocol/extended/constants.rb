@@ -8,7 +8,7 @@ module Seriamp
 
           GRAPHIC_EQ_CHANNEL_MAP = {
             '0' => :center,
-            '1' => :surround_back, # single
+            #'1' => :surround_back, # single? does not work
             '2' => :front_left,
             '3' => :front_right,
             '4' => :surround_left,
