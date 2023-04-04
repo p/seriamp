@@ -212,6 +212,14 @@ module Seriamp
         end
         data = resp[4...-2]
 
+        if length != 0 && data.length
+          raise UnexpectedResponse, "Advertised data length does not match actual data received: #{length} vs #{data.length}"
+        end
+
+        if data.empty?
+          raise InvalidCommand, "Extended command not recognized"
+        end
+
         command_id = data[...3]
         status = data[3]
         command_data = data[4..]
