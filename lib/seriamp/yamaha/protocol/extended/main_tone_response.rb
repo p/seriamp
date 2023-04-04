@@ -24,7 +24,7 @@ module Seriamp
           attr_reader :gain
 
           def to_s
-            "#<#{self.class.name}: #{output} #{tone} freq=#{frequency} gain=#{gain}"
+            "#<#{self.class.name}: #{output} #{tone} freq=#{frequency} gain=#{gain}>"
           end
 
           private
