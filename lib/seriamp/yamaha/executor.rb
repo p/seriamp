@@ -148,6 +148,8 @@ module Seriamp
           else
             raise "Wrong number of arguments: #{args}"
           end
+        when 'osd-message'
+          client.osd_message(args.shift)
         when 'status'
           pp client.status
         when 'dev-status'
