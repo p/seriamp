@@ -249,8 +249,11 @@ module Seriamp
     attr_reader :read_buf
 
     # Reads at least one complete response into the read buffer.
-    def read_response
-      reset_read_buf
+    def read_response(append: false, timeout: nil)
+      timeout ||= self.timeout
+      unless append
+        reset_read_buf
+      end
       started = Utils.monotime
       deadline = [started + timeout, @next_earliest_deadline].max
       loop do
