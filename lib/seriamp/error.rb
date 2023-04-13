@@ -4,6 +4,7 @@ module Seriamp
   class BadDevice < Error; end
   class InvalidCommand < Error; end
   class NotApplicable < Error; end
+  class NoResponse < Error; end
   class UnexpectedResponse < Error; end
   class HandshakeFailure < UnexpectedResponse; end
   class CommunicationTimeout < Error; end

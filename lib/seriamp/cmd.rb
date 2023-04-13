@@ -35,6 +35,10 @@ module Seriamp
         end
       end.parse!(args)
 
+      unless options[:module]
+        raise "Module is required"
+      end
+
       @options = options
 
       @mod_name = options.fetch(:module)

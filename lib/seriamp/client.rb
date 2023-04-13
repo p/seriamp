@@ -204,7 +204,7 @@ module Seriamp
     def extract_one_response!
       extract_one_response.tap do |resp|
         if resp.empty?
-          raise "Empty response is unacceptable"
+          raise NoResponse, "Empty response is unacceptable"
         end
         read_buf.replace(read_buf[resp.length..])
       end
@@ -218,7 +218,7 @@ module Seriamp
       if index
         read_buf[0..index+delimiter.length-1]
       else
-        raise "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
+        raise NoResponse, "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
       end
     end
 
