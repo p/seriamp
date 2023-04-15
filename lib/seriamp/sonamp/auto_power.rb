@@ -99,6 +99,9 @@ module Seriamp
         options[:logger]
       end
 
+      # Initial state: no amplifier information, no receiver information
+      # Request amplifier information, request receiver information
+
       def run
         load_sonamp_power
 
