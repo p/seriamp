@@ -13,17 +13,17 @@ describe Seriamp::Sonamp::Executor do
 
   describe 'power' do
     it 'works' do
-      client.should receive(:set_zone_power).with(1, true)
+      client.should receive(:set_power).with(1, true)
       executor.run_command('power', *%w(1 on)).should be nil
     end
   end
 
   describe 'off' do
     it 'works' do
-      client.should receive(:set_zone_power).with(1, false)
-      client.should receive(:set_zone_power).with(2, false)
-      client.should receive(:set_zone_power).with(3, false)
-      client.should receive(:set_zone_power).with(4, false)
+      client.should receive(:set_power).with(1, false)
+      client.should receive(:set_power).with(2, false)
+      client.should receive(:set_power).with(3, false)
+      client.should receive(:set_power).with(4, false)
       executor.run_command('off').should be nil
     end
   end

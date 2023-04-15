@@ -23,15 +23,15 @@ module Seriamp
             exit 3
           end
         when 'off'
-          client.set_zone_power(1, false)
-          client.set_zone_power(2, false)
-          client.set_zone_power(3, false)
-          client.set_zone_power(4, false)
+          client.set_power(1, false)
+          client.set_power(2, false)
+          client.set_power(3, false)
+          client.set_power(4, false)
         when 'power'
           zones = parse_zone(args.shift)
           state = Utils.parse_on_off(args.shift)
           zones.each do |zone|
-            client.set_zone_power(zone, state)
+            client.set_power(zone, state)
           end
           nil
         when 'zvol'

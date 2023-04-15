@@ -39,7 +39,7 @@ describe 'Sonamp integration' do
   end
 
   describe 'zone power' do
-    let(:result) { client.get_zone_power }
+    let(:result) { client.get_power }
 
     include_examples 'zone boolean-valued command'
   end
