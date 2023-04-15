@@ -182,14 +182,14 @@ module Seriamp
               if levels.length != 2
                 raise "Expected two values for channel levels"
               end
-              "channel_level #{zone*2-1} #{levels.first}\n" +
-              "channel_level #{zone*2} #{levels.last}\n"
+              "channel_volume #{zone*2-1} #{levels.first}\n" +
+              "channel_volume #{zone*2} #{levels.last}\n"
             when Integer
-              "zone_level #{zone} #{levels}\n"
+              "zone_volume #{zone} #{levels}\n"
             when true
               ''
             else
-              raise "Invalid level specification: #{levels.inspect}"
+              raise "Invalid volume specification: #{levels.inspect}"
             end
             prefix + "power #{zone} on"
           end.join("\n")

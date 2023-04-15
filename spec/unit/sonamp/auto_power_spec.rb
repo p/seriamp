@@ -42,6 +42,26 @@ describe Seriamp::Sonamp::AutoPower do
         result.should == "power 1 on\npower 2 on"
       end
     end
+
+    context 'zone volume input' do
+      let(:default) do
+        {3 => 70}
+      end
+
+      it 'works' do
+        result.should == "zone_volume 3 70\npower 3 on"
+      end
+    end
+
+    context 'channel volume input' do
+      let(:default) do
+        {3 => [70, 71]}
+      end
+
+      it 'works' do
+        result.should == "channel_volume 5 70\nchannel_volume 6 71\npower 3 on"
+      end
+    end
   end
 
   describe '#run' do
