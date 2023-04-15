@@ -21,7 +21,8 @@ describe Seriamp::Sonamp::AutoPower do
   end
 
   describe '#turn_on_cmd' do
-    let(:ap) { described_class.new(sonamp_url: 'test') }
+    let(:default) { nil }
+    let(:ap) { described_class.new(sonamp_url: 'test', default: default) }
     let(:result) { ap.send(:turn_on_cmd) }
 
     context 'no input' do
@@ -29,6 +30,16 @@ describe Seriamp::Sonamp::AutoPower do
         lambda do
           result
         end.should raise_error(Seriamp::NoPowerStateAvailable)
+      end
+    end
+
+    context 'zone only input' do
+      let(:default) do
+        [1, 2]
+      end
+
+      it 'works' do
+        result.should == "power 1 on\npower 2 on"
       end
     end
   end

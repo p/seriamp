@@ -74,8 +74,13 @@ module Seriamp
 
     class AutoPower
       def initialize(**opts)
-        pp opts
-        @options = opts.dup.freeze
+        opts = opts.dup
+        if default = opts[:default]
+          if Array === default
+            opts[:default] = Hash[default.map { |v| [v, true] }]
+          end
+        end
+        @options = opts.freeze
 
         unless options[:sonamp_url]
           raise ArgumentError, 'Sonamp URL is required'
@@ -171,6 +176,23 @@ module Seriamp
 
       def turn_on_cmd
         if default = options[:default]
+          default.map do |zone, levels|
+            prefix = case levels
+            when Array
+              if levels.length != 2
+                raise "Expected two values for channel levels"
+              end
+              "channel_level #{zone*2-1} #{levels.first}\n" +
+              "channel_level #{zone*2} #{levels.last}\n"
+            when Integer
+              "zone_level #{zone} #{levels}\n"
+            when true
+              ''
+            else
+              raise "Invalid level specification: #{levels.inspect}"
+            end
+            prefix + "power #{zone} on"
+          end.join("\n")
         else
           raise NoPowerStateAvailable, "No state available to generate the turn on command"
         end
