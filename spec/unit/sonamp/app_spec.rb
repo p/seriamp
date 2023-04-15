@@ -71,14 +71,14 @@ describe Seriamp::Sonamp::App do
       let(:client_status) do
         {
           power: {1 => true, 2 => false, 3 => true, 4 => false},
-          zone_fault: {1 => true, 2 => false, 3 => true, 4 => false},
+          fault: {1 => true, 2 => false, 3 => true, 4 => false},
         }
       end
 
       let(:expected_response) do
         {
           'power' => {'1' => true, '2' => false, '3' => true, '4' => false},
-          'zone_fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
+          'fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
         }
       end
 

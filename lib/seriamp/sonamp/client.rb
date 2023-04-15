@@ -94,7 +94,7 @@ module Seriamp
         get_channel_value('TVL', channel)
       end
 
-      def get_zone_fault(zone = nil)
+      def get_fault(zone = nil)
         get_zone_state('FP', zone)
       end
 
@@ -146,7 +146,7 @@ module Seriamp
         firmware_version
         temperature
         power
-        zone_fault
+        fault
         zone_volume
         channel_volume
         zone_mute

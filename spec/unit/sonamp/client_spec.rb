@@ -46,7 +46,7 @@ describe Seriamp::Sonamp::Client do
         firmware_version: '1.00',
         temperature: 1,
         power: {1 => true, 2 => true, 3 => true, 4 => true},
-        zone_fault: {1 => true, 2 => true, 3 => true, 4 => true},
+        fault: {1 => true, 2 => true, 3 => true, 4 => true},
         zone_mute: {1 => true, 2 => true, 3 => true, 4 => true},
         zone_volume: {1 => 1, 2 => 1, 3 => 1, 4 => 1},
         channel_volume: {1 => 1, 2 => 1, 3 => 1, 4 => 1, 5 => 1, 6 => 1, 7 => 1, 8 => 1},
