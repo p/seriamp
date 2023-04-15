@@ -312,7 +312,7 @@ module Seriamp
 
       module Utils
         module_function def parse_default_zones(value)
-          Hash[v.split(',').map do |v|
+          Hash[value.split(',').map do |v|
             if v.include?('=')
               zone, level = v.split('=')
               level = if level.include?('/')

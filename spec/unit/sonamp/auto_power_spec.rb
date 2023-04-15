@@ -73,4 +73,33 @@ describe Seriamp::Sonamp::AutoPower do
     end
   end
 
+  describe Seriamp::Sonamp::AutoPower::Utils do
+    describe '.parse_default_zones' do
+      let(:result) do
+        described_class.parse_default_zones(input)
+      end
+
+      context 'one value' do
+        let(:input) { '3' }
+        it 'parses correctly' do
+          result.should == {3 => true}
+        end
+      end
+
+      context 'two zones' do
+        let(:input) { '3,4' }
+        it 'parses correctly' do
+          result.should == {3 => true, 4 => true}
+        end
+      end
+
+      context 'two zones with zone and channel volumes' do
+        let(:input) { '3=40,4=41/51' }
+        it 'parses correctly' do
+          result.should == {3 => 40, 4 => [41, 51]}
+        end
+      end
+    end
+  end
+
 end
