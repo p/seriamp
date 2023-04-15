@@ -103,6 +103,41 @@ module Seriamp
       # Request amplifier information, request receiver information
 
       def run
+        # This may not load anything if the state file is missing, etc.
+        load_sonamp_power
+        @state = :initial
+
+        loop do
+          prev_state = @state
+          begin
+            send("run_#{@state}")
+            wait_time = 20
+          rescue => exc
+            puts "#{exc.class}: #{exc}"
+            wait_time = 5
+          end
+          # If state has not changed, sleep, otherwise do not sleep.
+          # If there was an error, also sleep, but not as long.
+          if @state == prev_state
+            sleep(wait_time)
+          end
+        end
+      end
+
+      def run_initial
+        @sonamp_power_state = sonamp_client.get_json('power')
+        @state = :good
+      end
+
+      def run_good
+        if @sonamp_pwoer_state
+          @prev_sonamp_power_state = @sonamp_power_state
+        end
+
+        receiver_on = detector.on?
+      end
+
+      def run
         load_sonamp_power
 
         bump('application start')
@@ -147,7 +182,7 @@ module Seriamp
             bump('failed to communicate with receiver - assuming it is on')
           end
 
-          delta = (@alive_through - Utils.monotime).to_i
+          delta = (@alive_through - Seriamp::Utils.monotime).to_i
           if delta <= 0 && sonamp_on
             logger&.info("Turning amplifier off")
             handle_exceptions do
@@ -183,7 +218,7 @@ module Seriamp
         if ttl > 0
           logger&.debug("Bumping #{ttl} seconds: #{reason}")
         end
-        @alive_through = Utils.monotime + ttl*60
+        @alive_through = Seriamp::Utils.monotime + ttl*60
       end
 
       def sonamp_client
@@ -236,6 +271,28 @@ module Seriamp
           end
         else
           logger&.warn("No stored sonamp power")
+        end
+      end
+
+      module Utils
+        module_function def parse_default_zones(value)
+          Hash[v.split(',').map do |v|
+            if v.include?('=')
+              zone, level = v.split('=')
+              level = if level.include?('/')
+                level.split('/').map { |v| Integer(v) }.tap do |v|
+                  if v.length != 2
+                    raise "Two volume levels expected for channel volumes"
+                  end
+                end
+              else
+                Integer(level)
+              end
+              [Integer(zone), level]
+            else
+              [Integer(v), true]
+            end
+          end]
         end
       end
     end

@@ -17,6 +17,10 @@ OptionParser.new do |opts|
     options[:daemonize] = true
   end
 
+  opts.on("--default", "-a", "Default zones and volume levels to set") do |v|
+    options[:default_zones] = Seriamp::Sonamp::AutoPower::Utils.parse_default_zones(v)
+  end
+
   opts.on("--detector", "-d", "Detector to use: sonamp|yamaha") do |v|
     if %w(sonamp yamaha).include?(v)
       options[:detector] = v.to_sym
