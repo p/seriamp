@@ -74,6 +74,7 @@ module Seriamp
 
     class AutoPower
       def initialize(**opts)
+        pp opts
         @options = opts.dup.freeze
 
         unless options[:sonamp_url]
@@ -89,7 +90,7 @@ module Seriamp
           when nil, :sonamp
             SonampDetector.new(sonamp_client: sonamp_client)
           else
-            raise "Invalid detector option: #{opts[:detector]}"
+            raise ArgumentError, "Invalid detector option: #{opts[:detector]}"
           end
       end
 
@@ -108,6 +109,7 @@ module Seriamp
         @state = :initial
 
         loop do
+          report_state
           prev_state = @state
           begin
             send("run_#{@state}")
@@ -124,20 +126,54 @@ module Seriamp
         end
       end
 
+      attr_reader :sonamp_power_state
+
+      def signal?
+        @signal
+      end
+
+      def any_zones_on?
+        sonamp_power_state.any? { |k, v| v }
+      end
+
+      def report_state
+        puts "State: #{@state}"
+        puts "Sonamp power: #{sonamp_power_state}"
+        puts "Signal: #{signal?.inspect}"
+      end
+
       def run_initial
         @sonamp_power_state = sonamp_client.get_json('power')
         @state = :good
       end
 
       def run_good
-        if @sonamp_pwoer_state
+        if @sonamp_power_state
           @prev_sonamp_power_state = @sonamp_power_state
         end
 
-        receiver_on = detector.on?
+        @signal = detector.on?
+        unless [true, false].include?(@signal)
+          raise "#{@signal.inspect} not a valid return value"
+        end
+        # Get the amplifier state again, if this fails the amplifier is
+        # not reachable and turning it on or off won't work either.
+        @sonamp_power_state = sonamp_client.get_json('power')
+
+        if signal? && !any_zones_on?
+          logger&.debug("Signal on and no zones off, turning zones on")
+          sonamp_client.post!('', body: turn_on_cmd)
+        elsif !signal? && any_zones_on?
+          logger&.debug("Signal off and zones on, turning zones off")
+          sonamp_client.post!('off')
+        end
       end
 
-      def run
+      def turn_on_cmd
+        "power 1 on\npower 2 on"
+      end
+
+      def runx
         load_sonamp_power
 
         bump('application start')
