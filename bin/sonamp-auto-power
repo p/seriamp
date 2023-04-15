@@ -17,6 +17,14 @@ OptionParser.new do |opts|
     options[:daemonize] = true
   end
 
+  opts.on("--detector", "-d", "Detector to use: sonamp|yamaha") do |v|
+    if %w(sonamp yamaha).include?(v)
+      options[:detector] = v.to_sym
+    else
+      raise "Valid detectors are: sonamp, yamaha"
+    end
+  end
+
   opts.on("--log=PATH", "-l", "Path to log file") do |path|
     options[:log_path] = path
   end
@@ -43,6 +51,7 @@ logger = Logger.new(STDERR)
 
 runner = Seriamp::Sonamp::AutoPower.new(
   logger: logger,
+  detector: options[:detector],
   sonamp_url: options[:sonamp_url],
   state_path: options[:state_path],
   ttl: options[:ttl],
