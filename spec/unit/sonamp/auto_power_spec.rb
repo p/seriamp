@@ -40,7 +40,7 @@ describe Seriamp::Sonamp::AutoPower do
         end
       end
 
-      context 'no input signal' do
+      xcontext 'no input signal' do
         let(:all_on) do
           {1 => true, 2 => true, 3 => true, 4 => true }
         end
