@@ -11,4 +11,6 @@ module Seriamp
 
   class InvalidOnOffValue < ArgumentError; end
   class InvalidBackend < ArgumentError; end
+
+  class NoPowerStateAvailable < Error; end
 end

@@ -20,6 +20,19 @@ describe Seriamp::Sonamp::AutoPower do
     end
   end
 
+  describe '#turn_on_cmd' do
+    let(:ap) { described_class.new(sonamp_url: 'test') }
+    let(:result) { ap.send(:turn_on_cmd) }
+
+    context 'no input' do
+      it 'raises NoPowerStateAvailable' do
+        lambda do
+          result
+        end.should raise_error(Seriamp::NoPowerStateAvailable)
+      end
+    end
+  end
+
   describe '#run' do
     context 'with sonamp detector' do
       let(:runner) do

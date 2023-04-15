@@ -170,7 +170,10 @@ module Seriamp
       end
 
       def turn_on_cmd
-        "power 1 on\npower 2 on"
+        if default = options[:default]
+        else
+          raise NoPowerStateAvailable, "No state available to generate the turn on command"
+        end
       end
 
       def runx
