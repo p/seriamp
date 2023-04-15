@@ -41,7 +41,7 @@ module Seriamp
       end
 
       get '/power' do
-        render_json(client.get_zone_power)
+        render_json(client.get_power)
       end
 
       get '/auto_trigger_input' do
@@ -50,9 +50,9 @@ module Seriamp
 
       post '/off' do
         1.upto(4) do |zone|
-          client.set_zone_power(zone, false)
+          client.set_power(zone, false)
         end
-        render_json(client.get_zone_power)
+        render_json(client.get_power)
       end
 
       get '/volume' do
@@ -66,12 +66,12 @@ module Seriamp
       end
 
       get '/zone/:zone/power' do |zone|
-        render_json(client.get_zone_power(Integer(zone)))
+        render_json(client.get_power(Integer(zone)))
       end
 
       put '/zone/:zone/power' do |zone|
         state = Utils.parse_on_off(request.body.read)
-        client.set_zone_power(Integer(zone), state)
+        client.set_power(Integer(zone), state)
         empty_response
       end
 

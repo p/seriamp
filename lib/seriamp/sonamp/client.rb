@@ -24,15 +24,15 @@ module Seriamp
       DEFAULT_RS232_TIMEOUT = 3
 
       def present?
-        get_zone_power(1)
+        get_power(1)
         true
       end
 
-      def get_zone_power(zone = nil)
+      def get_power(zone = nil)
         get_zone_state('P', zone)
       end
 
-      def set_zone_power(zone, state)
+      def set_power(zone, state)
         if zone < 1 || zone > 4
           raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
         end
@@ -43,7 +43,7 @@ module Seriamp
 
       def power_off
         1.upto(4).each do |zone|
-          set_zone_power(zone, false)
+          set_power(zone, false)
         end
       end
 
@@ -145,7 +145,7 @@ module Seriamp
       STATUS_FIELDS = %i(
         firmware_version
         temperature
-        zone_power
+        power
         zone_fault
         zone_volume
         channel_volume

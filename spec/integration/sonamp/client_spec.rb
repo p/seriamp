@@ -19,9 +19,9 @@ describe 'Sonamp integration' do
     let(:status) { client.status }
 
     it 'works' do
-      status.fetch(:zone_power).should be_a(Hash)
+      status.fetch(:power).should be_a(Hash)
       1.upto(4) do |zone|
-        status.fetch(:zone_power).should have_key(zone)
+        status.fetch(:power).should have_key(zone)
       end
     end
   end
