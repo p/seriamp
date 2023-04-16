@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../css/ss.css">
+<title>YNCA Command List Ver. 1.07 for RX-A3020_U</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+<div id="copy">&copy; 2012 Yamaha Corporation All Rights Reserved.</div>
+<div class="toptitle">Sub Unit : AIRPLAY</div>
+<div class="version">Function Tree version: 1.07</div>
+<div class="version">Model: RX-A3020</div>
+<div class="version">Product Region: USA</div>
+<div class="version">Date:2012-06-08 14:09:02</div>
+<hr>
+<div class ="title">Command Index</div>
+<ol type="1" start="1">
+    <li class="title">Source Device</li>
+        <div class="norm"><a href="#AVAIL" name="CatIdxAVAIL">AVAIL</a></div>
+        <div class="norm"><a href="#VOLINTERLOCK" name="CatIdxVOLINTERLOCK">VOLINTERLOCK</a></div>
+        <div class="norm"><a href="#PLAYBACK" name="CatIdxPLAYBACK">PLAYBACK</a></div>
+        <div class="norm"><a href="#PLAYBACKINFO" name="CatIdxPLAYBACKINFO">PLAYBACKINFO</a></div>
+        <div class="norm"><a href="#METAINFO" name="CatIdxMETAINFO">METAINFO</a></div>
+        <div class="norm"><a href="#ARTIST" name="CatIdxARTIST">ARTIST</a></div>
+        <div class="norm"><a href="#ALBUM" name="CatIdxALBUM">ALBUM</a></div>
+        <div class="norm"><a href="#SONG" name="CatIdxSONG">SONG</a></div>
+</ol><hr>
+<div class="title">Command Details of SubUnit: AIRPLAY</div>
+<ul type="disc">
+<li>
+<div class="itemtitle"><a name="AVAIL">AVAIL</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:AVAIL=?</div></dd>
+<dd><div class="description">Retrieving the connection state of AirPlay or the validity of its operational status</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Not Ready</div></dd>
+<dd><div class="description">GET Only: indicating invalid state of operation</div></dd>
+<dd><div class="param">Ready</div></dd>
+<dd><div class="description">GET Only: indicating valid state of operation</div></dd>
+<div class="backlink"><a href="#CatIdxAVAIL">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="VOLINTERLOCK">VOLINTERLOCK</a></div>
+<dl>
+<dt><span class="itemtitle">[PUT Command]</span></dt>
+<dd><div class="cmd">@AIRPLAY:VOLINTERLOCK=<span class="exparam">Parameter</span></div></dd>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:VOLINTERLOCK=?</div></dd>
+<dd><div class="description">Operating & retrieving volume controls from iTunes/iPod</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Off</div></dd>
+<dd><div class="description">PUT: setting to Off / GET: indicating its state is Off</div></dd>
+<dd><div class="param">Limited</div></dd>
+<dd><div class="description">PUT: setting to Limited / GET: indicating its state is Limited</div></dd>
+<dd><div class="param">Full</div></dd>
+<dd><div class="description">PUT: setting to Full / GET: indicating its state is Full</div></dd>
+<div class="backlink"><a href="#CatIdxVOLINTERLOCK">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="PLAYBACK">PLAYBACK</a></div>
+<dl>
+<dt><span class="itemtitle">[PUT Command]</span></dt>
+<dd><div class="cmd">@AIRPLAY:PLAYBACK=<span class="exparam">Parameter</span></div></dd>
+<dd><div class="description">Operating the playback state</div></dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Stop</div></dd>
+<dd><div class="description">PUT Only: change its state to Stop</div></dd>
+<dd><div class="param">Pause</div></dd>
+<dd><div class="description">PUT Only: change its state to Pause</div></dd>
+<dd><div class="param">Play</div></dd>
+<dd><div class="description">PUT Only: change its state to Play</div></dd>
+<dd><div class="param">Skip Rev</div></dd>
+<dd><div class="description">PUT Only: change its state to Skip Rev</div></dd>
+<dd><div class="param">Skip Fwd</div></dd>
+<dd><div class="description">PUT Only: change its state to Skip Fwd</div></dd>
+<div class="backlink"><a href="#CatIdxPLAYBACK">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="PLAYBACKINFO">PLAYBACKINFO</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:PLAYBACKINFO=?</div></dd>
+<dd><div class="description">Retrieving the playback state</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Stop</div></dd>
+<dd><div class="description">GET Only: indicating its state is Stop</div></dd>
+<dd><div class="param">Play</div></dd>
+<dd><div class="description">GET Only: indicating its state is Play</div></dd>
+<div class="backlink"><a href="#CatIdxPLAYBACKINFO">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="METAINFO">METAINFO</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:METAINFO=?</div></dd>
+<dd><div class="description">GET Only. Meta Info can be retrieved at a time.</div></dd>
+<dd><div class="notes">Updated by following commands: "@AIRPLAY:ARTIST", "@AIRPLAY:ALBUM" and "@AIRPLAY:SONG"</div></dd>
+<div class="backlink"><a href="#CatIdxMETAINFO">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="ARTIST">ARTIST</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:ARTIST=?</div></dd>
+<dd><div class="description">Retrieving Artist Name</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Character Code: Mixed (could be ASCII, Latin-1 or UTF-8 encoding), Variable Byte Length (0 to 64 bytes)</div></dd>
+<dd><div class="description">GET Only</div></dd>
+<div class="backlink"><a href="#CatIdxARTIST">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="ALBUM">ALBUM</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:ALBUM=?</div></dd>
+<dd><div class="description">Retrieving Album Title</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Parameters are the same as <a href="#ARTIST">ARTIST</a></div></dd>
+<div class="backlink"><a href="#CatIdxALBUM">Back To Index</a></div>
+</dl></li>
+<li>
+<div class="itemtitle"><a name="SONG">SONG</a></div>
+<dl>
+<dt><span class="itemtitle">[GET Command]</span><dt>
+<dd><div class="cmd">@AIRPLAY:SONG=?</div></dd>
+<dd><div class="description">Retrieving Song Title</div></dd>
+<dd><div class="iaf">Initial Auto Feedback is Available</div><dd>
+<dt><div class="itemtitle">[Parameters]</div></dt>
+<dd><div class="param">Parameters are the same as <a href="#ARTIST">ARTIST</a></div></dd>
+<div class="backlink"><a href="#CatIdxSONG">Back To Index</a></div>
+</dl></li>
+</ul>
+<p>
+<div id="copy">&copy; 2012 Yamaha Corporation All Rights Reserved.</div>
+</body>
+</html>
