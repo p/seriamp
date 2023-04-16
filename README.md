@@ -33,6 +33,20 @@ The following are some uses of Seriamp that are either less obvious or that
 cannot be performed using other control methods (i.e. OEM remote control or
 front panel buttons/knobs) that I have employed in my home setup.
 
+### Setup Receivers
+
+Yamaha for some reason likes to change the IR codes for the setup button
+and menu navigation buttons rather frequently, and does not place the
+equivalent buttons on the front panel of their receivers. This means that
+in order to configure their receivers from year 2000 onward, you generally
+must have the correct remote for that receiver. The higher tier receivers
+in particular can be difficult to get those correct remotes for, since
+there may be relatively few units manufactured that use a particular set of
+remote codes.
+
+By sending the IR remote codes via Seriamp it is possible to configure
+all of these receivers without having the correct remote control.
+
 ### Remote Tone Controls
 
 Yamaha receivers do not provide tone control buttons on their remotes, at least
@@ -53,7 +67,7 @@ In a stereo system without a subwoofer, these commands can be combined to
 set up a high pass filter at a particular frequency (40-200 Hz). This
 is useful to omit the lowest frequencies at night.
 
-## Set Volume Prior To Turn On
+### Set Volume Prior To Turn On
 
 Normally the receivers are not responding to control input when they are in
 standby (other than to the power button to turn themselves on).
