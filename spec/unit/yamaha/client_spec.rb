@@ -58,6 +58,36 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  describe '#parse_stx_response' do
+    let(:client) { described_class.new }
+    let(:parsed) { client.send(:parse_stx_response, resp) }
+
+    shared_examples 'returns correct result' do
+      let(:resp) { "0 0 #{response_content}".gsub(' ', '') }
+      it 'returns correct result' do
+        parsed.should == {control_type: :rs232c, state: expected_state}
+      end
+    end
+
+    context 'straight/effect straight' do
+      let(:response_content) { '28 80' }
+      let(:expected_state) do
+        {program: 'Straight'}
+      end
+
+      include_examples 'returns correct result'
+    end
+
+    context 'straight/effect effect - 2 ch stereo' do
+      let(:response_content) { '28 34' }
+      let(:expected_state) do
+        {program: '2ch Stereo'}
+      end
+
+      include_examples 'returns correct result'
+    end
+  end
+
   describe 'control methods' do
     let(:extra_client_options) { {} }
     let(:client) { described_class.new(**{device: '/dev/bogus'}.update(extra_client_options)) }
