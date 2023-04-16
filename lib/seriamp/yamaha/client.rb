@@ -314,6 +314,14 @@ module Seriamp
             {zone2_volume: parse_half_db_volume(data)}
           when 'A2'
             {zone3_volume: parse_half_db_volume(data)}
+          when '4B'
+            {zone2_bass: parse_volume(data, '00', -10, 10, 1)}
+          when '4C'
+            {zone2_treble: parse_volume(data, '00', -10, 10, 1)}
+          when '4D'
+            {zone3_bass: parse_volume(data, '00', -10, 10, 1)}
+          when '4E'
+            {zone3_treble: parse_volume(data, '00', -10, 10, 1)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil

@@ -90,6 +90,10 @@ describe Seriamp::Yamaha::Client do
       '2E 01' => {speaker_a: true},
       '2F 00' => {speaker_b: false},
       '2F 01' => {speaker_b: true},
+      '4B 00' => {zone2_bass: -10},
+      '4C 14' => {zone2_treble: 10},
+      '4D 01' => {zone3_bass: -9},
+      '4E 13' => {zone3_treble: 9},
       '80 01' => {test: true},
       '8C 01' => {pure_direct: true},
     }.each do |_response_content, _expected_state|
