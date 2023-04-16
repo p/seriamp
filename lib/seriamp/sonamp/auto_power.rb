@@ -167,7 +167,7 @@ module Seriamp
         @sonamp_power_state = sonamp_client.get_json('power')
 
         if signal? && !any_zones_on?
-          logger&.debug("Signal on and no zones off, turning zones on")
+          logger&.debug("Signal on and no zones on, turning zones on")
           sonamp_client.post!('', body: turn_on_cmd)
         elsif !signal? && any_zones_on?
           logger&.debug("Signal off and zones on, turning zones off")
