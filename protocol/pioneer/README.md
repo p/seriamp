@@ -1,5 +1,8 @@
 ## Protocol Specifications
 
+[SC-05](SC-05_RS232C.pdf)
+[SC-07](SC-07_RS232C.pdf)
+[SC-09TX](SC-09TX_RS232C.pdf)
 [SC-1222](SC-1x22_SC-6x_VSX-1122-K_VSX-60_IP_RS232C.xls)
 [SC-1522](SC-1x22_SC-6x_VSX-1122-K_VSX-60_IP_RS232C.xls)
 [SC-25](SC-2x_VSX-2xTXH_RS232C.pdf)
