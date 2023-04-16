@@ -1,6 +1,30 @@
-# Receiver & Amplifier Serial Control Ruby Library
+# Receiver & Amplifier Serial & Network Control Toolkit
+
+Seriamp is a Ruby library plus a collection of utilities and daemons to
+control a variety of receivers and amplifiers via serial connection (RS-232)
+or network (Ethernet/IP). The primary targets of Seriamp are Yamaha
+RS-232C-capable receivers and Sonance Sonamp 875D SE/Mk2 amplifiers, as
+those are the models I primarily use, but some code is written for
+Yamaha YNCA protocol (usable over both RS-232C and Ethernet) and
+Onkyo/Integra/post-2014 Pioneer Elite receivers (which all use the
+Integra protocol). While not currently implemented, Seriamp should be
+straightforwardly extendable to support Denon and Marantz receivers, and
+perhaps with a bit more work the Harman/Kardon ones.
+
+Seriamp features:
+
+- Replaceable low level communication backends (for example,
+to support multiple serial port communication libraries in Ruby).
+- A command-line tool and a web application for each supported device.
+The web application supports optional locking to prevent concurrent use
+of the device from multiple clients, which the hardware generally does not
+support.
+- Command-line tools can route command execution through the respective
+web applications.
+- Modular architecture that supports multiple protocols/device manufacturers.
 
 ## Use Cases
+
 
 The following are some of the uses of seriamp that I have employed in my
 home setup.
