@@ -1,77 +1,14 @@
+# frozen_string_literal: true
+
 autoload :JSON, 'json'
 autoload :FileUtils, 'fileutils'
 require 'seriamp/faraday_facade'
 require 'seriamp/utils'
 require 'seriamp/error'
+require 'seriamp/signal_detector'
 
 module Seriamp
   module Sonamp
-    # Queries receiver for power status.
-    #
-    # Requires giving the auto power daemon the receiver daemon address,
-    # and requires the receiver daemon to be running.
-    class YamahaDetector
-      def initialize(**opts)
-        @options = opts.dup.freeze
-      end
-
-      def on?
-        case resp = yamaha_client.get!('power')
-          when 'true'
-            true
-          when 'false'
-            false
-          else
-            raise "Unknown yamaha power response: #{resp}"
-          end
-      end
-
-      private
-
-      def yamaha_client
-        @yamaha_client ||= FaradayFacade.new(
-          url: options.fetch(:yamaha_url),
-          timeout: options[:yamaha_timeout] || 5,
-        )
-      end
-    end
-
-    # Determines receiver power status by inspecting signal sensing
-    # state of the amplifier. Essentially this mirrors how the amplifier
-    # itself handles the automatic power management.
-    #
-    # This may not work when amplifier is set to high gain and input
-    # signal level is low - the amplifier may not consider the input
-    # signal to be above threshold. You can use the receiver detector
-    # in this case.
-    class SonampDetector
-      def initialize(**opts)
-        @options = opts.dup.freeze
-
-        # The daemon needs the sonamp client anyway to turn the power
-        # on and off, thus require the client to be passed to this
-        # detector.
-        @sonamp_client = opts.fetch(:sonamp_client)
-      end
-
-      def on?
-        # There isn't an "all" auto trigger input return - sonamp
-        # only returns per-zone auto triggers.
-        # If any of the zones have audio signal, consider the amplifier
-        # to be receiving audio from the receiver.
-        # This seems like reasonable behavior when the amplifier is
-        # connected to a single receiver outputting one zone of audio,
-        # but perhaps wouldn't work well in a multi-zone installation.
-        # A multi-zone installation however would likely need different
-        # rules for how to turn the amplifier on (perhaps, for example,
-        # based on simply auto trigger input for each zone).
-        sonamp_client.get_json('auto_trigger_input').values.any? { |v| v == true }
-      end
-
-      private
-
-      attr_reader :sonamp_client
-    end
 
     # Initial state: no amplifier information, no receiver information
     # Request amplifier information
@@ -103,9 +40,9 @@ module Seriamp
             unless options[:yamaha_url]
               raise ArgumentError, 'Yamaha URL is required'
             end
-            YamahaDetector.new(**opts)
+            SignalDetector::Yamaha.new(**opts)
           when nil, :sonamp
-            SonampDetector.new(sonamp_client: sonamp_client)
+            SignalDetector::Sonamp.new(sonamp_client: sonamp_client)
           else
             raise ArgumentError, "Invalid detector option: #{opts[:detector]}"
           end

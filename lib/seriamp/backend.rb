@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Seriamp
   module Backend
     autoload :Logging, 'seriamp/backend/logging'
