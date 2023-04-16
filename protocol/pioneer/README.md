@@ -1,9 +1,22 @@
-[VSX-1120-K-RS232.PDF](VSX-1120-K-RS232.PDF)
+## Protocol Specifications
 
-RS232 and IP protocol sheet for Pioneer receivers in PDF format.
-Covers Elite SC-35, Elite SC-37, VSX-30, VSX-31, VSX-32, VSX-33 and VSX-1120-K.
+[SC-35](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[SC-37](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-1120-K](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-30](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-31](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-32](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-33](SC-3x_VSX-1120-K_VSX_3x_IP_RS232C.pdf)
+[VSX-52TX](VSX-52TX_RS232C.pdf)
+[VSX-81TXV](VSX-81TXV_RS232C.pdf)
+[VSX-82TXS](VSX-81TXS_RS232C.pdf)
+[VSX-84TXSi](VSX-81TXSi_RS232C.pdf)
+[VSX-91TXH](VSX-91TXH_RS232C.pdf)
+[VSX-94TXH](VSX-94TXH_RS232C.pdf)
 
-Network ports are:
+## Network Ports
+
+Open network ports on VSX-1120-K / VSX-3x / SC-3x are:
 
 Open TCP Port: 23 telnet
 Open TCP Port: 80 http
