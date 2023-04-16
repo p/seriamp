@@ -174,6 +174,9 @@ module Seriamp
 
       def run_initial
         @sonamp_power_state = sonamp_client.get_json('power')
+        if any_zones_on?
+          bump('initial state has zones on')
+        end
         @state = :good
       end
 

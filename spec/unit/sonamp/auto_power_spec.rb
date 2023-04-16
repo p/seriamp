@@ -71,9 +71,11 @@ describe Seriamp::Sonamp::AutoPower do
   describe '#run_one' do
     context 'with sonamp detector' do
       let(:default_zones) { nil }
+      let(:ttl) { nil }
       let(:runner) do
         described_class.new(sonamp_url: 'http://test/sonamp',
-          detector: :sonamp, logger: logger, default_zones: default_zones)
+          detector: :sonamp, logger: logger, default_zones: default_zones,
+          ttl: ttl)
       end
 
       let(:conn) do
@@ -154,6 +156,40 @@ describe Seriamp::Sonamp::AutoPower do
             conn.should_receive(:get_json).with('auto_trigger_input').and_return(all_off)
             conn.should_receive(:get_json).with('power').and_return(all_on)
             conn.should_receive(:post!).with('off')
+            runner.should_receive(:sleep).with(20)
+            runner.send(:run_one)
+          end
+        end
+      end
+
+      context 'on to off with ttl' do
+        let(:default_zones) { 4 }
+        let(:ttl) { 4 }
+
+        it 'turns zones off' do
+          Seriamp::FaradayFacade.should receive(:new).and_return(conn)
+
+          mock_scope do
+            conn.should_receive(:get_json).with('power').and_return(all_on)
+            runner.send(:run_one)
+            runner.state.should be :good
+          end
+
+          mock_scope do
+            conn.should_receive(:get_json).with('auto_trigger_input').and_return(all_off)
+            conn.should_receive(:get_json).with('power').and_return(all_on)
+            conn.should_not receive(:post!).with('off')
+            runner.should_receive(:sleep).with(20)
+            runner.send(:run_one)
+          end
+
+          now = Seriamp::Utils.monotime
+
+          mock_scope do
+            Seriamp::Utils.should receive(:monotime).and_return(now+20)
+            conn.should_receive(:get_json).with('auto_trigger_input').and_return(all_off)
+            conn.should_receive(:get_json).with('power').and_return(all_on)
+            conn.should receive(:post!).with('off')
             runner.should_receive(:sleep).with(20)
             runner.send(:run_one)
           end
