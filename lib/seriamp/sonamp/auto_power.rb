@@ -21,6 +21,11 @@ module Seriamp
     # - if receiver is off and ttl reached zero, turn amplifier off
 
     class AutoPower
+      # @option **opts [Integer|Array<Integer>|Hash<Integer,true|false|Integer|Array<Integer>>] :default_zones
+      # @option **opts [Symbol] :detector
+      # @option **opts [String] :sonamp_url
+      # @option **opts [String] :state_path
+      # @option **opts [String] :yamaha_url
       def initialize(**opts)
         opts = opts.dup
         case default = opts[:default_zones]
