@@ -70,8 +70,22 @@ describe Seriamp::Yamaha::Client do
     end
 
     {
-      '28 80' => {program: 'Straight'},
+      '06 00' => {xm_message: 'Check Antenna'},
+      '10 01' => {format: 'PCM'},
+      '10 FE' => {format: '???'},
+      '11 08' => {sampling: '44100'},
+      '12 02' => {input_channels: '2/0'},
+      '13 FF' => {input_lfe_channel: '---'},
+      '14 FF' => {bit_rate: '---'},
+      #'15 00' => {dialog: -31},
+      #'15 FF' => {dialog: nil},
+      #'16 00' => {flags: []},
+      '22 00' => {audio_select: 'Auto', decoder_mode: 'Auto'},
+      '23 00' => {mute: false},
+      '26 77' => {main_volume: -40.0},
       '28 34' => {program: '2ch Stereo'},
+      '28 80' => {program: 'Straight'},
+      #'2D 03' => {extended_surround: 'Auto'},
     }.each do |_response_content, _expected_state|
       response_content, expected_state = _response_content, _expected_state
 

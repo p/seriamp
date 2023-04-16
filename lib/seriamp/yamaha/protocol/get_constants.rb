@@ -533,7 +533,17 @@ module Seriamp
           '01' => true,
         }.freeze
 
+        XM_MESSAGE_GET = {
+          '00' => 'Check Antenna',
+          '01' => 'Updating',
+          '02' => 'No Signal',
+          '03' => 'Loading',
+          '04' => 'Off Air',
+          '05' => 'Unavailable',
+        }.freeze
+
         GET_MAP = {
+          '06' => :xm_message,
           '10' => :format,
           '11' => :sampling,
           '12' => :input_channels,
@@ -542,6 +552,7 @@ module Seriamp
           '20' => :power,
           '21' => :input_name,
           '23' => :mute,
+          '28' => :program,
         }.freeze
       end
     end
