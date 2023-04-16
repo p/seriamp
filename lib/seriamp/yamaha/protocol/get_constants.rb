@@ -542,6 +542,13 @@ module Seriamp
           '05' => 'Unavailable',
         }.freeze
 
+        SPEAKER_A_GET = {
+          '00' => false,
+          '01' => true,
+        }.freeze
+
+        SPEAKER_B_GET = SPEAKER_A_GET
+
         GET_MAP = {
           '06' => :xm_message,
           '10' => :format,
@@ -553,6 +560,8 @@ module Seriamp
           '21' => :input_name,
           '23' => :mute,
           '28' => :program,
+          '2E' => :speaker_a,
+          '2F' => :speaker_b,
         }.freeze
       end
     end

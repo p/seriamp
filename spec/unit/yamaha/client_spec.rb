@@ -86,6 +86,10 @@ describe Seriamp::Yamaha::Client do
       '28 34' => {program: '2ch Stereo'},
       '28 80' => {program: 'Straight'},
       #'2D 03' => {extended_surround: 'Auto'},
+      '2E 00' => {speaker_a: false},
+      '2E 01' => {speaker_a: true},
+      '2F 00' => {speaker_b: false},
+      '2F 01' => {speaker_b: true},
     }.each do |_response_content, _expected_state|
       response_content, expected_state = _response_content, _expected_state
 
