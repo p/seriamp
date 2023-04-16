@@ -138,6 +138,28 @@ describe Seriamp::Sonamp::AutoPower do
         end
       end
 
+      context 'on to off' do
+        let(:default_zones) { 4 }
+
+        it 'turns zones off' do
+          Seriamp::FaradayFacade.should receive(:new).and_return(conn)
+
+          mock_scope do
+            conn.should_receive(:get_json).with('power').and_return(all_on)
+            runner.send(:run_one)
+            runner.state.should be :good
+          end
+
+          mock_scope do
+            conn.should_receive(:get_json).with('auto_trigger_input').and_return(all_off)
+            conn.should_receive(:get_json).with('power').and_return(all_on)
+            conn.should_receive(:post!).with('off')
+            runner.should_receive(:sleep).with(20)
+            runner.send(:run_one)
+          end
+        end
+      end
+
       xcontext 'on to off' do
         before do
           Seriamp::FaradayFacade.should receive(:new).and_return(conn)

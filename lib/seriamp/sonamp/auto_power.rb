@@ -113,6 +113,8 @@ module Seriamp
         # This may not load anything if the state file is missing, etc.
         load_sonamp_power
         @state = :initial
+
+        @alive_through = Seriamp::Utils.monotime
       end
 
       attr_reader :options
