@@ -17,7 +17,7 @@ OptionParser.new do |opts|
     options[:daemonize] = true
   end
 
-  opts.on("--default", "-a", "Default zones and volume levels to set") do |v|
+  opts.on("--default=LEVELS", "-a", "Default zones and volume levels to set") do |v|
     options[:default_zones] = Seriamp::Sonamp::AutoPower::Utils.parse_default_zones(v)
   end
 
@@ -60,6 +60,7 @@ runner = Seriamp::Sonamp::AutoPower.new(
   state_path: options[:state_path],
   ttl: options[:ttl],
   yamaha_url: options[:yamaha_url],
+  default_zones: options[:default_zones],
 )
 
 if options[:daemonize]

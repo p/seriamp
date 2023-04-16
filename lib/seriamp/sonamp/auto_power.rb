@@ -2,6 +2,7 @@ autoload :JSON, 'json'
 autoload :FileUtils, 'fileutils'
 require 'seriamp/faraday_facade'
 require 'seriamp/utils'
+require 'seriamp/error'
 
 module Seriamp
   module Sonamp
@@ -75,9 +76,9 @@ module Seriamp
     class AutoPower
       def initialize(**opts)
         opts = opts.dup
-        if default = opts[:default]
+        if default = opts[:default_zones]
           if Array === default
-            opts[:default] = Hash[default.map { |v| [v, true] }]
+            opts[:default_zones] = Hash[default.map { |v| [v, true] }]
           end
         end
         @options = opts.freeze
@@ -175,7 +176,7 @@ module Seriamp
       end
 
       def turn_on_cmd
-        if default = options[:default]
+        if default = options[:default_zones]
           default.map do |zone, levels|
             prefix = case levels
             when Array

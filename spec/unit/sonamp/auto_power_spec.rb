@@ -22,7 +22,7 @@ describe Seriamp::Sonamp::AutoPower do
 
   describe '#turn_on_cmd' do
     let(:default) { nil }
-    let(:ap) { described_class.new(sonamp_url: 'test', default: default) }
+    let(:ap) { described_class.new(sonamp_url: 'test', default_zones: default) }
     let(:result) { ap.send(:turn_on_cmd) }
 
     context 'no input' do
