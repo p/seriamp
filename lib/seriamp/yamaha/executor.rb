@@ -26,6 +26,12 @@ module Seriamp
         when 'remote-command'
           cmd = args.shift.upcase
           client.remote_command(cmd)
+        # Some remote commands do not produce responses, for example
+        # SET MENU navigation ones (up/down/+/-). The "nr" version of
+        # remote-command does not attempt to read a response.
+        when 'remote-command-nr'
+          cmd = args.shift.upcase
+          client.remote_command(cmd, read_response: false)
         when 'ext-command'
           cmd = args.shift.upcase
           client.extended_command(cmd)

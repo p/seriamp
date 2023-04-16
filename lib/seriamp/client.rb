@@ -168,13 +168,15 @@ module Seriamp
       get_command_response
     end
 
-    def dispatch(cmd)
+    def dispatch(cmd, read_response: true)
       start = Utils.monotime
       sanitized_cmd = cmd.gsub(/[\r\n]/, ' ').strip
       begin
         with_device do
           @io.syswrite(cmd.encode('ascii'))
-          read_response
+          if read_response
+            self.read_response
+          end
         end.tap do
           elapsed = Utils.monotime - start
           logger&.debug("#{self.class.name}: #{sanitized_cmd} succeeded in #{'%.2f' % elapsed} s")

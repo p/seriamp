@@ -129,10 +129,15 @@ module Seriamp
         nil
       end
 
-      def remote_command(cmd)
+      def remote_command(cmd, read_response: true)
         with_lock do
           with_retry do
-            dispatch_and_parse("#{STX}0#{cmd}#{ETX}")
+            cmd = "#{STX}0#{cmd}#{ETX}"
+            if read_response
+              dispatch_and_parse(cmd)
+            else
+              dispatch(cmd, read_response: false)
+            end
           end
         end
       end
