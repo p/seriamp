@@ -151,6 +151,8 @@ module Seriamp
         end
       end
 
+      attr_reader :state
+
       attr_reader :sonamp_power_state
 
       def signal?

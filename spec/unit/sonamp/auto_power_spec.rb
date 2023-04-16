@@ -64,23 +64,45 @@ describe Seriamp::Sonamp::AutoPower do
     end
   end
 
-  describe '#run' do
+  def mock_scope(&block)
+    RSpec::Mocks.with_temporary_scope(&block)
+  end
+
+  describe '#run_one' do
     context 'with sonamp detector' do
       let(:runner) do
         described_class.new(sonamp_url: 'http://test/sonamp', detector: :sonamp, logger: logger)
       end
 
-      let(:conn) { double('test connection') }
+      let(:conn) do
+        # Not a double because doubles cannot be used across mock scopes,
+        # and the connection object is cached by the client.
+        Object.new
+      end
 
       context 'when initial connection fails' do
-        before do
+        it 'retries on next iteraton' do
           Seriamp::FaradayFacade.should receive(:new).and_return(conn)
-          conn.should_receive(:get_json).and_raise(Faraday::ConnectionFailed)
-        end
 
-        it 'stays running and retries' do
-          skip 'needs finishing'
-          runner.run
+          mock_scope do
+            conn.should_receive(:get_json).and_raise(Faraday::ConnectionFailed)
+            runner.should receive(:sleep).with(5)
+            runner.send(:run_one)
+            runner.state.should be :initial
+          end
+
+          mock_scope do
+            conn.should_receive(:get_json).and_raise(Faraday::ConnectionFailed)
+            runner.should receive(:sleep).with(5)
+            runner.send(:run_one)
+            runner.state.should be :initial
+          end
+
+          mock_scope do
+            conn.should_receive(:get_json).and_return({})
+            runner.send(:run_one)
+            runner.state.should be :good
+          end
         end
       end
 
