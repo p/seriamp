@@ -69,22 +69,18 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
-    context 'straight/effect straight' do
-      let(:response_content) { '28 80' }
-      let(:expected_state) do
-        {program: 'Straight'}
+    {
+      '28 80' => {program: 'Straight'},
+      '28 34' => {program: '2ch Stereo'},
+    }.each do |_response_content, _expected_state|
+      response_content, expected_state = _response_content, _expected_state
+
+      context _response_content do
+        let(:response_content) { _response_content }
+        let(:expected_state) { _expected_state }
+
+        include_examples 'returns correct result'
       end
-
-      include_examples 'returns correct result'
-    end
-
-    context 'straight/effect effect - 2 ch stereo' do
-      let(:response_content) { '28 34' }
-      let(:expected_state) do
-        {program: '2ch Stereo'}
-      end
-
-      include_examples 'returns correct result'
     end
   end
 
