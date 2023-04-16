@@ -542,14 +542,18 @@ module Seriamp
           '05' => 'Unavailable',
         }.freeze
 
-        SPEAKER_A_GET = {
+        OFF_ON_GET = {
           '00' => false,
           '01' => true,
         }.freeze
 
-        SPEAKER_B_GET = SPEAKER_A_GET
+        SPEAKER_A_GET = OFF_ON_GET
 
-        TEST_GET = SPEAKER_A_GET
+        SPEAKER_B_GET = OFF_ON_GET
+
+        TEST_GET = OFF_ON_GET
+
+        PURE_DIRECT_GET = OFF_ON_GET
 
         GET_MAP = {
           '06' => :xm_message,
@@ -566,6 +570,7 @@ module Seriamp
           '2F' => :speaker_b,
           # Speaker level test mode
           '80' => :test,
+          '8C' => :pure_direct,
         }.freeze
       end
     end
