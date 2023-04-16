@@ -70,8 +70,10 @@ describe Seriamp::Sonamp::AutoPower do
 
   describe '#run_one' do
     context 'with sonamp detector' do
+      let(:default_zones) { nil }
       let(:runner) do
-        described_class.new(sonamp_url: 'http://test/sonamp', detector: :sonamp, logger: logger)
+        described_class.new(sonamp_url: 'http://test/sonamp',
+          detector: :sonamp, logger: logger, default_zones: default_zones)
       end
 
       let(:conn) do
@@ -106,15 +108,37 @@ describe Seriamp::Sonamp::AutoPower do
         end
       end
 
-      xcontext 'no input signal' do
-        let(:all_on) do
-          {1 => true, 2 => true, 3 => true, 4 => true }
-        end
+      let(:all_on) do
+        {1 => true, 2 => true, 3 => true, 4 => true }
+      end
 
-        let(:all_off) do
-          {1 => false, 2 => false, 3 => false, 4 => false }
-        end
+      let(:all_off) do
+        {1 => false, 2 => false, 3 => false, 4 => false }
+      end
 
+      context 'off to on' do
+        let(:default_zones) { 4 }
+
+        it 'turns zones on' do
+          Seriamp::FaradayFacade.should receive(:new).and_return(conn)
+
+          mock_scope do
+            conn.should_receive(:get_json).with('power').and_return(all_off)
+            runner.send(:run_one)
+            runner.state.should be :good
+          end
+
+          mock_scope do
+            conn.should_receive(:get_json).with('auto_trigger_input').and_return(all_on)
+            conn.should_receive(:get_json).with('power').and_return(all_off)
+            conn.should_receive(:post!).with('', body: "power 4 on")
+            runner.should_receive(:sleep).with(20)
+            runner.send(:run_one)
+          end
+        end
+      end
+
+      xcontext 'on to off' do
         before do
           Seriamp::FaradayFacade.should receive(:new).and_return(conn)
           conn.should_receive(:get_json).with('power').and_return(all_on)

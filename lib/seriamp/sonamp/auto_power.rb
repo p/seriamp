@@ -86,10 +86,11 @@ module Seriamp
     class AutoPower
       def initialize(**opts)
         opts = opts.dup
-        if default = opts[:default_zones]
-          if Array === default
-            opts[:default_zones] = Hash[default.map { |v| [v, true] }]
-          end
+        case default = opts[:default_zones]
+        when Array
+          opts[:default_zones] = Hash[default.map { |v| [v, true] }]
+        when Integer
+          opts[:default_zones] = {default => true}
         end
         @options = opts.freeze
 
