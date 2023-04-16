@@ -549,6 +549,8 @@ module Seriamp
 
         SPEAKER_B_GET = SPEAKER_A_GET
 
+        TEST_GET = SPEAKER_A_GET
+
         GET_MAP = {
           '06' => :xm_message,
           '10' => :format,
@@ -562,6 +564,8 @@ module Seriamp
           '28' => :program,
           '2E' => :speaker_a,
           '2F' => :speaker_b,
+          # Speaker level test mode
+          '80' => :test,
         }.freeze
       end
     end

@@ -90,6 +90,7 @@ describe Seriamp::Yamaha::Client do
       '2E 01' => {speaker_a: true},
       '2F 00' => {speaker_b: false},
       '2F 01' => {speaker_b: true},
+      '80 01' => {test: true},
     }.each do |_response_content, _expected_state|
       response_content, expected_state = _response_content, _expected_state
 
