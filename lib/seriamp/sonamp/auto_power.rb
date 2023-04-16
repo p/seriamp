@@ -73,6 +73,16 @@ module Seriamp
       attr_reader :sonamp_client
     end
 
+    # Initial state: no amplifier information, no receiver information
+    # Request amplifier information
+    #
+    # Each iteration:
+    # - get receiver information (via detector)
+    # - get amplifier information
+    # - if receiver is on and amplifier off, turn amplifier on
+    # - if receiver is on, bump ttl, otherwise do not bump
+    # - if receiver is off and ttl reached zero, turn amplifier off
+
     class AutoPower
       def initialize(**opts)
         opts = opts.dup
@@ -98,6 +108,10 @@ module Seriamp
           else
             raise ArgumentError, "Invalid detector option: #{opts[:detector]}"
           end
+
+        # This may not load anything if the state file is missing, etc.
+        load_sonamp_power
+        @state = :initial
       end
 
       attr_reader :options
@@ -106,29 +120,34 @@ module Seriamp
         options[:logger]
       end
 
-      # Initial state: no amplifier information, no receiver information
-      # Request amplifier information, request receiver information
+      def stop
+        @stop_requested = true
+      end
+
+      def stop_requested?
+        !!@stop_requested
+      end
 
       def run
-        # This may not load anything if the state file is missing, etc.
-        load_sonamp_power
-        @state = :initial
+        until stop_requested?
+          run_one
+        end
+      end
 
-        loop do
-          report_state
-          prev_state = @state
-          begin
-            send("run_#{@state}")
-            wait_time = 20
-          rescue => exc
-            puts "#{exc.class}: #{exc}"
-            wait_time = 5
-          end
-          # If state has not changed, sleep, otherwise do not sleep.
-          # If there was an error, also sleep, but not as long.
-          if @state == prev_state
-            sleep(wait_time)
-          end
+      def run_one
+        report_state
+        prev_state = @state
+        begin
+          send("run_#{@state}")
+          wait_time = 20
+        rescue => exc
+          puts "#{exc.class}: #{exc}"
+          wait_time = 5
+        end
+        # If state has not changed, sleep, otherwise do not sleep.
+        # If there was an error, also sleep, but not as long.
+        if @state == prev_state
+          sleep(wait_time)
         end
       end
 
@@ -169,9 +188,16 @@ module Seriamp
         if signal? && !any_zones_on?
           logger&.debug("Signal on and no zones on, turning zones on")
           sonamp_client.post!('', body: turn_on_cmd)
+          bump('amplifier turned on')
         elsif !signal? && any_zones_on?
-          logger&.debug("Signal off and zones on, turning zones off")
-          sonamp_client.post!('off')
+          if ttl_expired?
+            logger&.debug("Signal off and zones on, turning zones off")
+            sonamp_client.post!('off')
+          else
+            logger&.debug("Signal off and zones on, waiting for TTL to expire: #{'%.1f' % remaining_ttl}")
+          end
+        elsif signal?
+          bump('have signal')
         end
       end
 
@@ -280,7 +306,7 @@ module Seriamp
         if ttl > 0
           logger&.debug("Bumping #{ttl} seconds: #{reason}")
         end
-        @alive_through = Seriamp::Utils.monotime + ttl*60
+        @alive_through = Seriamp::Utils.monotime + ttl
       end
 
       def sonamp_client
@@ -294,6 +320,14 @@ module Seriamp
         @ttl ||= begin
           options[:ttl] || 0
         end
+      end
+
+      def remaining_ttl
+        [@alive_through - Seriamp::Utils.monotime, 0].max
+      end
+
+      def ttl_expired?
+        remaining_ttl <= 0
       end
 
       def load_sonamp_power
