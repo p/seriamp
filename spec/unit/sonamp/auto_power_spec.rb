@@ -64,10 +64,6 @@ describe Seriamp::Sonamp::AutoPower do
     end
   end
 
-  def mock_scope(&block)
-    RSpec::Mocks.with_temporary_scope(&block)
-  end
-
   describe '#run_one' do
     context 'with sonamp detector' do
       let(:default_zones) { nil }

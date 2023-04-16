@@ -44,6 +44,10 @@ module InstanceMethods
       end
     end
   end
+
+  def mock_scope(&block)
+    RSpec::Mocks.with_temporary_scope(&block)
+  end
 end
 
 RSpec.configure do |rspec|
