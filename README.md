@@ -1,5 +1,42 @@
 # Receiver & Amplifier Serial Control Ruby Library
 
+## Use Cases
+
+The following are some of the uses of seriamp that I have employed in my
+home setup.
+
+### Remote Tone Controls
+
+Yamaha receivers do not provide tone control buttons on their remotes, at least
+for the main zone. The protocol includes tone control remote IR codes for
+second and third zones (but, surprisingly, not for the main zone), therefore
+those should in theory be operable via the remote, but not the main zone.
+Normally the only way to adjust main zone tone controls is to walk to the
+receiver and operate the front panel knobs/buttons.
+
+The extended RS232C protocol however provides commands to alter tone for the
+main zone, and can be used to implement remote tone control functionality.
+
+### Night Mode via High Pass Filter
+
+Yamaha receivers provide commands for changing the speaker type (large/small),
+bass output (front main/subwoofer/both) and subwoofer crossover frequency.
+In a stereo system without a subwoofer, these commands can be combined to
+set up a high pass filter at a particular frequency (40-200 Hz). This
+is useful to omit the lowest frequencies at night.
+
+## Set Volume Prior To Turn On
+
+Normally the receivers are not responding to control input when they are in
+standby (other than to the power button to turn themselves on).
+However both Yamaha and Integra receivers can alter their main zone volume
+while they are in standby. This permits having the volume clamped to a
+sensible range when the receiver is turned on.
+
+Yamaha receivers permit setting Zone 2 and Zone 3 volumes in standby as well,
+whereas Integra (at least DTR-50.4) only permits the main zone volume to
+be set in standby.
+
 ## Sonamp Auto Power Daemon
 
 When Sonamp amplifiers are placed in RS-232 control mode, they lose the
