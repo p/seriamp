@@ -190,7 +190,7 @@ module Seriamp
       def parse_response(resp)
         case first_byte = resp[0]
         when STX
-          parse_stx_response(resp)
+          parse_framed_stx_response(resp)
         when DC2
           parse_status_response(resp)
         when DC4
@@ -260,14 +260,17 @@ module Seriamp
         cls&.new(command_id, command_data)
       end
 
-      def parse_stx_response(resp)
+      def parse_framed_stx_response(resp)
         unless resp[0] == STX
           raise UnexpectedResponse, "Invalid response: expected to start with STX: #{resp} #{resp[0].ord}"
         end
         unless resp[-1] == ETX
           raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
         end
-        resp = resp[1...-1]
+        parse_stx_response(resp[1...-1])
+      end
+
+      def parse_stx_response(resp)
         control_type = parse_flag(resp[0], {
           '0' => :rs232c,
           '1' => :remote,
@@ -528,7 +531,7 @@ module Seriamp
         when DC2
           logger&.warn("Status response, #{buf.length} bytes")
         when STX
-          logger&.warn("Command response: #{buf} #{parse_stx_response(buf)}")
+          logger&.warn("Command response: #{buf} #{parse_framed_stx_response(buf)}")
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
