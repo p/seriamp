@@ -159,29 +159,6 @@ describe Seriamp::Sonamp::AutoPower do
           end
         end
       end
-
-      xcontext 'on to off' do
-        before do
-          Seriamp::FaradayFacade.should receive(:new).and_return(conn)
-          conn.should_receive(:get_json).with('power').and_return(all_on)
-          conn.should_receive(:get_json).with('power').and_return(all_on)
-          conn.should_receive(:get_json).with('auto_trigger_input').and_return({})
-
-          #conn.should_receive(:get_json).with('power').and_return(all_on)
-          #conn.should_receive(:get_json).with('auto_trigger_input').and_return({})
-
-          conn.should_receive(:post!).with('off')
-        end
-
-        it 'powers amplifier off' do
-          runner.should receive(:wait_for_next_iteration)
-          runner.should receive(:wait_for_next_iteration).and_throw(:finish)
-
-          catch(:finish) do
-            runner.run
-          end
-        end
-      end
     end
   end
 
