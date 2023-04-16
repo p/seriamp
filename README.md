@@ -25,9 +25,13 @@ web applications.
 
 ## Use Cases
 
+The simplest use case of Seriamp is control of basic functionality of the
+supported hardware from a computer - for example, turning the hardware on
+and off, and adjusting volume.
 
-The following are some of the uses of seriamp that I have employed in my
-home setup.
+The following are some uses of Seriamp that are either less obvious or that
+cannot be performed using other control methods (i.e. OEM remote control or
+front panel buttons/knobs) that I have employed in my home setup.
 
 ### Remote Tone Controls
 
