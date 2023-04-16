@@ -40,7 +40,13 @@ module Seriamp
     wait_thread = Thread.new do
       threads.each do |thread|
         # Unhandled exceptions raised in threads are reraised by the join method
-        thread.join rescue nil
+        begin
+          thread.join
+        rescue NoMemoryError, Interrupt, SystemExit
+          raise
+        rescue
+          nil
+        end
       end
       queue << nil
     end
