@@ -15,14 +15,16 @@ module Seriamp
       attr_reader :options
       attr_reader :input_reader
 
-      LEFT = "\e[D"
-      RIGHT = "\e[C"
-      UP = "\e[A"
-      DOWN = "\e[B"
-      MENU = 'm'
-      ENTER = 'e'
-      RETURN = 'r'
-      QUIT = 'q'
+      KEYS = {
+        left: "\e[D",
+        right: "\e[C",
+        up: "\e[A",
+        down: "\e[B",
+        menu: 'm',
+        enter: 'e',
+        return: 'r',
+        quit: 'q',
+      }.freeze
 
       ARROWS = {
         left: '7A9F',
@@ -31,37 +33,33 @@ module Seriamp
         down: '7A9C',
       }.freeze
 
-      COMMANDS = ARROWS.merge(
+      COMMANDS_RX_V1500 = ARROWS.merge(
+        # These are not working
         menu: '7AA0',
         enter: '7ADE',
         return: '7AA1',
       )
 
+      KEYS_INVERTED = KEYS.invert.freeze
+
       def run_command(cmd, *args)
         puts "Keys: Left/Right/Up/Down arrows"
         puts "      (m)enu (e)nter (r)eturn (q)uit"
-        commands = COMMANDS
+        commands = COMMANDS_RX_V1500
         case cmd
         when 'menu'
           loop do
-            case key = input_reader.get_key
-            when LEFT
-              client.remote_command(commands.fetch(:left), read_response: false)
-            when RIGHT
-              client.remote_command(commands.fetch(:right), read_response: false)
-            when UP
-              client.remote_command(commands.fetch(:up), read_response: false)
-            when DOWN
-              client.remote_command(commands.fetch(:down), read_response: false)
-            when MENU, MENU.upcase
-              client.remote_command(commands.fetch(:menu), read_response: false)
-            when ENTER, ENTER.upcase
-              client.remote_command(commands.fetch(:enter), read_response: false)
-            when RETURN, RETURN.upcase
-              client.remote_command(commands.fetch(:return), read_response: false)
-            when QUIT, QUIT.upcase
-              break
+            key = input_reader.get_key
+            if key.include?(?\e)
+              cmd = KEYS_INVERTED[key]
+            else
+              cmd = KEYS_INVERTED[key.downcase]
             end
+
+            next unless cmd
+
+            cmd = commands.fetch(cmd)
+            client.remote_command(cmd, read_response: false)
           end
         end
       end
