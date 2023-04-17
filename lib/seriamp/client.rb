@@ -280,6 +280,8 @@ module Seriamp
       try = 1
       begin
         yield
+      rescue NotApplicable
+        raise
       rescue Seriamp::Error, IOError, SystemCallError => exc
         if try <= retries
           logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")

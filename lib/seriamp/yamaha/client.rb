@@ -149,7 +149,10 @@ module Seriamp
             if resp.fetch(:control_type) != :rs232c
               raise "Wrong control type: #{resp[:control_type]}"
             end
-            resp.fetch(:state)
+            if guard = resp[:guard]
+              raise NotApplicable, "Command guarded by '#{guard}'"
+            end
+            resp[:state]
           end
         end
       end

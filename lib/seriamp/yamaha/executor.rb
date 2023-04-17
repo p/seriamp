@@ -32,6 +32,9 @@ module Seriamp
         when 'remote-command-nr'
           cmd = args.shift.upcase
           client.remote_command(cmd, read_response: false)
+        when 'system-command'
+          cmd = args.shift.upcase
+          client.system_command(cmd)
         when 'ext-command'
           cmd = args.shift.upcase
           client.extended_command(cmd)
