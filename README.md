@@ -148,3 +148,7 @@ the receiver or the amplifier. This is because in practice all A/V
 equipment that is supported by Seriamp only works with a single
 control client (the webapp daemon in case of Seriamp), and direct access
 by multiple clients will produce errors and potentially erroneous behavior.
+
+## License
+
+2-clause BSD.
