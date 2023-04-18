@@ -44,8 +44,11 @@ in particular can be difficult to get those correct remotes for, since
 there may be relatively few units manufactured that use a particular set of
 remote codes.
 
-By sending the IR remote codes via Seriamp it is possible to configure
-all of these receivers without having the correct remote control.
+By sending the IR remote codes via Seriamp it is possible, theoretically,
+to configure all of these receivers without having the correct remote control.
+
+I succeeded with controlling RX-V1500 in this way but RX-V1800 is ignoring
+the commands I've attempted so far.
 
 ### Remote Tone Controls
 
