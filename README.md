@@ -50,6 +50,8 @@ to configure all of these receivers without having the correct remote control.
 I succeeded with controlling RX-V1500 in this way but RX-V1800 is ignoring
 the commands I've attempted so far.
 
+The setup utility is `yamaha-menu`.
+
 ### Remote Tone Controls
 
 Yamaha receivers do not provide tone control buttons on their remotes, at least
@@ -81,6 +83,44 @@ sensible range when the receiver is turned on.
 Yamaha receivers permit setting Zone 2 and Zone 3 volumes in standby as well,
 whereas Integra (at least DTR-50.4) only permits the main zone volume to
 be set in standby.
+
+## Utilities
+
+Each supported receiver/amplifier type comes with a command-line utility
+to issue commands to the respective receivers/amplifiers. These are:
+
+- `integra`
+- `sonamp`
+- `yamaha` (controls RS-232-capable Yamaha receivers via the serial port)
+- `ynca` (controls network-capable Yamaha receivers via the YNCA protocol, serial or IP)
+
+These utilities are a good starting point to explore the functionality
+available over the serial or network interfaces. By default, they issue
+commands directly to the receiver/amplifier (via either a serial port
+or network connection).
+
+For "production" use, these utilities are also capable of routing the
+commands through the respective control daemons, described in the next
+section. This eliminates lost/broken responses that would happen when
+multiple clients are communicating with the same receiver/amplifier without
+mutual coordination.
+
+## Daemons
+
+Each supported receiver/amplifier type comes with a daemon that exposes the
+device's functionality over the network, permits safe access of the device by
+multiple clients, and provides state caching. The daemons are:
+
+- `integra-web`
+- `sonamp-web`
+- `yamaha-web`
+
+The daemons provide an HTTP API to control the respective device.
+
+The "production" deployment of seriamp is to run one daemon on a computer
+closest to the receiver/amplifier being controlled and perform all operations
+on the receiver/amplifier by issuing commands to the daemon. The command-line
+utilities provide the `--service` command-line option to achieve this.
 
 ## Sonamp Auto Power Daemon
 
