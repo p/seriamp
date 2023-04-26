@@ -25,6 +25,10 @@ module Seriamp
           options[:device] = v
         end
 
+        opts.on("-l", "--log-level LEVEL", "Log level as symbol or integer (debug/0|info/1|warn/2|error/3|fatal/4)") do |v|
+          options[:log_level] = v
+        end
+
         opts.on("-a", "--print-all", "Print the result of each command given (default: only the last)") do
           options[:print_all] = true
         end

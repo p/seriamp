@@ -54,7 +54,7 @@ module Seriamp
     end
 
     module_function def logger_from_options(**opts)
-      level = opts[:level]
+      level = opts[:log_level]
       if level =~ /\A\d+\z/
         level = Integer(level)
       end
