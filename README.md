@@ -102,7 +102,7 @@ The syntax of `seriamp` command is:
     seriamp -m module [options] command arg...
 
 The `module` must be specified and it can be one of `integra`, `sonamp`,
-`yamaha` or `ynca`. See the documentation on the specific module about
+`yamaha` and `ynca`. See the documentation on the specific module about
 which hardware it supports.
 
 Further options recognized are:
@@ -124,6 +124,8 @@ This timeout is applied to each operation performed by `seriamp`; for
 example, if `seriamp` is instructed to turn on two zones of a Sonamp
 amplifier, two commands are issued (one for each zone) and each command is
 allowed up to the specified timeout.
+
+
 
 Each supported receiver/amplifier type comes with a command-line utility
 to issue commands to the respective receivers/amplifiers. These are:
