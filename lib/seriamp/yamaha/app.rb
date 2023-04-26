@@ -2,7 +2,7 @@
 
 require 'sinatra/base'
 require 'seriamp/utils'
-require 'seriamp/detect'
+require 'seriamp/detect/serial'
 require 'seriamp/yamaha/client'
 require 'seriamp/yamaha/executor'
 require 'seriamp/app_base'

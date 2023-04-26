@@ -14,7 +14,7 @@ module Seriamp
       def run_command(cmd, *args)
         case cmd
         when 'detect'
-          device = Seriamp.detect_device(Sonamp, *args, logger: logger, timeout: options[:timeout])
+          device = Seriamp::Detect::Serial.detect_device(Sonamp, *args, logger: logger, timeout: options[:timeout])
           if device
             puts device
             exit 0

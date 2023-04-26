@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-require 'seriamp/detect'
+require 'seriamp/detect/serial'
 require 'seriamp/yamaha/client'

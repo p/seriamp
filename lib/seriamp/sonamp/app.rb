@@ -4,7 +4,7 @@ require 'sinatra/base'
 require 'seriamp/utils'
 require 'seriamp/sonamp/client'
 require 'seriamp/sonamp/executor'
-require 'seriamp/detect'
+require 'seriamp/detect/serial'
 require 'seriamp/app_base'
 
 module Seriamp

@@ -5,7 +5,7 @@ require 'logger'
 require 'pp'
 require 'seriamp'
 require 'seriamp/utils'
-require 'seriamp/detect'
+require 'seriamp/detect/serial'
 
 module Seriamp
   class Cmd
@@ -106,7 +106,7 @@ module Seriamp
 
       case cmd
       when 'detect'
-        device = Seriamp.detect_device(mod, *args, logger: logger)
+        device = Seriamp::Detect::Serial.detect_device(mod, *args, logger: logger)
         if device
           puts device
           exit 0

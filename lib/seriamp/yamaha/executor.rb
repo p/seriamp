@@ -15,7 +15,7 @@ module Seriamp
         cmd = cmd.gsub('_', '-')
         case cmd
         when 'detect'
-          device = Seriamp.detect_device(Yamaha, *args, logger: logger, timeout: options[:timeout])
+          device = Seriamp::Detect::Serial.detect_device(Yamaha, *args, logger: logger, timeout: options[:timeout])
           if device
             puts device
             exit 0

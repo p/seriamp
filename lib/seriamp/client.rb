@@ -137,7 +137,7 @@ module Seriamp
       if detect_device? && device.nil?
         logger&.debug("Detecting device")
         mod = eval(self.class.name.sub(/::\w+\z/, ''))
-        @device = Seriamp.detect_device(mod, *glob, logger: logger, timeout: timeout)
+        @device = Seriamp::Detect::Serial.detect_device(mod, *glob, logger: logger, timeout: timeout)
         if @device
           logger&.info("Using #{device} as TTY device")
         else

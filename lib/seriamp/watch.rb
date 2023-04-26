@@ -5,7 +5,7 @@ require 'logger'
 require 'pp'
 require 'seriamp'
 require 'seriamp/utils'
-require 'seriamp/detect'
+require 'seriamp/detect/serial'
 
 module Seriamp
   # Shows report responses received from the receiver with no input.
