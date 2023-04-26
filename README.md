@@ -86,6 +86,17 @@ be set in standby.
 
 ## Utilities
 
+The `seriamp` utility can control receivers and amplifiers from the
+command line. It can communicate directly to devices connected via the serial
+port to the computer on which it is invoked, devices connected via network
+and to both kinds via the `seriamp-web` daemon.
+
+Assuming there is a Yamaha receiver attached via a USB to serial adapter
+to the local computer, the following command will interrogate this receiver
+for its status:
+
+    seriamp -m yamaha status
+
 Each supported receiver/amplifier type comes with a command-line utility
 to issue commands to the respective receivers/amplifiers. These are:
 

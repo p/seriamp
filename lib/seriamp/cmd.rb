@@ -14,15 +14,15 @@ module Seriamp
       OptionParser.new do |opts|
         opts.banner = "Usage: seriamp -m module [options] command arg..."
 
-        opts.on("-m", "--module MODULE", "Device module to use: integra|sonamp|yamaha") do |v|
+        opts.on("-m", "--module MODULE", "Device module to use: integra|sonamp|yamaha|ynca") do |v|
           options[:module] = v
         end
 
-        opts.on("-b", "--backend BACKEND", "Backend to use for communication") do |v|
+        opts.on("-b", "--backend BACKEND", "Backend to use for communication: serial_port|logging_serial_port|tcp|logging_tcp") do |v|
           options[:backend] = v
         end
 
-        opts.on("-d", "--device DEVICE", "TTY to use (default autodetect /dev/ttyUSB*)") do |v|
+        opts.on("-d", "--device DEVICE", "TTY or hostname/IP to use (default autodetect /dev/ttyUSB*)") do |v|
           options[:device] = v
         end
 

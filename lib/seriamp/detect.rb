@@ -16,10 +16,10 @@ module Seriamp
     end.flatten.uniq
     case devices.length
     when 0
-      logger&.debug("No devices matched the pattern(s)")
+      logger&.debug("No devices matched the pattern(s): #{patterns.join('|')}")
       return nil
     when 1
-      logger&.debug("Assuming #{devices.first} as the only device matching the pattern(s)")
+      logger&.debug("Assuming #{devices.first} as the only device matching the pattern(s): #{patterns.join('|')}")
       return devices.first
     end
     queue = Queue.new
