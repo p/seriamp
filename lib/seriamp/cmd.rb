@@ -26,6 +26,10 @@ module Seriamp
           options[:device] = v
         end
 
+        opts.on("-a", "--print-all", "Print the result of each command given (default: only the last)") do
+          options[:print_all] = true
+        end
+
         opts.on("-s", "--service URL", "Route commands through the webapp service at URL") do |v|
           options[:service_url] = v
         end
@@ -92,8 +96,18 @@ module Seriamp
         resp = service_client.post!('', body: body)
         puts resp.body
       else
+        last_result = nil
         commands.each do |args|
-          run_command(args)
+          result = run_command(args)
+          if options[:print_all]
+            puts result
+          else
+            last_result = result
+          end
+        end
+
+        unless options[:print_all]
+          puts last_result
         end
       end
     end
@@ -122,7 +136,7 @@ module Seriamp
         else
           :format
         end
-        puts formatter.public_send(meth, result)
+        formatter.public_send(meth, result)
       end
     end
 
