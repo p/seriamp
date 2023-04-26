@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'logger'
 require 'pp'
 require 'seriamp'
 require 'seriamp/utils'
@@ -57,7 +56,7 @@ module Seriamp
         mod_name.sub(/(.)/) { $1.upcase }.gsub(/_(.)/) { $1.upcase }
       )
 
-      @logger = Logger.new(STDERR)
+      @logger = Utils.logger_from_options(**options)
       @direct_client = mod.const_get(:Client).new(device: options[:device],
         backend: options[:backend],
         logger: @logger, timeout: options[:timeout])

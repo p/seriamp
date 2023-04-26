@@ -9,7 +9,6 @@ rescue LoadError
   require 'seriamp/sonamp/auto_power'
 end
 require 'optparse'
-require 'logger'
 
 options = {}
 OptionParser.new do |opts|
@@ -53,7 +52,7 @@ OptionParser.new do |opts|
 
 end.parse!
 
-logger = Logger.new(STDERR)
+logger = Utils.logger_from_options(**options)
 
 runner = Seriamp::Sonamp::AutoPower.new(
   logger: logger,

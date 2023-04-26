@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'logger'
 
 module Seriamp
   class AppCmd
@@ -50,7 +49,7 @@ module Seriamp
       mod = Seriamp.const_get(mod_name.sub(/(.)/) { $1.upcase })
       @app_mod = mod.const_get(:App)
 
-      @logger = Logger.new(STDERR)
+      @logger = Utils.logger_from_options(**options)
 
       @client = mod.const_get(:Client).new(device: options[:device],
         backend: options[:backend],

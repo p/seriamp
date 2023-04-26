@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+autoload :Logger, 'logger'
+
 module Seriamp
   module Utils
 
@@ -49,6 +51,18 @@ module Seriamp
     module_function def sleep_before_retry
       # Sleep a random time between 1 and 2 seconds
       sleep(rand + 1)
+    end
+
+    module_function def logger_from_options(**opts)
+      level = opts[:level]
+      if level =~ /\A\d+\z/
+        level = Integer(level)
+      end
+      opts = {}
+      if level
+        opts[:level] = level
+      end
+      Logger.new(STDERR, **opts)
     end
   end
 end
