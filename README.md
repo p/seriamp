@@ -125,7 +125,19 @@ example, if `seriamp` is instructed to turn on two zones of a Sonamp
 amplifier, two commands are issued (one for each zone) and each command is
 allowed up to the specified timeout.
 
+The command to issue can be specified on the command line as the following
+example shows:
 
+    seriamp -m yamaha status
+
+Commands can also be given on standard input, with one command per line,
+in which case multiple commands can be issued with a single `seriamp`
+invocation which will reuse the connection to the receiver:
+
+    (echo 'volume -20'; echo status) |seriamp -m yamaha
+
+Normally, only the output of the last command will be printed, but
+if `--print-all` option is given, the output of each command will be printed.
 
 Each supported receiver/amplifier type comes with a command-line utility
 to issue commands to the respective receivers/amplifiers. These are:
