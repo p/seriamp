@@ -119,7 +119,7 @@ This permits concurrent usage of one device by multiple clients, with
 operations, especially over the serial protocol, because `seriamp-web`
 maintains a persistent connection to the device whereas `seriamp` must
 necessarily connect for each invocation.
-- `-T, --timeout TIMEOUT`: the timeout to use for the operations.
+- `-t, --timeout TIMEOUT`: the timeout to use for the operations.
 This timeout is applied to each operation performed by `seriamp`; for
 example, if `seriamp` is instructed to turn on two zones of a Sonamp
 amplifier, two commands are issued (one for each zone) and each command is

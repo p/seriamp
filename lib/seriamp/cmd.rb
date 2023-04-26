@@ -34,7 +34,7 @@ module Seriamp
           options[:service_url] = v
         end
 
-        opts.on('-T', '--timeout TIMEOUT', 'Timeout to use') do |v|
+        opts.on('-t', '--timeout TIMEOUT', 'Timeout to use') do |v|
           options[:timeout] = Float(v)
         end
       end.parse!(args)
