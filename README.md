@@ -97,6 +97,34 @@ for its status:
 
     seriamp -m yamaha status
 
+The syntax of `seriamp` command is:
+
+    seriamp -m module [options] command arg...
+
+The `module` must be specified and it can be one of `integra`, `sonamp`,
+`yamaha` or `ynca`. See the documentation on the specific module about
+which hardware it supports.
+
+Further options recognized are:
+
+- `-b, --backend BACKEND`: specify the backend to use for communicating
+with the device. This is normally only needed for debugging.
+- `-d, --device DEVICE`: specify the device address. For devices connected
+via a serial interface, this is the path to the device file, e.g.
+`/dev/ttyUSB0`. For devices connected via network (Ethernet or Wi-Fi),
+this is the IP address or the hostname of the device.
+- `-s, --service URL`: communicate with the device via `seriamp-web`.
+This permits concurrent usage of one device by multiple clients, with
+`seriamp-web` providing the required locking. This can also speed up
+operations, especially over the serial protocol, because `seriamp-web`
+maintains a persistent connection to the device whereas `seriamp` must
+necessarily connect for each invocation.
+- `-T, --timeout TIMEOUT`: the timeout to use for the operations.
+This timeout is applied to each operation performed by `seriamp`; for
+example, if `seriamp` is instructed to turn on two zones of a Sonamp
+amplifier, two commands are issued (one for each zone) and each command is
+allowed up to the specified timeout.
+
 Each supported receiver/amplifier type comes with a command-line utility
 to issue commands to the respective receivers/amplifiers. These are:
 
