@@ -140,7 +140,8 @@ Normally, only the output of the last command will be printed, but
 if `--print-all` option is given, the output of each command will be printed.
 
 Each supported receiver/amplifier type comes with a command-line utility
-to issue commands to the respective receivers/amplifiers. These are:
+alias for the `seriamp` utility, named after the respective module.
+These are:
 
 - `integra`
 - `sonamp`
