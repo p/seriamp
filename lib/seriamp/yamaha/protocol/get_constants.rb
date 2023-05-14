@@ -411,6 +411,24 @@ module Seriamp
           'FF' => '---',
         }.freeze
 
+        INPUT_MODE_R0178 = {
+          '0' => 'Auto',
+          '2' => 'DTS',
+          '4' => 'Analog',
+          '5' => 'Analog Only',
+        }.freeze
+
+        SAMPLE_RATE_R0178 = {
+          '0' => 'Analog',
+          '1' => 32000,
+          '2' => 44100,
+          '3' => 48000,
+          '4' => 64000,
+          '5' => 88200,
+          '6' => 96000,
+          '7' => 'Unknown',
+        }.freeze
+
         SAMPLING_GET = {
           '00' => 'Analog',
           '01' => '8000',

@@ -418,24 +418,6 @@ module Seriamp
         'R0226' => 126,
       }.freeze
 
-      INPUT_MODE_R0178 = {
-        '0' => 'Auto',
-        '2' => 'DTS',
-        '4' => 'Analog',
-        '5' => 'Analog Only',
-      }.freeze
-
-      SAMPLE_RATE_R0178 = {
-        '0' => 'Analog',
-        '1' => 32000,
-        '2' => 44100,
-        '3' => 48000,
-        '4' => 64000,
-        '5' => 88200,
-        '6' => 96000,
-        '7' => 'Unknown',
-      }.freeze
-
       def parse_status_response(resp)
         if resp.length < 10
           raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
@@ -469,8 +451,7 @@ module Seriamp
         }
         if data.length > 9
           status.update(
-            input: input = data[9],
-            input_name: MAIN_INPUTS_GET.fetch(input),
+            input_name: MAIN_INPUTS_GET.fetch(data[9]),
             multi_ch_input: data[10] == '1',
             audio_select: audio_select = data[11],
             audio_select_name: AUDIO_SELECT_GET.fetch(audio_select),
@@ -487,15 +468,13 @@ module Seriamp
             main_volume: parse_half_db_volume(data[15..16]),
             zone2_volume: parse_half_db_volume(data[17..18]),
             zone3_volume: parse_half_db_volume(data[129..130]),
-            program: program = data[19..20],
-            program_name: PROGRAM_GET.fetch(program),
+            program_name: PROGRAM_GET.fetch(data[19..20]),
             # true: straight; false: effect
             effect: data[21] == '1',
             #extended_surround: data[22],
             #short_message: data[23],
             sleep: SLEEP_GET.fetch(data[24]),
-            night: night = data[27],
-            night_name: NIGHT_GET.fetch(night),
+            night_name: NIGHT_GET.fetch(data[27]),
             pure_direct: data[PURE_DIRECT_FIELD.fetch(model_code)] == '1',
             speaker_a: data[29] == '1',
             speaker_b: data[30] == '1',
@@ -503,16 +482,17 @@ module Seriamp
             #format: data[31..32],
             #sampling: data[33..34],
           )
-          if model_code == 'R0178'
+          if model_code >= 'R0178'
             status.update(
               input_mode: INPUT_MODE_R0178.fetch(data[11]),
-              sampling: data[32],
               sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
             )
           end
           if model_code >= 'R0190'
             status.update(
               input_name: INPUT_NAME_GET.fetch(data[9..10]),
+              format: FORMAT_GET.fetch(data[31..32]),
+              sample_rate: SAMPLING_GET.fetch(data[33..34]),
             )
             # Multi-channel input as a flag is not provided by RX-V1600+
             status.delete(:multi_ch_input)
