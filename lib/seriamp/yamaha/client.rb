@@ -510,6 +510,13 @@ module Seriamp
               sample_rate: SAMPLE_RATE_R0178.fetch(data[32]),
             )
           end
+          if model_code >= 'R0190'
+            status.update(
+              input_name: INPUT_NAME_GET.fetch(data[9..10]),
+            )
+            # Multi-channel input as a flag is not provided by RX-V1600+
+            status.delete(:multi_ch_input)
+          end
         end
         status.update(raw_string: data)
         status
