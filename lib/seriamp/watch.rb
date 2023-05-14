@@ -22,7 +22,7 @@ module Seriamp
     def initialize(args = ARGV, stdin = STDIN, module_name: nil)
       options = {module: module_name}
       OptionParser.new do |opts|
-        opts.banner = "Usage: watch -m module [options]"
+        opts.banner = "Usage: seriamp-watch -m module [options]"
 
         opts.on("-m", "--module MODULE", "Device module to use: integra|sonamp|yamaha") do |v|
           options[:module] = v
