@@ -12,6 +12,22 @@ module Seriamp
         include Yamaha::Helpers
         include Extended::Constants
 
+        def advanced_setup(state)
+          system_command("B00#{state ? '1' : '0'}")
+        end
+
+        def set_speaker_impedance(value)
+          value = case value
+          when 8
+            '0'
+          when 6
+            '1'
+          else
+            raise ArgumentError, "Invalid value: must be 6 or 8: #{value}"
+          end
+          system_command("B30#{value}")
+        end
+
         # Turns the receiver on or off.
         #
         # @param [ true | false ] state Desired power state.

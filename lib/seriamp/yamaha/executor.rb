@@ -159,6 +159,12 @@ module Seriamp
           end
         when 'osd-message'
           client.osd_message(args.shift)
+        when 'advanced-setup'
+          client.advanced_setup
+        # This command can be given in normal operation, it does not require
+        # being in the "advanced setup" menu for serial access.
+        when 'speaker-impedance'
+          client.set_speaker_impedance(Integer(args.shift))
         when 'status'
           pp client.status
         when 'dev-status'
