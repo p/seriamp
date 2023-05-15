@@ -43,11 +43,13 @@ module Seriamp
       KEYS_INVERTED = KEYS.invert.freeze
 
       def run_command(cmd, *args)
-        puts "Keys: Left/Right/Up/Down arrows"
-        puts "      (m)enu (e)nter (r)eturn (q)uit"
-        commands = COMMANDS_RX_V1500
         case cmd
         when 'menu'
+          puts "Keys: Left/Right/Up/Down arrows"
+          puts "      (m)enu (e)nter (r)eturn (q)uit"
+          commands = COMMANDS_RX_V1500
+          client.remote_command(commands.fetch(:menu), read_response: false)
+
           loop do
             key = input_reader.get_key
             if key.include?(?\e)
