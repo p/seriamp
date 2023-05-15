@@ -67,3 +67,13 @@ receiver (e.g., volume being altered). Such a notification mechanism
 exists in the YNC protocol, but an RX-V3900 receiver with a working RS-232
 port and a broken network port has no way to notify controller of state
 changes.
+
+### Power Ratings & Transformers
+
+Every 1000 through 4000 level receiver, from RX-V1000 through RX-V3900,
+claims on the back of it to consume "500 watts" of power. At the same time
+output ratings have climbed steadily, from 110 watts/channel in RX-V1000
+to 140 watts/channel in RX-V3900. I don't know how accurate either the
+output power or the power consumption ratings are, but the different models
+are using different transformers, and visually transformer in RX-V3900
+appears to be larger than the one in RX-V1500.
