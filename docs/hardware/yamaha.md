@@ -1,5 +1,4 @@
-
-### Yamaha RX-V**00 - RS-232
+# Yamaha RX-V**00 - RS-232
 
 - 5-pin cable required (with RTS pin connected)
 - Null-modem cable required
@@ -39,35 +38,12 @@ capability and which do not for the 2000 through 2010 models:
 |      |          | HTR-6295, HTR-6290           |          | HTR-6280 and lower |
 | 2010 | RX-Vx67  | RX-V3067, RX-V2067, RX-V1067 | RX-V3067, RX-V2067, RX-V1067, RX-V867 | RX-V767 and lower |
 
-The models which have an Ethernet port in addition to RS-232C should be
-controllable via the Yamaha YNCA protocol via either the Ethernet port or the
-RS-232C port. Over time Yamaha has been adding networking functionality
-to lower tier models, for example it is present in RX-V867, RX-V671 and RX-V475.
+Note that pre-2010 receivers that have both a serial port and a network port
+(namely, RX-V2700, RX-V3800 and RX-V3900) do not implement the YNCA protocol.
+As far as I can tell RX-V2700 is only controllable using the Yamaha serial
+protocol described here, over the serial port. RX-V3800 I expect to behave
+the same way. RX-V3900 is claimed to implement YNC for network and YSRC for
+serial port, and not implement the Yamaha serial protocol described here,
+but I have not yet verified this.
 
 Models lower than the 1000 level receivers have never had RS-232C to my knowledge.
-
-### Yamaha YNCA
-
-This protocol is implemented by Yamaha receivers that have a network port.
-The following devices should be compatible:
-
-- Aventage receivers (RX-Axxx)
-- RX-V671, RX-V871, RX-V1071, RX-V2071, RX-V3071 and newer
-- RX-V2600, RX-V2700, RX-V3800, RX-V3900
-- RX-V500D
-- TSR-5790 (reportedly uses port 49154)
-- HTR-4065
-
-It is claimed that receivers that implement MusicCast do not support the
-YNCA protocol. I haven't owned any of these thus cannot confirm or deny.
-
-The YNCA protocol can be used over the serial port (RS-232) and over the
-network. The serial port is generally found on the higher end receiver
-models, while the network connectivity has been migrating to lower end
-models over the years. For example, RX-A700 has a serial port whereas
-RX-A710 and newer do not; RX-A800 and newer and the higher end models
-(1000/2000/3000) appear to offer the serial port. In the RX-V line, the
-serial port is generally present in 2000 and higher models, absent in
-models below 1000, and is present in some but not all of the 1000 models.
-
-The default port for the YNCA protocol is 50000.
