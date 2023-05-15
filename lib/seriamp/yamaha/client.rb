@@ -28,6 +28,8 @@ module Seriamp
       # environment (RX-V1500/1800/2500).
       # 1 second is insufficient here to turn the receiver on after it has
       # just been powered off.
+      # For RX-V2700, this timeout is insufficient when powering up
+      # the receiver from standby.
       DEFAULT_RS232_TIMEOUT = 2
 
       include Protocol::Methods
