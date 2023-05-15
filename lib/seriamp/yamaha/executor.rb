@@ -138,18 +138,18 @@ module Seriamp
           case args.length
           when 3
             # set value
-            channel = args.shift.to_sym
+            channel = args.shift.gsub('-', '_').to_sym
             band = Integer(args.shift)
             value = Float(args.shift)
             client.public_send("set_#{channel}_graphic_eq_#{band}", value)
           when 2
             # get channel & band
-            channel = args.shift.to_sym
+            channel = args.shift.gsub('-', '_').to_sym
             band = Integer(args.shift)
             client.public_send("#{channel}_graphic_eq_#{band}")
           when 1
             # get channel all
-            channel = args.shift.to_sym
+            channel = args.shift.gsub('-', '_').to_sym
             client.public_send("#{channel}_graphic_eq")
           when 0
             # get all
