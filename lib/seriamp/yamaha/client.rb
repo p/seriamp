@@ -431,10 +431,10 @@ module Seriamp
         length = payload[6..7].to_i(16)
         data = payload[8...-2]
         if data.length != length
-          raise HandshakeFailure, "Broken status response: expected #{length} bytes, got #{data.length} bytes; concurrent operation on device? #{data}"
+          raise HandshakeFailure, "Broken status response: expected #{length} bytes for data, got #{data.length} bytes; concurrent operation on device? #{data}"
         end
         unless data.start_with?('@E01900')
-          raise HandshakeFailure, "Broken status response: expected to start with @E01900, actual #{data[0..6]}"
+          raise HandshakeFailure, "Broken status response: expected data to start with @E01900, actual #{data[0..6]}"
         end
         received_checksum = payload[-2..]
         calculated_checksum = calculate_checksum(payload[...-2])
@@ -442,6 +442,37 @@ module Seriamp
           raise HandshakeFailure, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
         end
 
+        parse_status_response_inner(data).update(raw_string: data)
+      end
+
+      def parse_status_response_inner(data, model_code)
+        table = STATUS_FIELDS.fetch(model_code)
+        index = 0
+        result = {}
+        table.each do |entry|
+          entry_index = 0
+          case size_or_field = entry[entry_index]
+          when Integer
+            size = size_or_field
+            entry_index += 1
+          end
+          value = data[index..index+size]
+          index += size
+          field = entry[entry_index]
+          next if field.nil?
+          fn = entry[entry_index+1] || field
+          parsed = send("parse_#{fn}", value)
+          case parsed
+          when Hash
+            result.update(parsed)
+          else
+            result.update(field => parsed)
+          end
+        end
+        result
+      end
+
+      def x
         status = {
           model_code: model_code,
           model_name: MODEL_NAMES[model_code],
