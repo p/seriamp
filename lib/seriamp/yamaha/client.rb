@@ -461,7 +461,7 @@ module Seriamp
           field = entry[entry_index]
           next if field.nil?
           fn = entry[entry_index+1] || field
-          parsed = send("parse_#{fn}", value)
+          parsed = send("parse_#{fn}", value, field)
           case parsed
           when Hash
             result.update(parsed)
@@ -470,6 +470,25 @@ module Seriamp
           end
         end
         result
+      end
+
+      def parse_table(value, field, table)
+        table[value].tap do |parsed|
+          if parsed.nil?
+            raise UnexpectedResponse, "Bad value for #{kind} field #{field}: #{value}"
+          end
+        end
+      end
+
+      def parse_bool(value, field)
+        case value
+        when '0'
+          false
+        when '1'
+          true
+        else
+          raise UnexpectedResponse, "Bad value for boolean field #{field}: #{value}"
+        end
       end
 
       def x
