@@ -5,6 +5,7 @@ require 'seriamp/utils'
 require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
+require 'seriamp/yamaha/protocol/status'
 require 'seriamp/yamaha/protocol/extended/generic_response'
 require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
@@ -442,11 +443,11 @@ module Seriamp
           raise HandshakeFailure, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
         end
 
-        parse_status_response_inner(data).update(raw_string: data)
+        parse_status_response_inner(data, model_code).update(raw_string: data)
       end
 
       def parse_status_response_inner(data, model_code)
-        table = STATUS_FIELDS.fetch(model_code)
+        table = Protocol::Status::STATUS_FIELDS.fetch(model_code)
         index = 0
         result = {}
         table.each do |entry|

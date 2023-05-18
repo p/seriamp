@@ -19,7 +19,7 @@ module Seriamp
           'Data length',
         ]
 
-        STATUS_FIELDS = [
+        __UNUSED__STATUS_FIELDS = [
           'Baud rate (@)',
           'Receive buffer (E)',
           'Receive buffer (0)',

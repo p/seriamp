@@ -8,10 +8,10 @@ describe Seriamp::Yamaha::Client do
   describe '#parse_status_response' do
     let(:parsed) { client.send(:parse_status_response, status_response) }
 
-    context 'RX-V1500' do
+    context 'RX-V1800' do
 
       let(:status_response) do
-        '1230000104343222234324324324'
+        "R0226JB5@E0190002040050B94D3403140300000108200F1020001002828282828282828282800030114140000A00400511000000000002000200000000000200000010504D00012100070E01FFFF0110000A0014A0014210A0A00FF101101E"
       end
 
       it 'works' do

@@ -228,7 +228,7 @@ module Seriamp
             [:net_usb_repeat], # RX-V2700 only
             [:net_usb_shuffle, :bool], # RX-V2700 only
             [2, :zone2_max_volume, :max_volume], # RX-V2700 only
-            [2, :zone2_initial_volume, :volume] # RX-V2700 only
+            [2, :zone2_initial_volume, :volume], # RX-V2700 only
             [2, :zone2_balance],
             [2, :zone3_max_volume, :max_volume], # RX-V2700 only
             [2, :zone3_initial_volume, :volume], # RX-V2700 only
@@ -264,7 +264,7 @@ module Seriamp
         STATUS_FIELDS_MAP = {
           'R0178' => STATUS_FIELDS_R0178,
           'R0226' => STATUS_FIELDS_R0226,
-        ].freeze
+        }.freeze
       end
     end
   end
