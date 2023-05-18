@@ -456,13 +456,22 @@ module Seriamp
           when Integer
             size = size_or_field
             entry_index += 1
+          else
+            size = 1
           end
-          value = data[index..index+size]
+          value = data[index...index+size]
           index += size
           field = entry[entry_index]
           next if field.nil?
           fn = entry[entry_index+1] || field
-          parsed = send("parse_#{fn}", value, field)
+          constant = "#{fn.to_s.upcase}_GET"
+          parsed = begin
+            table = Protocol::GetConstants.const_get(constant)
+          rescue NameError
+            send("parse_#{fn}", value, field)
+          else
+            parse_table(value, field, table)
+          end
           case parsed
           when Hash
             result.update(parsed)
@@ -476,7 +485,7 @@ module Seriamp
       def parse_table(value, field, table)
         table[value].tap do |parsed|
           if parsed.nil?
-            raise UnexpectedResponse, "Bad value for #{kind} field #{field}: #{value}"
+            raise UnexpectedResponse, "Bad value for field #{field}: #{value}"
           end
         end
       end

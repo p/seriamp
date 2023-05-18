@@ -294,7 +294,13 @@ module Seriamp
           'ETX',
         ]
 
-        MAIN_INPUTS_GET = {
+        BUSY_STANDBY_GET = {
+          '0' => 'OK',
+          '1' => 'Busy',
+          '2' => 'Standby',
+        }
+
+        INPUT_NAME_1_GET = {
           '0' => 'PHONO',
           '1' => 'CD',
           '2' => 'TUNER',
@@ -517,17 +523,17 @@ module Seriamp
         }.freeze
 
         POWER_GET = {
-          '00' => {main_power: false, zone2_power: false, zone3_power: false}.freeze,
-          '01' => {main_power: true, zone2_power: true, zone3_power: true}.freeze,
-          '02' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
-          '03' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
-          '04' => {main_power: true, zone2_power: true, zone3_power: false}.freeze,
-          '05' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
-          '06' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
-          '07' => {main_power: false, zone2_power: false, zone3_power: true}.freeze,
+          '0' => {main_power: false, zone2_power: false, zone3_power: false}.freeze,
+          '1' => {main_power: true, zone2_power: true, zone3_power: true}.freeze,
+          '2' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
+          '3' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
+          '4' => {main_power: true, zone2_power: true, zone3_power: false}.freeze,
+          '5' => {main_power: true, zone2_power: false, zone3_power: false}.freeze,
+          '6' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
+          '7' => {main_power: false, zone2_power: false, zone3_power: true}.freeze,
         }.freeze
 
-        INPUT_NAME_GET = {
+        INPUT_NAME_2_GET = {
           '00' => 'PHONO',
           '01' => 'CD',
           '02' => 'TUNER',

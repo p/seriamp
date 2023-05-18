@@ -18,5 +18,16 @@ describe Seriamp::Yamaha::Client do
         parsed.should == {}
       end
     end
+
+    context 'RX-V2700' do
+
+      let(:status_response) do
+        "R0212IAE@E01900020430507B778003140500000108200F1020001002828262626262628282800020114140000A114055110000020240120001000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A00A8"
+      end
+
+      it 'works' do
+        parsed.should == {}
+      end
+    end
   end
 end
