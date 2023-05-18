@@ -8,6 +8,17 @@ describe Seriamp::Yamaha::Client do
   describe '#parse_status_response' do
     let(:parsed) { client.send(:parse_status_response, status_response) }
 
+    context 'RX-V1500' do
+
+      let(:status_response) do
+        "R0177F8A@E01900021000517A773413240001102300000000230110029242626262020282832000000141400000014005100000020240110000242926262620202828325177000070104"
+      end
+
+      it 'works' do
+        parsed.should == {}
+      end
+    end
+
     context 'RX-V1800' do
 
       let(:status_response) do
