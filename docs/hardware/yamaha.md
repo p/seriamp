@@ -50,3 +50,7 @@ Models lower than the 1000 level receivers have never had RS-232C to my knowledg
 
 Although RX-V2065 implements YNC, on the RS-232 side it implements the
 Yamaha serial protocol described here and not YRSC.
+
+## References
+
+http://www.yamaha.com/yec/dealers/dealer_main.htm
