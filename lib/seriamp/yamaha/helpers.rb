@@ -7,7 +7,7 @@ module Seriamp
         '%02X' % (((value - min_value) / step).round + min_serialized)
       end
 
-      def parse_volume(value, min_serialized, min, max, step)
+      def parse_sequence(value, min_serialized, min, max, step)
         i_value = Integer(value, 16)
         min_serialized = Integer(min_serialized, 16)
         max_serialized = (min_serialized + (max - min) / step).round

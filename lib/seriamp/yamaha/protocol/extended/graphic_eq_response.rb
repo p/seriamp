@@ -18,7 +18,7 @@ module Seriamp
             @channel = GRAPHIC_EQ_CHANNEL_MAP.fetch(value[0])
             band_map = GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel)
             @frequency = band_map.fetch(value[1])
-            @gain = parse_volume(value[2..3], '03', -6, 6, 0.5)
+            @gain = parse_sequence(value[2..3], '03', -6, 6, 0.5)
           end
 
           attr_reader :channel

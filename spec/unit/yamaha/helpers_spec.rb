@@ -33,32 +33,32 @@ describe Seriamp::Yamaha::Helpers do
     end
   end
 
-  describe '#parse_volume' do
+  describe '#parse_sequence' do
     context '0.5 dB step' do
       it 'translates min value' do
-        host.parse_volume('00', '00', -6, 6, 0.5).should == -6
+        host.parse_sequence('00', '00', -6, 6, 0.5).should == -6
       end
 
       it 'translates zero value' do
-        host.parse_volume('0C', '00', -6, 6, 0.5).should == 0
+        host.parse_sequence('0C', '00', -6, 6, 0.5).should == 0
       end
 
       it 'translates max value' do
-        host.parse_volume('18', '00', -6, 6, 0.5).should == 6
+        host.parse_sequence('18', '00', -6, 6, 0.5).should == 6
       end
 
       it 'translates negative fractional value' do
-        host.parse_volume('01', '00', -6, 6, 0.5).should == -5.5
+        host.parse_sequence('01', '00', -6, 6, 0.5).should == -5.5
       end
 
       it 'translates positive fractional value' do
-        host.parse_volume('17', '00', -6, 6, 0.5).should == 5.5
+        host.parse_sequence('17', '00', -6, 6, 0.5).should == 5.5
       end
     end
 
     context 'upper bound' do
       it 'works' do
-        host.parse_volume('09', '00', -30, 15, 5).should == 15
+        host.parse_sequence('09', '00', -30, 15, 5).should == 15
       end
     end
   end

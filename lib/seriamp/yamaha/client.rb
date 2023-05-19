@@ -321,13 +321,13 @@ module Seriamp
           when 'A2'
             {zone3_volume: parse_half_db_volume(data, :zone3_volume)}
           when '4B'
-            {zone2_bass: parse_volume(data, '00', -10, 10, 1)}
+            {zone2_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4C'
-            {zone2_treble: parse_volume(data, '00', -10, 10, 1)}
+            {zone2_treble: parse_sequence(data, '00', -10, 10, 1)}
           when '4D'
-            {zone3_bass: parse_volume(data, '00', -10, 10, 1)}
+            {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
-            {zone3_treble: parse_volume(data, '00', -10, 10, 1)}
+            {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil
@@ -503,7 +503,7 @@ module Seriamp
       end
 
       def parse_speaker_level(value, field)
-        parse_volume(value, '14', -10, 10, 0.5)
+        parse_sequence(value, '14', -10, 10, 0.5)
       end
 
       def parse_max_volume(value, field)
@@ -511,7 +511,7 @@ module Seriamp
         when 'A'
           16.5
         else
-          parse_volume(value, '0', -30, 15, 5)
+          parse_sequence(value, '0', -30, 15, 5)
         end
       end
 
