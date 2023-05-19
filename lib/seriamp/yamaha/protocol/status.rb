@@ -18,8 +18,8 @@ module Seriamp
             [:mute, :bool],
             [:zone2_input_name, :input_name_1],
             [:zone2_mute, :bool],
-            [2, :main_volume, :volume],
-            [2, :zone2_volume, :volume],
+            [2, :main_volume, :half_db_volume],
+            [2, :zone2_volume, :half_db_volume],
             [2, :program_name],
             [:effect, :bool],
             [:es_key],
@@ -97,7 +97,7 @@ module Seriamp
             [2, :multi_ch_subwoofer_level, :speaker_level],
             [:zone3_input_name, :input_name_1],
             [:zone3_mute, :bool],
-            [2, :zone3_volume, :volume],
+            [2, :zone3_volume, :half_db_volume],
             [1],
             [:multi_ch_select],
             [:multi_ch_surround_out],
@@ -115,8 +115,8 @@ module Seriamp
             [:mute, :bool],
             [:zone2_input_name, :input_name_1],
             [:zone2_mute, :bool],
-            [2, :main_volume, :volume],
-            [2, :zone2_volume, :volume],
+            [2, :main_volume, :half_db_volume],
+            [2, :zone2_volume, :half_db_volume],
             [2, :program_name],
             [1],
             [:es_key],
@@ -205,7 +205,7 @@ module Seriamp
             [:pure_direct, :bool],
             [:zone3_input_name, :input_name_1],
             [:zone3_mute, :bool],
-            [2, :zone3_volume, :volume],
+            [2, :zone3_volume, :half_db_volume],
             [:remote_sensor, :bool],
             [:multi_ch_select],
             [:remote_id_xm],
@@ -228,10 +228,10 @@ module Seriamp
             [:net_usb_repeat], # RX-V2700 only
             [:net_usb_shuffle, :bool], # RX-V2700 only
             [2, :zone2_max_volume, :max_volume], # RX-V2700 only
-            [2, :zone2_initial_volume, :volume], # RX-V2700 only
+            [2, :zone2_initial_volume, :half_db_volume], # RX-V2700 only
             [2, :zone2_balance],
             [2, :zone3_max_volume, :max_volume], # RX-V2700 only
-            [2, :zone3_initial_volume, :volume], # RX-V2700 only
+            [2, :zone3_initial_volume, :half_db_volume], # RX-V2700 only
             [2, :zone3_balance],
             [:net_usb_source], # RX-V2700 only
             [:monitor_check, :bool],

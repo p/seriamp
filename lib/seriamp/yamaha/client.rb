@@ -315,11 +315,11 @@ module Seriamp
               audio_select: AUDIO_SELECT_GET.fetch(data[1]),
             }
           when '26'
-            {main_volume: parse_half_db_volume(data)}
+            {main_volume: parse_half_db_volume(data, :main_volume)}
           when '27'
-            {zone2_volume: parse_half_db_volume(data)}
+            {zone2_volume: parse_half_db_volume(data, :zone2_volume)}
           when 'A2'
-            {zone3_volume: parse_half_db_volume(data)}
+            {zone3_volume: parse_half_db_volume(data, :zone3_volume)}
           when '4B'
             {zone2_bass: parse_volume(data, '00', -10, 10, 1)}
           when '4C'
@@ -347,7 +347,7 @@ module Seriamp
         end
       end
 
-      def parse_half_db_volume(value)
+      def parse_half_db_volume(value, field_name)
         case i_value = Integer(value, 16)
         when 0
           # Mute
@@ -355,7 +355,7 @@ module Seriamp
         when 0x27..0xE8
           (i_value - 0x27)/2.0 - 80
         else
-          raise UnexpectedResponse, "Volume raw value (0.5 dB step) out of range: #{value}"
+          raise UnexpectedResponse, "Volume raw value (0.5 dB step) for #{fiel_name} out of range: #{value}"
         end
       end
 
