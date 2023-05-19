@@ -318,6 +318,13 @@ module Seriamp
           'E' => 'XM',
         }.freeze
 
+        DECODER_MODE_SETTING_GET = {
+          '0' => 'Auto',
+          '1' => 'Last',
+        }.freeze
+
+        AUDIO_SELECT_SETTING_GET = DECODER_MODE_SETTING_GET
+
         DECODER_MODE_GET = {
           '0' => 'Auto',
           '1' => 'DTS',
@@ -654,6 +661,14 @@ module Seriamp
           '1' => '10',
           '2' => '30',
           '3' => 'Always',
+        }.freeze
+
+        DIMMER_GET = {
+          '0' => -4,
+          '1' => -3,
+          '2' => -2,
+          '3' => -1,
+          '4' => 0,
         }.freeze
 
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
