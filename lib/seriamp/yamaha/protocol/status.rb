@@ -160,7 +160,7 @@ module Seriamp
             [2, :speaker_lfe_level, :speaker_level],
             [2, :headphone_lfe_level, :speaker_level],
             [2, :audio_delay],
-            [2, :initial_volume, :volume], # RX-V2700 only
+            [2, :initial_volume, :half_db_volume], # RX-V2700 only
             [2, :max_volume], # RX-V2700 only
             [:decoder_mode_setting],
             [:audio_select_setting],
