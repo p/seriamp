@@ -506,6 +506,15 @@ module Seriamp
         parse_volume(value, '14', -10, 10, 0.5)
       end
 
+      def parse_max_volume(value, field)
+        case value
+        when 'A'
+          16.5
+        else
+          parse_volume(value, '0', -30, 15, 5)
+        end
+      end
+
       def x
         status = {
           model_code: model_code,

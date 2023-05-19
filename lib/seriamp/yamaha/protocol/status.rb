@@ -161,7 +161,7 @@ module Seriamp
             [2, :headphone_lfe_level, :speaker_level],
             [2, :audio_delay],
             [2, :initial_volume, :half_db_volume], # RX-V2700 only
-            [2, :max_volume], # RX-V2700 only
+            [:max_volume], # RX-V2700 only
             [:decoder_mode_setting],
             [:audio_select_setting],
             [:dimmer],
@@ -227,10 +227,10 @@ module Seriamp
             [:ipod_shuffle],
             [:net_usb_repeat], # RX-V2700 only
             [:net_usb_shuffle, :bool], # RX-V2700 only
-            [2, :zone2_max_volume, :max_volume], # RX-V2700 only
+            [:zone2_max_volume, :max_volume], # RX-V2700 only
             [2, :zone2_initial_volume, :half_db_volume], # RX-V2700 only
             [2, :zone2_balance],
-            [2, :zone3_max_volume, :max_volume], # RX-V2700 only
+            [:zone3_max_volume, :max_volume], # RX-V2700 only
             [2, :zone3_initial_volume, :half_db_volume], # RX-V2700 only
             [2, :zone3_balance],
             [:net_usb_source], # RX-V2700 only

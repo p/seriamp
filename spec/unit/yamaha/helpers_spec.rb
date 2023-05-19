@@ -55,5 +55,11 @@ describe Seriamp::Yamaha::Helpers do
         host.parse_volume('17', '00', -6, 6, 0.5).should == 5.5
       end
     end
+
+    context 'upper bound' do
+      it 'works' do
+        host.parse_volume('09', '00', -30, 15, 5).should == 15
+      end
+    end
   end
 end
