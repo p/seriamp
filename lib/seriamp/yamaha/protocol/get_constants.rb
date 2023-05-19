@@ -333,10 +333,16 @@ module Seriamp
           '8' => 'HDMI', # Unconfirmed
         }.freeze
 
-        NIGHT_GET = {
+        NIGHT_MODE_GET = {
           '0' => 'Off',
           '1' => 'Cinema',
           '2' => 'Music',
+        }.freeze
+
+        NIGHT_MODE_PARAMETER_GET = {
+          '0' => 'Low',
+          '1' => 'Middle',
+          '2' => 'High',
         }.freeze
 
         SLEEP_GET = {
@@ -347,7 +353,39 @@ module Seriamp
           '4' => nil,
         }.freeze
 
-        PROGRAM_GET = {
+        TUNER_PAGE_GET = {
+          '0' => 'A',
+          '1' => 'B',
+          '2' => 'C',
+          '3' => 'D',
+          '4' => 'E',
+        }.freeze
+
+        TUNER_NUMBER_GET = {
+          '0' => 1,
+          '1' => 2,
+          '2' => 3,
+          '3' => 4,
+          '4' => 5,
+          '5' => 6,
+          '6' => 7,
+          '7' => 8,
+        }.freeze
+
+        TUNER_BAND_GET = {
+          '0' => 'FM',
+          '1' => 'AM',
+        }.freeze
+
+        XM_SEARCH_MODE_GET = {
+          '0' => 'All',
+          '1' => 'Category',
+          '2' => 'Preset',
+        }.freeze
+
+        XM_CHANNEL_NUMBER_GET = Hash[(0..255).map { |i| [i, '%02X' % i ] }].invert.freeze
+
+        PROGRAM_NAME_GET = {
           '00' => 'Munich',
           '01' => 'Hall B',
           '02' => 'Hall C',
@@ -424,18 +462,18 @@ module Seriamp
           '5' => 'Analog Only',
         }.freeze
 
-        SAMPLE_RATE_R0178 = {
+        SAMPLE_RATE_1_GET = {
           '0' => 'Analog',
-          '1' => 32000,
-          '2' => 44100,
-          '3' => 48000,
-          '4' => 64000,
-          '5' => 88200,
-          '6' => 96000,
+          '1' => '32000',
+          '2' => '44100',
+          '3' => '48000',
+          '4' => '64000',
+          '5' => '88200',
+          '6' => '96000',
           '7' => 'Unknown',
         }.freeze
 
-        SAMPLING_GET = {
+        SAMPLE_RATE_2_GET = {
           '00' => 'Analog',
           '01' => '8000',
           '02' => '11025',
@@ -457,24 +495,29 @@ module Seriamp
           'FF' => '---',
         }.freeze
 
-        INPUT_CHANNELS_GET = {
-          '00' => '1+',
-          '01' => '1/0',
-          '02' => '2/0',
-          '03' => '3/0',
-          '04' => '2/1',
-          '05' => '3/1',
-          '06' => '2/2',
-          '07' => '3/2',
-          '08' => '2/3',
-          '09' => '3/3',
-          '0A' => '2/4',
-          '0B' => '3/4',
-          'AC' => 'MLT',
-          '0F' => '---',
+        CHANNEL_INDICATOR_GET = {
+          '0' => '1+',
+          '1' => '1/0',
+          '2' => '2/0',
+          '3' => '3/0',
+          '4' => '2/1',
+          '5' => '3/1',
+          '6' => '2/2',
+          '7' => '3/2',
+          '8' => '2/3',
+          '9' => '3/3',
+          'A' => '2/4',
+          'B' => '3/4',
+          'C' => 'MLT',
+          'F' => '---',
         }.freeze
 
-        INPUT_LFE_CHANNEL_GET = {
+        LFE_INDICATOR_GET = {
+          '0' => '0.1',
+          'F' => '---',
+        }.freeze
+
+        LFE_INDICATOR_STATUS = {
           '00' => '0.1',
           'FF' => '---',
         }.freeze
@@ -520,6 +563,26 @@ module Seriamp
           '25' => 'Variable',
           '26' => 'Losless',
           'FF' => '---',
+        }.freeze
+
+        DUAL_MONO_OUT_GET = {
+          '0' => 'Main',
+          '1' => 'Subwoofer',
+          '2' => 'All',
+        }.freeze
+
+        TRIGGER_CONTROL_GET = {
+          '0' => 'All',
+          '1' => 'Main',
+          '2' => 'Zone2',
+          '3' => 'Zone3',
+        }.freeze
+
+        SPEAKER_OUT_GET = {
+          '0' => 'Ext',
+          '1' => 'Int Speaker 1',
+          '2' => 'Int Speaker 2',
+          '3' => 'Int Both',
         }.freeze
 
         POWER_GET = {
@@ -570,6 +633,30 @@ module Seriamp
           '00' => false,
           '01' => true,
         }.freeze
+
+        ES_KEY_GET = {
+          '0' => 'Off',
+          '1' => 'EX/ES',
+          '3' => 'Auto',
+          '4' => 'EX',
+          '5' => 'PLIIx Movie',
+          '6' => 'PLIIx Music',
+        }.freeze
+
+        OSD_MESSAGE_GET = {
+          # Not used as of RX-V2700 or earlier
+          '0' => :full,
+          '1' => :short,
+          '2' => :off,
+        }.freeze
+
+        ON_SCREEN_GET = {
+          '1' => '10',
+          '2' => '30',
+          '3' => 'Always',
+        }.freeze
+
+        AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
 
         SPEAKER_A_GET = OFF_ON_GET
 

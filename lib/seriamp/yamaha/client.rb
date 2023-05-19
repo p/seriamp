@@ -483,10 +483,11 @@ module Seriamp
       end
 
       def parse_table(value, field, table)
-        table[value].tap do |parsed|
-          if parsed.nil?
-            raise UnexpectedResponse, "Bad value for field #{field}: #{value}"
-          end
+        # Some values are nil, e.g. sleep
+        if table.key?(value)
+          table[value]
+        else
+          raise UnexpectedResponse, "Bad value for field #{field}: #{value}"
         end
       end
 
@@ -499,6 +500,10 @@ module Seriamp
         else
           raise UnexpectedResponse, "Bad value for boolean field #{field}: #{value}"
         end
+      end
+
+      def parse_speaker_level(value, field)
+        parse_volume(value, '14', -10, 10, 0.5)
       end
 
       def x
