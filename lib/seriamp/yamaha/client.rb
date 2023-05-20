@@ -502,6 +502,10 @@ module Seriamp
         end
       end
 
+      def parse_inverted_bool(value, field)
+        !parse_bool(value, field)
+      end
+
       def parse_speaker_level(value, field)
         parse_sequence(value, '14', -10, 10, 0.5)
       end
@@ -513,6 +517,17 @@ module Seriamp
         else
           parse_sequence(value, '0', -30, 15, 5)
         end
+      end
+
+      def parse_osd_shift(value, field)
+        parse_sequence(value, '00', -5, 5, 1)
+      end
+
+      def parse_gui_position(value, field)
+        {
+          gui_position_h: parse_sequence(value[0], '0', -5, 5, 1),
+          gui_position_v: parse_sequence(value[1], '0', -5, 5, 1),
+        }
       end
 
       def x

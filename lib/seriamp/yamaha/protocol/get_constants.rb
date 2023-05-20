@@ -392,6 +392,11 @@ module Seriamp
 
         XM_CHANNEL_NUMBER_GET = Hash[(0..255).map { |i| [i, '%02X' % i ] }].invert.freeze
 
+        TUNER_SETUP_GET = {
+          '0' => 'AM10/FM100',
+          '1' => 'AM9/FM0',
+        }.freeze
+
         PROGRAM_NAME_GET = {
           '00' => 'Munich',
           '01' => 'Hall B',
@@ -657,6 +662,12 @@ module Seriamp
           '2' => :off,
         }.freeze
 
+        ZONE_OSD_GET = {
+          '0' => 'Off',
+          '1' => 'Zone2',
+          '2' => 'Zone2 & Zone3',
+        }.freeze
+
         ON_SCREEN_GET = {
           '1' => '10',
           '2' => '30',
@@ -669,6 +680,98 @@ module Seriamp
           '2' => -2,
           '3' => -1,
           '4' => 0,
+        }.freeze
+
+        DYNAMIC_RANGE_GET = {
+          '0' => 'Max',
+          '1' => 'Std',
+          '2' => 'Min',
+        }.freeze
+
+        VOLUME_OUT_GET = {
+          '0' => 'Variable',
+          '1' => 'Fixed',
+        }.freeze
+
+        SPEAKER_SETTING_GET = {
+          '0' => 'Large',
+          '1' => 'Small',
+          '2' => 'None',
+        }.freeze
+
+        BASS_OUT_GET = {
+          '0' => 'Subwoofer',
+          '1' => 'Front',
+          '2' => 'Both',
+        }.freeze
+
+        SUBWOOFER_PHASE_GET = {
+          '0' => 'Normal',
+          '1' => 'Reverse',
+        }.freeze
+
+        EQ_SELECT_GET = {
+          '0' => 'Auto PEQ',
+          '1' => 'GEQ',
+          '2' => 'Off',
+        }.freeze
+
+        WALLPAPER_GET = {
+          '0' => 'Yes',
+          'E' => 'Gray',
+          'F' => 'None',
+        }.freeze
+
+        GUI_LANGUAGE_GET = {
+          '0' => 'English',
+          '1' => 'Japanese',
+          '2' => 'French',
+          '3' => 'German',
+          '4' => 'Spanish',
+          '5' => 'Russian',
+        }.freeze
+
+        HDMI_UPSCALING_GET = {
+          '0' => 'Through',
+          '1' => '480p (576p)',
+          '2' => '1080i',
+          '3' => '720p',
+        }.freeze
+
+        HDMI_ASPECT_GET = {
+          '0' => 'Through',
+          '1' => '16:9 Normal',
+          '2' => 'Smart Zoom',
+        }.freeze
+
+        SB_SPEAKER_SETTING_GET = {
+          '0' => 'Large x2',
+          '1' => 'Large x1',
+          '2' => 'Small x2',
+          '3' => 'Small x1',
+          '4' => 'None',
+        }.freeze
+
+        DECODER_SELECT_GET = {
+          '0' => 'Pro Logic',
+          '1' => 'PLIIx Movie',
+          '2' => 'PLIIx Music',
+          '3' => 'PLIIx Game',
+          '4' => 'Neo:6 Cinema',
+          '5' => 'Neo:6 Music',
+          '6' => 'CSII Cinema',
+          '7' => 'CSII Music',
+          '9' => 'Neural Surround',
+        }.freeze
+
+        REMOTE_ID_GET = {
+          '0' => 'ID1',
+          '1' => 'ID2',
+        }.freeze
+
+        SPEAKER_IMPEDANCE_GET = {
+          '0' => 8,
+          '1' => 6,
         }.freeze
 
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze

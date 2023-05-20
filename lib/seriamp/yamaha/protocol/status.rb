@@ -166,7 +166,8 @@ module Seriamp
             [:audio_select_setting],
             [:dimmer],
             [1],
-            [2, :osd_shift],
+            # [2, :osd_shift], # RX-V1700
+            [2, :gui_position], # RX-V2700
             [:gray_back, :bool],
             [:video_conversion, :bool],
             [:speaker_dynamic_range, :dynamic_range],
@@ -177,17 +178,17 @@ module Seriamp
             [:center_speaker_setting, :speaker_setting],
             [:front_speaker_setting, :speaker_setting],
             [:surround_speaker_setting, :speaker_setting],
-            [:surround_back_speaker_setting, :speaker_setting],
+            [:surround_back_speaker_setting, :sb_speaker_setting],
             [:zone3_speaker_out, :speaker_out],
             [:presence_speaker_setting, :inverted_bool],
             [:bass_out],
             [:subwoofer_phase],
             [1],
-            [:test_mode],
+            [:test_mode, :bool],
             [:eq_select], # RX-V1700 only
             [:wallpaper], # RX-V2700 only
             [3],
-            [:hdmi_audio_out],
+            [:hdmi_audio, :inverted_bool],
             [:component_ip, :bool],
             [:hdmi_ip, :bool], # RX-V1700 only
             [:gui_language], # RX-V2700 only
@@ -196,9 +197,9 @@ module Seriamp
             [1],
             [:zone_osd], # RX-V2700 only
             [:decoder_select],
-            [:remote_id_tuner],
-            [:advanced_setup],
-            [:remote_id_amp],
+            [:tuner_remote_id, :remote_id],
+            [:advanced_setup, :bool],
+            [:amp_remote_id, :remote_id],
             [1],
             [:speaker_impedance],
             [:tuner_setup],
