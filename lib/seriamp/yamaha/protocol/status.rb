@@ -220,7 +220,7 @@ module Seriamp
             [:tone_bypass, :inverted_bool],
             [:wake_on_rs232, :bool],
             [2, :bit_rate],
-            [2, :dialog],
+            [2, :dialog_level],
             [:fl_scroll],
             [:multi_ch_bgv],
             [:ipod_charge_standby, :bool],

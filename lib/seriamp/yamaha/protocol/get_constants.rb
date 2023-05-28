@@ -784,6 +784,80 @@ module Seriamp
           '1' => 6,
         }.freeze
 
+        MULTI_CH_SELECT_GET = {
+          '0' => '6ch',
+          '2' => '8ch CD',
+          '3' => '8ch CD-R',
+          '4' => '8ch MD/TAPE',
+          '5' => '8ch DVD',
+          '6' => '8ch DTV',
+          '7' => '8ch CBL/SAT',
+          '9' => '8ch VCR1',
+          'A' => '8ch DVR/VCR2',
+          'C' => '8ch V-AUX',
+        }.freeze
+
+        REMOTE_ID_XM_GET = {
+          '0' => 'ID1',
+          '1' => 'ID2',
+        }.freeze
+
+        SUBWOOFER_CROSSOVER_GET = {
+          '0' => 40,
+          '1' => 60,
+          '2' => 80,
+          '3' => 90,
+          '4' => 100,
+          '5' => 110,
+          '6' => 120,
+          '7' => 160,
+          '8' => 200,
+        }.freeze
+
+        TV_FORMAT_GET = {
+          '0' => 'PAL',
+          '1' => 'NTSC',
+        }.freeze
+
+        PRESENCE_SURROUND_BACK_SELECT_GET = {
+          '0' => 'Presence',
+          '1' => 'Surround Back',
+        }.freeze
+
+        FL_SCROLL_GET = {
+          '0' => 'Continue',
+          '1' => 'Once',
+        }.freeze
+
+        MULTI_CH_BGV_GET = {
+          '0' => 'Off',
+          '1' => 'Last',
+          '5' => 'DVD',
+          '6' => 'DTV',
+          '7' => 'CBL/SAT',
+          '9' => 'VCR1',
+          'A' => 'DVR/VCR2',
+          'C' => 'V-AUX',
+        }.freeze
+
+        IPOD_REPEAT_GET = {
+          '0' => 'Off',
+          '1' => 'One',
+          '2' => 'All',
+        }.freeze
+
+        IPOD_SHUFFLE_GET = {
+          '0' => 'Off',
+          '1' => 'Songs',
+          '2' => 'Albums',
+        }.freeze
+
+        NET_USB_REPEAT_GET = {
+          '0' => 'Off',
+          '1' => 'Single',
+          '2' => 'All',
+        }.freeze
+
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
 
         SPEAKER_A_GET = OFF_ON_GET

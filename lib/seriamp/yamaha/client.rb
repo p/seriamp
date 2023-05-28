@@ -366,6 +366,19 @@ module Seriamp
         end
       end
 
+      def parse_zone_tone(value, field_name)
+        parse_sequence(value, '00', -10, 10, 1)
+      end
+
+      def parse_dialog_level(value, field_name)
+        case value
+        when 'FF'
+          '---'
+        else
+          parse_sequence(value, '00' -31, 0, 1)
+        end
+      end
+
 =begin I don't know what this is actually needed for, may have gotten myself confused with the Integra
       def parse_full_db_volume(value)
         case i_value = Integer(value, 16)
