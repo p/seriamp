@@ -791,9 +791,9 @@ module Seriamp
         GET_MAP = {
           '06' => :xm_message,
           '10' => :format,
-          '11' => :sampling,
-          '12' => :channel_indicator_report,
-          '13' => :lfe_indicator_report,
+          '11' => [:sample_rate, :sample_rate_2],
+          '12' => [:channel_indicator, :channel_indicator_report],
+          '13' => [:lfe_indicator, :lfe_indicator_report],
           '14' => :bit_rate,
           '20' => :power,
           '21' => :input_name,

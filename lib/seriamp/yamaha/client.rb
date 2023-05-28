@@ -297,14 +297,18 @@ module Seriamp
         command = resp[2..3]
         data = resp[4..5]
         logger&.debug("Command response: #{command} #{data}")
-        state = if field_name = GET_MAP[command]
-          map = self.class.const_get("#{field_name.upcase}_GET")
+        state = if field_name_or_spec = GET_MAP[command]
+          case field_name_or_spec
+          when Array
+            field_name = field_name_or_spec.first
+            const_name = field_name_or_spec.last
+          else
+            field_name = const_name = field_name_or_spec
+          end
+          map = self.class.const_get("#{const_name.upcase}_GET")
           value = map[data]
           if value.nil?
             logger&.warn("Unhandled value #{data} for #{command} (#{field_name})")
-          end
-          if field_name.to_s.end_with?('_report')
-            field_name = field_name.to_s.gsub(/_report\z/, '').to_sym
           end
           unless Hash === value
             value = {field_name => value}

@@ -73,7 +73,7 @@ describe Seriamp::Yamaha::Client do
       '06 00' => {xm_message: 'Check Antenna'},
       '10 01' => {format: 'PCM'},
       '10 FE' => {format: '???'},
-      '11 08' => {sampling: '44100'},
+      '11 08' => {sample_rate: '44100'},
       '12 02' => {channel_indicator: '2/0'},
       '13 FF' => {lfe_indicator: '---'},
       '14 FF' => {bit_rate: '---'},
