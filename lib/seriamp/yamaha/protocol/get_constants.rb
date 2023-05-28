@@ -7,6 +7,12 @@ module Seriamp
 
         private
 
+        def self.prefix_keys_with_zero(table)
+          Hash[table.map do |k, v|
+            ['0' + k, v]
+          end].freeze
+        end
+
         STATUS_HEAD_FIELDS = [
           'DC2',
           'Model',
@@ -524,9 +530,7 @@ module Seriamp
           'F' => '---',
         }.freeze
 
-        CHANNEL_INDICATOR_REPORT_GET = Hash[CHANNEL_INDICATOR_GET.map do |k, v|
-          ['0' + k, v]
-        end].freeze
+        CHANNEL_INDICATOR_REPORT_GET = prefix_keys_with_zero(CHANNEL_INDICATOR_GET)
 
         LFE_INDICATOR_GET = {
           '0' => '0.1',
@@ -611,6 +615,8 @@ module Seriamp
           '6' => {main_power: false, zone2_power: true, zone3_power: true}.freeze,
           '7' => {main_power: false, zone2_power: false, zone3_power: true}.freeze,
         }.freeze
+
+        POWER_REPORT_GET = prefix_keys_with_zero(POWER_GET)
 
         INPUT_NAME_2_GET = {
           '00' => 'PHONO',
@@ -795,7 +801,7 @@ module Seriamp
           '12' => [:channel_indicator, :channel_indicator_report],
           '13' => [:lfe_indicator, :lfe_indicator_report],
           '14' => :bit_rate,
-          '20' => :power,
+          '20' => [:power, :power_report],
           '21' => :input_name,
           '23' => :mute,
           '28' => :program_name,
