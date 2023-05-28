@@ -112,6 +112,25 @@ module Seriamp
           remote_command('7AFE')
         end
 
+        def set_main_mute(state)
+          cmd = if state == :attenuate || state == 'attenuate'
+            '7EDF'
+          elsif state
+            '7EA2'
+          else
+            '7EA3'
+          end
+          remote_command(cmd)
+        end
+
+        def set_zone2_mute(state)
+          remote_command("7EA#{state ? '0' : '1'}")
+        end
+
+        def set_zone3_mute(state)
+          remote_command("7E#{state ? '2' : '6'}6")
+        end
+
         def set_subwoofer_level(level)
           system_command("49#{'%02x' % level}")
         end
