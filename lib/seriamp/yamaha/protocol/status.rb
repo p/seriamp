@@ -230,10 +230,10 @@ module Seriamp
             [:net_usb_shuffle, :bool], # RX-V2700 only
             [:zone2_max_volume, :max_volume], # RX-V2700 only
             [2, :zone2_initial_volume, :half_db_volume], # RX-V2700 only
-            [2, :zone2_balance],
+            [2, :zone2_balance, :balance],
             [:zone3_max_volume, :max_volume], # RX-V2700 only
             [2, :zone3_initial_volume, :half_db_volume], # RX-V2700 only
-            [2, :zone3_balance],
+            [2, :zone3_balance, :balance],
             [:net_usb_source], # RX-V2700 only
             [:monitor_check, :bool],
             [2, :zone3_bass, :zone_tone],

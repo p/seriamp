@@ -858,6 +858,12 @@ module Seriamp
           '2' => 'All',
         }.freeze
 
+        NET_USB_SOURCE_GET = {
+          '0' => 'PC/MCX',
+          '1' => 'Net Radio',
+          '2' => 'USB',
+        }.freeze
+
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
 
         SPEAKER_A_GET = OFF_ON_GET

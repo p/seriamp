@@ -379,6 +379,23 @@ module Seriamp
         end
       end
 
+      def parse_balance(value, field_name)
+        parse_sequence(value, '00', -10, 10, 0.5)
+      end
+
+      def parse_flag(value, field_name)
+        value = Integer(value, 16)
+        {
+          dd_karaoke: value & 0x1 != 0,
+          dd_61: value & 0x2 != 0,
+          dts_es_matrix_61: value & 0x4 != 0,
+          dts_es_discrete_61: value & 0x8 != 0,
+          dts_96_24: value & 0x10 != 0,
+          pre_emphasis: value & 0x20 != 0,
+          dpl_encoded: value & 0x40 != 0,
+        }
+      end
+
 =begin I don't know what this is actually needed for, may have gotten myself confused with the Integra
       def parse_full_db_volume(value)
         case i_value = Integer(value, 16)
