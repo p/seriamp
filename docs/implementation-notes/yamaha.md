@@ -44,11 +44,22 @@ As far as I can tell this behavior is not documented.
 Some of the other parameters are not changeable in standby - for example,
 input name and pure direct setting.
 
-## Volume
+## Volume Increments
 
 For all zones on RX-V1500/RX-V2500, the volume
 is adjusted in 0.5 dB increments from -80 dB to 16.5 dB, giving the hex
 values the range of 0x27-0xE8.
+
+## Volume Up & Down
+
+When RX-V1500 receiver volume up/down commands over serial, these are
+interpreted the same way as remote volume up/down buttons, namely:
+the first command displays the current volume on the front panel while
+making no change to the level, the second and subsequent commands (in a short
+interval) actually change the volume. This behavior is obviously
+problematic when the receiver is controlled by multiple clients
+simultaneously. RX-V2700 changes the volume level with every up/down remote
+command received over the serial port.
 
 ## Python Buffering
 
