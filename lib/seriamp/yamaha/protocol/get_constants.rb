@@ -524,6 +524,10 @@ module Seriamp
           'F' => '---',
         }.freeze
 
+        CHANNEL_INDICATOR_REPORT_GET = Hash[CHANNEL_INDICATOR_GET.map do |k, v|
+          ['0' + k, v]
+        end].freeze
+
         LFE_INDICATOR_GET = {
           '0' => '0.1',
           'F' => '---',
@@ -788,7 +792,7 @@ module Seriamp
           '06' => :xm_message,
           '10' => :format,
           '11' => :sampling,
-          '12' => :input_channels,
+          '12' => :channel_indicator_report,
           '13' => :lfe_indicator_report,
           '14' => :bit_rate,
           '20' => :power,
