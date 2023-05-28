@@ -324,6 +324,41 @@ module Seriamp
           'E' => 'XM',
         }.freeze
 
+        INPUT_NAME_1_1800_GET = {
+          '0' => 'PHONO',
+          '1' => 'CD',
+          '2' => 'TUNER',
+          '3' => 'CD-R',
+          '4' => 'MD/TAPE',
+          '5' => 'DVD',
+          '6' => 'DTV/CBL',
+          '9' => 'VCR',
+          'A' => 'DVR',
+          'C' => 'V-AUX',
+          'D' => 'NET/USB',
+          'E' => 'XM',
+          'F' => 'BD/HD DVD',
+        }.freeze
+
+        INPUT_NAME_2_GET = {
+          '00' => 'PHONO',
+          '01' => 'CD',
+          '02' => 'TUNER',
+          '03' => 'CD-R',
+          '04' => 'MD/TAPE',
+          '05' => 'DVD',
+          '06' => 'DTV',
+          '07' => 'CBL/SAT',
+          '08' => 'SAT',
+          '09' => 'VCR1',
+          '0A' => 'DVR/VCR2',
+          '0B' => 'VCR3/DVR',
+          '0C' => 'V-AUX/DOCK',
+          '0D' => 'NET/USB',
+          '0E' => 'XM',
+          '10' => 'Multi-Channel',
+        }.freeze
+
         DECODER_MODE_SETTING_GET = {
           '0' => 'Auto',
           '1' => 'Last',
@@ -618,25 +653,6 @@ module Seriamp
 
         POWER_REPORT_GET = prefix_keys_with_zero(POWER_GET)
 
-        INPUT_NAME_2_GET = {
-          '00' => 'PHONO',
-          '01' => 'CD',
-          '02' => 'TUNER',
-          '03' => 'CD-R',
-          '04' => 'MD/TAPE',
-          '05' => 'DVD',
-          '06' => 'DTV',
-          '07' => 'CBL/SAT',
-          '08' => 'SAT',
-          '09' => 'VCR1',
-          '0A' => 'DVR/VCR2',
-          '0B' => 'VCR3/DVR',
-          '0C' => 'V-AUX/DOCK',
-          '0D' => 'NET/USB',
-          '0E' => 'XM',
-          '10' => 'Multi-Channel',
-        }.freeze
-
         MUTE_GET = {
           '00' => false,
           '01' => true,
@@ -746,6 +762,7 @@ module Seriamp
           '1' => '480p (576p)',
           '2' => '1080i',
           '3' => '720p',
+          '4' => '1080p', # As of RX-V1800
         }.freeze
 
         HDMI_ASPECT_GET = {
@@ -797,6 +814,19 @@ module Seriamp
           'C' => '8ch V-AUX',
         }.freeze
 
+        MULTI_CH_SELECT_1800_GET = {
+          '0' => '6ch',
+          '2' => '8ch CD',
+          '3' => '8ch CD-R',
+          '4' => '8ch MD/TAPE',
+          '5' => '8ch DVD',
+          '6' => '8ch DTV/CBL',
+          '9' => '8ch VCR',
+          'A' => '8ch DVR',
+          'C' => '8ch V-AUX',
+          'F' => '8ch BD/HD DVD',
+        }.freeze
+
         REMOTE_ID_XM_GET = {
           '0' => 'ID1',
           '1' => 'ID2',
@@ -838,6 +868,17 @@ module Seriamp
           '9' => 'VCR1',
           'A' => 'DVR/VCR2',
           'C' => 'V-AUX',
+        }.freeze
+
+        MULTI_CH_BGV_1800_GET = {
+          '0' => 'Off',
+          '1' => 'Last',
+          '5' => 'DVD',
+          '6' => 'DTV/CBL',
+          '9' => 'VCR',
+          'A' => 'DVR',
+          'C' => 'V-AUX',
+          'F' => 'BD/HD DVD',
         }.freeze
 
         IPOD_REPEAT_GET = {
