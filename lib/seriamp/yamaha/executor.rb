@@ -101,7 +101,10 @@ EOT
             client.public_send("#{which}_volume_down")
             client.public_send("#{which}_volume_down")
           else
-            if %w(. - mute).include?(value)
+            if %w(att attenuate).include?(value)
+              method = "#{prefix}_mute"
+              value = :attenuate
+            elsif %w(. - mute).include?(value)
               method = "#{prefix}_mute"
               value = true
             elsif value == 'unmute'
