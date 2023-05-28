@@ -794,7 +794,7 @@ module Seriamp
           '20' => :power,
           '21' => :input_name,
           '23' => :mute,
-          '28' => :program,
+          '28' => :program_name,
           '2E' => :speaker_a,
           '2F' => :speaker_b,
           # Speaker level test mode
