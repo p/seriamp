@@ -789,7 +789,7 @@ module Seriamp
           '10' => :format,
           '11' => :sampling,
           '12' => :input_channels,
-          '13' => :input_lfe_channel,
+          '13' => :lfe_indicator_report,
           '14' => :bit_rate,
           '20' => :power,
           '21' => :input_name,

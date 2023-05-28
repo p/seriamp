@@ -303,8 +303,8 @@ module Seriamp
           if value.nil?
             logger&.warn("Unhandled value #{data} for #{command} (#{field_name})")
           end
-          if field_name.end_with?('_report')
-            field_name.gsub!(/_report\z/, '')
+          if field_name.to_s.end_with?('_report')
+            field_name = field_name.to_s.gsub(/_report\z/, '').to_sym
           end
           unless Hash === value
             value = {field_name => value}
