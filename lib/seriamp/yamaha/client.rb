@@ -383,7 +383,7 @@ module Seriamp
         parse_sequence(value, '00', -10, 10, 0.5)
       end
 
-      def parse_flag(value, field_name)
+      def parse_status_flags(value, field_name)
         value = Integer(value, 16)
         {
           dd_karaoke: value & 0x1 != 0,

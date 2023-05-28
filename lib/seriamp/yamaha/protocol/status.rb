@@ -238,7 +238,7 @@ module Seriamp
             [:monitor_check, :bool],
             [2, :zone3_bass, :zone_tone],
             [2, :zone3_treble, :zone_tone],
-            [2, :flag],
+            [2, :status_flags],
           ].freeze,
         }.freeze
 
