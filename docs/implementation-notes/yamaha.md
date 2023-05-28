@@ -61,6 +61,16 @@ problematic when the receiver is controlled by multiple clients
 simultaneously. RX-V2700 changes the volume level with every up/down remote
 command received over the serial port.
 
+## Custom OSD Message
+
+RX-V1500 shows this message on the front panel.
+
+RX-V2700 does not show this message on the front panel. If the receiver
+is in pure direct mode, the front panel momentarily turns on but it
+lacks any message output on the main 2 lines (which is a condition that is
+not attainable via remote control/front panel operations).
+When pure direct is off, nothing appears to happen on the front panel.
+
 ## Python Buffering
 
 While testing with Python, I ran into [this issue](https://bugs.python.org/issue20074) -
