@@ -3,6 +3,37 @@
 module Seriamp
   module Yamaha
     class Executor
+      def self.usage
+        <<-EOT
+Yamaha module commands:
+
+detect
+remote-command 4-char-code
+remote-command-nr 4-char-code # Do not attempt to read the response
+system-command 4-char-code
+ext-command arg # Extended command
+power [main|zone2|zone3] on/true/yes|off/false/no
+volume [main|zone2|zone3] value|up|down|./-/mute
+input [main|zone2|zone3] input-name
+program program-name
+pure-direct bool
+center-speaker-layout arg
+surround-speaker-layout arg
+front-speaker-layout arg
+presence-speaker-layout arg
+bass-out arg
+subwoofer-phase arg
+subwoofer-crossover arg
+main-tone-bass-speaker gain [frequency]
+graphic-eq [channel [band [value]]]
+osd-message message
+advanced-setup bool
+speaker-impedance 4|8
+status
+dev-status
+EOT
+      end
+
       def initialize(client, **opts)
         @client = client
         @options = opts.dup.freeze

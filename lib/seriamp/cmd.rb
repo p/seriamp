@@ -25,6 +25,21 @@ module Seriamp
           options[:device] = v
         end
 
+        opts.on('-h', '--help', 'This help text') do
+          puts opts.banner
+          if module_name = options[:module]
+            puts "       #{module_name} [options] command arg..."
+            puts
+          end
+          puts opts.summarize
+          if module_name
+            set_module_name(module_name)
+            puts
+            puts executor_cls.usage
+          end
+          exit
+        end
+
         opts.on("-l", "--log-level LEVEL", "Log level as symbol or integer (debug/0|info/1|warn/2|error/3|fatal/4)") do |v|
           options[:log_level] = v
         end
@@ -48,14 +63,7 @@ module Seriamp
 
       @options = options
 
-      @mod_name = options.fetch(:module)
-
-      require "seriamp/#{mod_name}"
-      require "seriamp/#{mod_name}/executor"
-
-      @mod = Seriamp.const_get(
-        mod_name.sub(/(.)/) { $1.upcase }.gsub(/_(.)/) { $1.upcase }
-      )
+      set_module_name(options.fetch(:module))
 
       @logger = Utils.logger_from_options(**options)
       if url = options[:service_url]
@@ -148,9 +156,23 @@ module Seriamp
     attr_reader :direct_client
     attr_reader :service_client
 
+    def set_module_name(module_name)
+      @mod_name = module_name
+
+      require "seriamp/#{mod_name}"
+      require "seriamp/#{mod_name}/executor"
+
+      @mod = Seriamp.const_get(
+        mod_name.sub(/(.)/) { $1.upcase }.gsub(/_(.)/) { $1.upcase }
+      )
+    end
+
+    def executor_cls
+      mod.const_get(:Executor)
+    end
+
     def executor
-      @executor ||= mod.const_get(:Executor).new(
-        direct_client, timeout: options[:timeout])
+      @executor ||= executor_cls.new(direct_client, timeout: options[:timeout])
     end
 
     def formatter
