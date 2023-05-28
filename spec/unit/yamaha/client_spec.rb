@@ -75,7 +75,7 @@ describe Seriamp::Yamaha::Client do
       '10 FE' => {format: '???'},
       '11 08' => {sampling: '44100'},
       '12 02' => {input_channels: '2/0'},
-      '13 FF' => {input_lfe_channel: '---'},
+      '13 FF' => {lfe_indicator: '---'},
       '14 FF' => {bit_rate: '---'},
       #'15 00' => {dialog: -31},
       #'15 FF' => {dialog: nil},

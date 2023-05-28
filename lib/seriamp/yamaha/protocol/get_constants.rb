@@ -529,7 +529,7 @@ module Seriamp
           'F' => '---',
         }.freeze
 
-        LFE_INDICATOR_STATUS = {
+        LFE_INDICATOR_REPORT_GET = {
           '00' => '0.1',
           'FF' => '---',
         }.freeze
