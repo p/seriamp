@@ -12,7 +12,8 @@ module Seriamp
           'R0177' => [
             [7],
             [:busy, :bool],
-            [:power, :bool],
+            # Power is documented as a boolean but is in fact not.
+            [:power],
             [:input_name, :input_name_1],
             [:multi_ch_input, :bool],
             [:input_mode],

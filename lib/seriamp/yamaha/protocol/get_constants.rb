@@ -402,6 +402,8 @@ module Seriamp
           '0' => 'Zone1',
           '1' => 'Zone2',
           '2' => 'Zone1 & Zone2',
+          # Undocumented value.
+          '3' => '???',
         }.freeze
 
         TRIGGER_CONTROL_GET = {
