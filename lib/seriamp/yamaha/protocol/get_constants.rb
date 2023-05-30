@@ -59,6 +59,8 @@ module Seriamp
           '2' => 'Standby',
         }
 
+        BUSY_STANDBY_REPORT_GET = prefix_keys_with_zero(BUSY_STANDBY_GET)
+
         # RX-V1 and RX-V3200 need a different table.
         INPUT_NAME_1_GET = {
           '0' => 'PHONO',
@@ -774,6 +776,7 @@ module Seriamp
         PURE_DIRECT_GET = OFF_ON_GET
 
         GET_MAP = {
+          '00' => [:busy_standby, :busy_standby_report],
           '06' => :xm_message,
           '10' => :format,
           '11' => [:sample_rate, :sample_rate_2],

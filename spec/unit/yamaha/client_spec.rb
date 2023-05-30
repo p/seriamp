@@ -70,6 +70,9 @@ describe Seriamp::Yamaha::Client do
     end
 
     {
+      '00 00' => {busy_standby: 'OK'},
+      '00 01' => {busy_standby: 'Busy'},
+      '00 02' => {busy_standby: 'Standby'},
       '06 00' => {xm_message: 'Check Antenna'},
       '10 01' => {format: 'PCM'},
       '10 FE' => {format: '???'},
@@ -80,6 +83,8 @@ describe Seriamp::Yamaha::Client do
       #'15 00' => {dialog: -31},
       #'15 FF' => {dialog: nil},
       #'16 00' => {flags: []},
+      '20 00' => {main_power: false, zone2_power: false, zone3_power: false},
+      '20 01' => {main_power: true, zone2_power: true, zone3_power: true},
       '21 04' => {input_name: 'MD/TAPE'},
       '22 00' => {audio_select: 'Auto', decoder_mode: 'Auto'},
       '23 00' => {mute: false},
