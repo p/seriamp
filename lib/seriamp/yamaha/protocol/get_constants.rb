@@ -13,6 +13,18 @@ module Seriamp
           end].freeze
         end
 
+        def self.make_sequence(format, min_serialized, min, max)
+          Hash[min.upto(max).map do |value|
+            [format % [min_serialized - min + value], value]
+          end].freeze
+        end
+
+        def self.make_from_list(*values)
+          Hash[0.upto(values.length-1).map do |i|
+            [i.to_s, values[i]]
+          end].freeze
+        end
+
         STATUS_HEAD_FIELDS = [
           'DC2',
           'Model',
@@ -55,7 +67,8 @@ module Seriamp
           '3' => 'CD-R',
           '4' => 'MD/TAPE',
           '5' => 'DVD',
-          # "LD" was removed from input 6 as of RX-V2500/RX-V1600.
+          # This input was titled "DTV/LD" in earlier receivers
+          # (RX-V1500 and earlier but not RX-V2500 which already omitted LD).
           '6' => 'DTV/LD',
           '7' => 'CBL/SAT',
           # Input 8 is not used as of RX-V1300 or earlier.
@@ -81,6 +94,7 @@ module Seriamp
           'C' => 'V-AUX',
           'D' => 'NET/USB',
           'E' => 'XM',
+          # As of RX-V1800.
           'F' => 'BD/HD DVD',
         }.freeze
 
@@ -492,6 +506,8 @@ module Seriamp
           '2' => 'Zone2 & Zone3',
         }.freeze
 
+        OSD_SHIFT_GET = make_sequence('%02X', 0, -5, 5)
+
         ON_SCREEN_GET = {
           '1' => '10',
           '2' => '30',
@@ -523,15 +539,47 @@ module Seriamp
           '2' => 'None',
         }.freeze
 
+        SB_SPEAKER_SETTING_GET = {
+          '0' => 'Large x2',
+          '1' => 'Large x1',
+          '2' => 'Small x2',
+          '3' => 'Small x1',
+          '4' => 'None',
+        }.freeze
+
         BASS_OUT_GET = {
           '0' => 'Subwoofer',
-          '1' => 'Front',
+          '1' => 'Front/Main',
           '2' => 'Both',
         }.freeze
 
         SUBWOOFER_PHASE_GET = {
           '0' => 'Normal',
           '1' => 'Reverse',
+        }.freeze
+
+        MULTI_CH_CENTER_OUT_GET = {
+          '0' => 'Center',
+          '1' => 'Main',
+        }.freeze
+
+        MULTI_CH_SUBWOOFER_OUT_GET = {
+          '0' => 'Subwoofer',
+          '1' => 'Main',
+        }.freeze
+
+        MULTI_CH_SURROUND_OUT_GET = make_from_list(
+          'Surround', 'Main',
+        )
+
+        MAIN_LEVEL_GET = make_from_list(
+          'Normal', '-10 dB',
+        )
+
+        TEST_MODE_GET = {
+          '0' => 'Off',
+          '1' => 'Dolby',
+          '2' => 'DTS',
         }.freeze
 
         EQ_SELECT_GET = {
@@ -569,14 +617,6 @@ module Seriamp
           '2' => 'Smart Zoom',
         }.freeze
 
-        SB_SPEAKER_SETTING_GET = {
-          '0' => 'Large x2',
-          '1' => 'Large x1',
-          '2' => 'Small x2',
-          '3' => 'Small x1',
-          '4' => 'None',
-        }.freeze
-
         DECODER_SELECT_GET = {
           '0' => 'Pro Logic',
           '1' => 'PLIIx Movie',
@@ -599,8 +639,23 @@ module Seriamp
           '1' => 6,
         }.freeze
 
+        MULTI_CH_SELECT_1500_GET = {
+          '0' => '6ch',
+          '1' => '8ch TUNER',
+          '2' => '8ch CD',
+          '4' => '8ch CD-R',
+          '5' => '8ch DVD',
+          '6' => '8ch DTV',
+          '7' => '8ch CBL/SAT',
+          '9' => '8ch VCR1',
+          'A' => '8ch DVR/VCR2',
+          'C' => '8ch V-AUX',
+        }.freeze
+
         MULTI_CH_SELECT_GET = {
           '0' => '6ch',
+          # Not used in RX-V2700 or earlier
+          '1' => '8ch TUNER',
           '2' => '8ch CD',
           '3' => '8ch CD-R',
           '4' => '8ch MD/TAPE',
@@ -629,6 +684,10 @@ module Seriamp
           '0' => 'ID1',
           '1' => 'ID2',
         }.freeze
+
+        SUBWOOFER_POSITION_GET = make_from_list(
+          'L-R', 'F-R', 'None',
+        )
 
         SUBWOOFER_CROSSOVER_GET = {
           '0' => 40,
