@@ -47,6 +47,7 @@ module Seriamp
           '2' => 'Standby',
         }
 
+        # RX-V1 and RX-V3200 need a different table.
         INPUT_NAME_1_GET = {
           '0' => 'PHONO',
           '1' => 'CD',
@@ -54,8 +55,10 @@ module Seriamp
           '3' => 'CD-R',
           '4' => 'MD/TAPE',
           '5' => 'DVD',
-          '6' => 'DTV',
+          # "LD" was removed from input 6 as of RX-V2500/RX-V1600.
+          '6' => 'DTV/LD',
           '7' => 'CBL/SAT',
+          # Input 8 is not used as of RX-V1300 or earlier.
           '8' => 'SAT',
           '9' => 'VCR1',
           'A' => 'DVR/VCR2',
@@ -141,6 +144,29 @@ module Seriamp
           '3' => 30,
           '4' => nil,
         }.freeze
+
+        SLEEP_1500_GET = {
+          '0' => 120,
+          '2' => 90,
+          '3' => 60,
+          '4' => 30,
+          '5' => nil,
+        }.freeze
+
+        PLAYBACK_MODE_GET = -{
+          '0' => '6ch Input',
+          '1' => 'Analog',
+          '2' => 'PCM',
+          '3' => 'DD except 2.0',
+          '4' => 'DD 2.0',
+          '5' => 'DD Karaoke',
+          '6' => 'DD EX',
+          '7' => 'DTS',
+          '8' => 'DTS-ES',
+          '9' => 'Other Digital',
+          'A' => 'DTS Analog Mute',
+          'B' => 'DTS ES Discrete',
+        }
 
         TUNER_PAGE_GET = {
           '0' => 'A',
@@ -249,12 +275,17 @@ module Seriamp
           'FF' => '---',
         }.freeze
 
-        INPUT_MODE_R0178 = {
+        INPUT_MODE_GET = {
           '0' => 'Auto',
           '2' => 'DTS',
           '4' => 'Analog',
           '5' => 'Analog Only',
         }.freeze
+
+        INPUT_MODE_SETTING_GET = -{
+          '0' => 'Auto',
+          '1' => 'Last',
+        }
 
         SAMPLE_RATE_1_GET = {
           '0' => 'Analog',
@@ -367,6 +398,12 @@ module Seriamp
           '2' => 'All',
         }.freeze
 
+        TRIGGER_CONTROL_1500_GET = {
+          '0' => 'Zone1',
+          '1' => 'Zone2',
+          '2' => 'Zone1 & Zone2',
+        }.freeze
+
         TRIGGER_CONTROL_GET = {
           '0' => 'All',
           '1' => 'Main',
@@ -380,6 +417,11 @@ module Seriamp
           '2' => 'Int Speaker 2',
           '3' => 'Int Both',
         }.freeze
+
+        SPEAKER_B_ZONE_GET = -{
+          '0' => 'Zone1',
+          '1' => 'Zone2',
+        }
 
         POWER_GET = {
           '0' => {main_power: false, zone2_power: false, zone3_power: false}.freeze,
@@ -413,6 +455,19 @@ module Seriamp
           '01' => true,
         }.freeze
 
+        ES_KEY_1500_GET = {
+          '0' => 'Off',
+          '1' => 'Matrix On',
+          '2' => 'Discrete On',
+          '3' => 'Auto',
+        }.freeze
+
+        ES_STATUS_GET = -{
+          '0' => 'Off',
+          '1' => 'Matrix On',
+          '2' => 'Discrete On',
+        }
+
         ES_KEY_GET = {
           '0' => 'Off',
           '1' => 'EX/ES',
@@ -424,9 +479,9 @@ module Seriamp
 
         OSD_MESSAGE_GET = {
           # Not used as of RX-V2700 or earlier
-          '0' => :full,
-          '1' => :short,
-          '2' => :off,
+          '0' => 'Full',
+          '1' => 'Short',
+          '2' => 'Off',
         }.freeze
 
         ZONE_OSD_GET = {
@@ -646,6 +701,7 @@ module Seriamp
           '2' => 'USB',
         }.freeze
 
+        # RX-V1500 only goes to 160 ms
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
 
         SPEAKER_A_GET = OFF_ON_GET
