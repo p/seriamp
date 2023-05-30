@@ -153,7 +153,7 @@ module Seriamp
           '5' => nil,
         }.freeze
 
-        PLAYBACK_MODE_GET = -{
+        PLAYBACK_MODE_GET = {
           '0' => '6ch Input',
           '1' => 'Analog',
           '2' => 'PCM',
@@ -166,7 +166,7 @@ module Seriamp
           '9' => 'Other Digital',
           'A' => 'DTS Analog Mute',
           'B' => 'DTS ES Discrete',
-        }
+        }.freeze
 
         TUNER_PAGE_GET = {
           '0' => 'A',
@@ -282,10 +282,10 @@ module Seriamp
           '5' => 'Analog Only',
         }.freeze
 
-        INPUT_MODE_SETTING_GET = -{
+        INPUT_MODE_SETTING_GET = {
           '0' => 'Auto',
           '1' => 'Last',
-        }
+        }.freeze
 
         SAMPLE_RATE_1_GET = {
           '0' => 'Analog',
@@ -418,10 +418,10 @@ module Seriamp
           '3' => 'Int Both',
         }.freeze
 
-        SPEAKER_B_ZONE_GET = -{
+        SPEAKER_B_ZONE_GET = {
           '0' => 'Zone1',
           '1' => 'Zone2',
-        }
+        }.freeze
 
         POWER_GET = {
           '0' => {main_power: false, zone2_power: false, zone3_power: false}.freeze,
@@ -462,11 +462,11 @@ module Seriamp
           '3' => 'Auto',
         }.freeze
 
-        ES_STATUS_GET = -{
+        ES_STATUS_GET = {
           '0' => 'Off',
           '1' => 'Matrix On',
           '2' => 'Discrete On',
-        }
+        }.freeze
 
         ES_KEY_GET = {
           '0' => 'Off',
