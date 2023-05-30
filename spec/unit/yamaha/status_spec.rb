@@ -10,12 +10,112 @@ describe Seriamp::Yamaha::Client do
 
     context 'RX-V1500' do
 
+      let(:status_middle) do
+        -'@E01900021000517A7734132400011023000000002301100292426262620202828320000001414000000140051000000202401100002429262626202028283251770000701'
+      end
+
       let(:status_response) do
-        "R0177F8A@E01900021000517A773413240001102300000000230110029242626262020282832000000141400000014005100000020240110000242926262620202828325177000070104"
+        "R0177F8A#{status_middle}04"
+      end
+
+      let(:expected) do
+        {
+          :busy=>false,
+          :main_power=>true,
+          :zone2_power=>false,
+          :zone3_power=>false,
+          :input_name=>"CD",
+          :multi_ch_input=>false,
+          :input_mode=>"Auto",
+          :mute=>false,
+          :zone2_input_name=>"DVD",
+          :zone2_mute=>true,
+          :main_volume=>-38.5,
+          :zone2_volume=>-40.0,
+          :program_name=>"2ch Stereo",
+          :effect=>true,
+          :es_key=>"Auto",
+          :osd_message=>"Full",
+          :sleep=>30,
+          :tuner_page=>"A",
+          :tuner_number=>1,
+          :night_mode=>"Off",
+          :pure_direct=>true,
+          :speaker_a=>true,
+          :speaker_b=>false,
+          :playback_mode=>"PCM",
+          :sample_rate=>"48000",
+          :es_status=>"Off",
+          :thr_bypass=>false,
+          :red_dts_wait=>false,
+          :headphone=>false,
+          :tuner_band=>"FM",
+          :tuned=>false,
+          :trigger1=>false,
+          :trigger1_control=>"???",
+          :dts_96_24=>false,
+          :trigger2_control=>"Zone2",
+          :trigger2=>true,
+          :speaker_b_zone=>"Zone1",
+          :zone2_speaker=>false,
+          :main_right_level=>0.5,
+          :main_left_level=>-2.0,
+          :center_level=>-1.0,
+          :surround_right_level=>-1.0,
+          :surround_left_level=>-1.0,
+          :surround_back_right_level=>-4.0,
+          :surround_back_left_level=>-4.0,
+          :front_effect_right_level=>0.0,
+          :front_effect_left_level=>0.0,
+          :subwoofer_level=>5.0,
+          :night_mode_parameter=>"Low",
+          :speaker_lfe_level=>-10.0,
+          :headphone_lfe_level=>-10.0,
+          :audio_delay=>0,
+          :input_mode_setting=>"Last",
+          :dimmer=>0,
+          :osd_shift=>0,
+          :gray_back=>true,
+          :video_conversion=>false,
+          :speaker_dynamic_range=>"Max",
+          :headphone_dynamic_range=>"Max",
+          :zone2_volume_out=>"Variable",
+          :memory_guard=>false,
+          :center_speaker_setting=>"None",
+          :main_speaker_setting=>"Large",
+          :surround_speaker_setting=>"None",
+          :surround_back_speaker_setting=>"None",
+          :front_effect_speaker_setting=>true,
+          :bass_out=>"Front/Main",
+          :multi_ch_center_out=>"Main",
+          :multi_ch_subwoofer_out=>"Subwoofer",
+          :main_level=>"Normal",
+          :test_mode=>"Off",
+          :multi_ch_main_left_level=>-2.0,
+          :multi_ch_main_right_level=>0.5,
+          :multi_ch_center_level=>-1.0,
+          :multi_ch_surround_left_level=>-1.0,
+          :multi_ch_surround_right_level=>-1.0,
+          :multi_ch_surround_back_left_level=>-4.0,
+          :multi_ch_surround_back_right_level=>-4.0,
+          :multi_ch_front_effect_left_level=>0.0,
+          :multi_ch_front_effect_right_level=>0.0,
+          :multi_ch_subwoofer_level=>5.0,
+          :zone3_input_name=>"DVD",
+          :zone3_mute=>true,
+          :zone3_volume=>-40.0,
+          :multi_ch_select_1500=>"6ch",
+          :multi_ch_surround_out=>"Surround",
+          :subwoofer_position=>"L-R",
+          :subwoofer_crossover=>160,
+          :component_osd=>false,
+          :presence_surround_back_select=>"Surround Back",
+          :raw_string=>status_middle,
+        }
       end
 
       it 'works' do
-        parsed.should == {}
+        parsed.should == expected
       end
     end
 
