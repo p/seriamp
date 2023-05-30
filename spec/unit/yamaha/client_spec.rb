@@ -80,6 +80,7 @@ describe Seriamp::Yamaha::Client do
       #'15 00' => {dialog: -31},
       #'15 FF' => {dialog: nil},
       #'16 00' => {flags: []},
+      '21 04' => {input_name: 'MD/TAPE'},
       '22 00' => {audio_select: 'Auto', decoder_mode: 'Auto'},
       '23 00' => {mute: false},
       '26 77' => {main_volume: -40.0},
