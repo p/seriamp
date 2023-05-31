@@ -1,6 +1,23 @@
 
 # Functionality Comparison
 
+The below table shows functionality that is supposed to work on all
+RX-Vx000 receivers but does not.
+
+| Model    | Set Menu          | OSD Message         | Equalizer       | Input Trim |
+| -------- | ----------------- | ------------------- | --------------- | ---------- |
+| RX-V1500 | Yes               | Yes                 | GEQ             | No         |
+| RX-V2500 |                   |                     | None (GUI only) | Yes        |
+| RX-V2700 | Yes               | No (hardware bug)   | PEQ             | Yes        |
+| RX-V1800 | No (hardware bug) | Yes (top line only) | GEQ             | Yes        |
+
+GEQ: 7 bands with fixed frequencies, fixed Q, only gain is adjustable.
+PEQ: 7 bands with 25 available frequences, adjustable Q, adjustable gain.
+RX-V2500 EQ: accessible via the GUI only (not serial), 7 bands with
+~14 available frequencies, adjustable Q, adjustable gain.
+RX-V2500 also does not expose its current EQ settings via serial
+(neither reading nor writing functionality is available).
+
 - *Subwoofer crossover frequency*: settable in Yamaha receivers, not settable
 in Onkyo/Integra receivers.
 - *Speaker configuration (small/large)*: settable in Yamaha receivers, not
