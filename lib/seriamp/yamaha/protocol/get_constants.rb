@@ -775,6 +775,13 @@ module Seriamp
 
         PURE_DIRECT_GET = OFF_ON_GET
 
+        MEMORY_GET = make_sequence('%02X', 1, 1, 6)
+
+        BOOL_REPORT_GET = {
+          '00' => false,
+          '01' => true,
+        }.freeze
+
         GET_MAP = {
           '00' => [:busy_standby, :busy_standby_report],
           '06' => :xm_message,
@@ -789,6 +796,11 @@ module Seriamp
           '28' => :program_name,
           '2E' => :speaker_a,
           '2F' => :speaker_b,
+          '30' => [:system_memory_load, :memory],
+          '31' => [:system_memory_save, :memory],
+          '32' => [:main_volume_memory_load, :memory],
+          '33' => [:main_volume_memory_save, :memory],
+          '34' => [:headphone, :bool_report],
           # Speaker level test mode
           '80' => :test,
           '8C' => :pure_direct,
