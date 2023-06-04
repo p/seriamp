@@ -112,10 +112,7 @@ EOT
               value = false
             else
               method = "#{prefix}_volume"
-              if value[0] == ','
-                value = value[1..]
-              end
-              value = Float(value)
+              value = cmd_line_float(value)
             end
             client.public_send(method, value)
           end
@@ -153,33 +150,34 @@ EOT
         when 'subwoofer-phase'
           client.set_subwoofer_phase(args.shift)
         when 'subwoofer-crossover'
-          client.set_subwoofer_crossover(Integer(args.shift))
-        when 'main-tone-bass-speaker'
+          client.set_subwoofer_crossover(cmd_line_integer(args.shift))
+        when /\Amain-(speaker|headphone)-tone-(bass|treble)\z/
+          output, tone = $1, $2
           if args.any?
             if args.length == 1
-              args = [Float(args.shift)]
+              args = [cmd_line_float(args.shift)]
             else
               args = [
-                gain: Float(args.shift),
-                frequency: Float(args.shift),
+                gain: cmd_line_float(args.shift),
+                frequency: cmd_line_float(args.shift),
               ]
             end
-            client.set_main_tone_bass_speaker(*args)
+            client.public_send("set_main_#{output}_tone_#{tone}", *args)
           else
-            client.main_tone_bass_speaker
+            client.public_send("main_#{output}_tone_#{tone}")
           end
         when 'graphic-eq'
           case args.length
           when 3
             # set value
             channel = args.shift.gsub('-', '_').to_sym
-            band = Integer(args.shift)
-            value = Float(args.shift)
+            band = cmd_line_integer(args.shift)
+            value = cmd_line_float(args.shift)
             client.public_send("set_#{channel}_graphic_eq_#{band}", value)
           when 2
             # get channel & band
             channel = args.shift.gsub('-', '_').to_sym
-            band = Integer(args.shift)
+            band = cmd_line_integer(args.shift)
             client.public_send("#{channel}_graphic_eq_#{band}")
           when 1
             # get channel all
@@ -198,7 +196,7 @@ EOT
         # This command can be given in normal operation, it does not require
         # being in the "advanced setup" menu for serial access.
         when 'speaker-impedance'
-          client.set_speaker_impedance(Integer(args.shift))
+          client.set_speaker_impedance(cmd_line_integer(args.shift))
         when 'status'
           pp client.status
         when 'dev-status'
@@ -237,6 +235,20 @@ EOT
         else
           raise ArgumentError, "Unknown command: #{cmd}"
         end
+      end
+
+      def cmd_line_integer(value)
+        if value[0] == ?,
+          value = value[1..]
+        end
+        Integer(value)
+      end
+
+      def cmd_line_float(value)
+        if value[0] == ?,
+          value = value[1..]
+        end
+        Float(value)
       end
 
       def build_fields(fields, model_name)

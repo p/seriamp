@@ -240,12 +240,12 @@ module Seriamp
 
         {bass: '0', treble: '1'}.each do |tone, tone_value|
           {speaker: '0', headphone: '1'}.each do |output, output_value|
-            define_method("main_tone_#{tone}_#{output}") do
+            define_method("main_#{output}_tone_#{tone}") do
               result = extended_command("0330#{output_value}#{tone_value}")
               {frequency: result.frequency, gain: result.gain}
             end
 
-            define_method("set_main_tone_#{tone}_#{output}") do |value|
+            define_method("set_main_#{output}_tone_#{tone}") do |value|
               if Hash === value
                 freq = value.fetch(:frequency)
                 gain = value.fetch(:gain)
@@ -254,7 +254,7 @@ module Seriamp
                 gain = value
               end
               if freq.nil?
-                freq = send("main_tone_#{tone}_#{output}").fetch(:frequency)
+                freq = send("main_#{output}_tone_#{tone}").fetch(:frequency)
               end
               # Round to 0.5 dB
               use_gain = (gain * 2).round / 2.0

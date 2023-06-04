@@ -29,6 +29,14 @@ module Seriamp
             "#<#{self.class.name}: #{output} #{tone} freq=#{frequency} gain=#{gain}>"
           end
 
+          def to_h
+            prefix = "main_#{output}_tone_#{tone}"
+            {
+              "#{prefix}_freq": frequency,
+              "#{prefix}_gain": gain,
+            }
+          end
+
           private
 
           OUTPUT_MAP = {
