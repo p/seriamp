@@ -493,6 +493,11 @@ module Seriamp
         index = 0
         result = {}
         table.each do |entry|
+          if index >= data.length
+            # Truncated response - normally obtained when receiver is
+            # in standby
+            break
+          end
           entry_index = 0
           case size_or_field = entry[entry_index]
           when Integer

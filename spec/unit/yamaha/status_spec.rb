@@ -416,6 +416,33 @@ describe Seriamp::Yamaha::Client do
       it 'works' do
         parsed.should == expected
       end
+
+      context 'in standby' do
+        let(:status_middle) do
+          -'@E0190000'
+        end
+
+        let(:status_response) do
+          "R0212I09#{status_middle}A8"
+        end
+
+        let(:expected) do
+          {
+            firmware_version:'I',
+            model_code:'R0212',
+            model_name:'RX-V2700',
+            :ready=>"OK",
+            :main_power=>false,
+            :zone2_power=>false,
+            :zone3_power=>false,
+            :raw_string=>status_middle,
+          }
+        end
+
+        it 'works' do
+          parsed.should == expected
+        end
+      end
     end
   end
 end
