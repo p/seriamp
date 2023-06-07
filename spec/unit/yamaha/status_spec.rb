@@ -20,6 +20,9 @@ describe Seriamp::Yamaha::Client do
 
       let(:expected) do
         {
+          firmware_version:'F',
+          model_code:'R0177',
+          model_name:'RX-V1500/HTR-5890',
           :busy=>false,
           :main_power=>true,
           :zone2_power=>false,
@@ -131,6 +134,9 @@ describe Seriamp::Yamaha::Client do
 
       let(:expected) do
         {
+          firmware_version:'J',
+          model_code:'R0226',
+          model_name:'RX-V1800',
           :ready=>"OK",
           :main_power=>true,
           :zone2_power=>false,
@@ -271,6 +277,9 @@ describe Seriamp::Yamaha::Client do
 
       let(:expected) do
         {
+          firmware_version:'I',
+          model_code:'R0212',
+          model_name:'RX-V2700',
           :ready=>"OK",
           :main_power=>true,
           :zone2_power=>false,

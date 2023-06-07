@@ -480,7 +480,12 @@ module Seriamp
           raise HandshakeFailure, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
         end
 
-        parse_status_response_inner(data, model_code).update(raw_string: data)
+        parse_status_response_inner(data, model_code).update(
+          model_code: model_code,
+          model_name: MODEL_NAMES.fetch(model_code),
+          firmware_version: version,
+          raw_string: data,
+        )
       end
 
       def parse_status_response_inner(data, model_code)
