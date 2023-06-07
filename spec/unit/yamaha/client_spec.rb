@@ -70,9 +70,9 @@ describe Seriamp::Yamaha::Client do
     end
 
     {
-      '00 00' => {busy_standby: 'OK'},
-      '00 01' => {busy_standby: 'Busy'},
-      '00 02' => {busy_standby: 'Standby'},
+      '00 00' => {ready: 'OK'},
+      '00 01' => {ready: 'Busy'},
+      '00 02' => {ready: 'Standby'},
       '06 00' => {xm_message: 'Check Antenna'},
       '10 01' => {format: 'PCM'},
       '10 FE' => {format: '???'},

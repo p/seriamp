@@ -212,7 +212,7 @@ module Seriamp
           # RX-V2700
           'R0212' => [
             [7],
-            [:busy_standby],
+            [:ready],
             [:power],
             [2, :input_name, :input_name_2],
             [:audio_select],
@@ -347,7 +347,7 @@ module Seriamp
           # RX-V3800
           'R0225' => [
             [7],
-            [:busy_standby],
+            [:ready],
             [:power],
             [2, :input_name, :input_name_2],
             [:audio_select],
@@ -480,7 +480,7 @@ module Seriamp
           # RX-V1800
           'R0226' => [
             [7],
-            [:busy_standby],
+            [:ready],
             [:power],
             [2, :input_name, :input_name_2],
             [:audio_select],

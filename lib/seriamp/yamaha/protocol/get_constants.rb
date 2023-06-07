@@ -53,13 +53,13 @@ module Seriamp
           'ETX',
         ]
 
-        BUSY_STANDBY_GET = {
+        READY_GET = {
           '0' => 'OK',
           '1' => 'Busy',
           '2' => 'Standby',
         }
 
-        BUSY_STANDBY_REPORT_GET = prefix_keys_with_zero(BUSY_STANDBY_GET)
+        READY_REPORT_GET = prefix_keys_with_zero(READY_GET)
 
         # RX-V1 and RX-V3200 need a different table.
         INPUT_NAME_1_GET = {
@@ -783,7 +783,7 @@ module Seriamp
         }.freeze
 
         GET_MAP = {
-          '00' => [:busy_standby, :busy_standby_report],
+          '00' => [:ready, :ready_report],
           '06' => :xm_message,
           '10' => :format,
           '11' => [:sample_rate, :sample_rate_2],

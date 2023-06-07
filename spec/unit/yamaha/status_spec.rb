@@ -131,7 +131,7 @@ describe Seriamp::Yamaha::Client do
 
       let(:expected) do
         {
-          :busy_standby=>"OK",
+          :ready=>"OK",
           :main_power=>true,
           :zone2_power=>false,
           :zone3_power=>false,
@@ -271,7 +271,7 @@ describe Seriamp::Yamaha::Client do
 
       let(:expected) do
         {
-          :busy_standby=>"OK",
+          :ready=>"OK",
           :main_power=>true,
           :zone2_power=>false,
           :zone3_power=>false,
