@@ -507,9 +507,11 @@ module Seriamp
             size = 1
           end
           value = data[index...index+size]
-          index += size
           field = entry[entry_index]
-          next if field.nil?
+          if field.nil?
+            index += size
+            next
+          end
           fn = entry[entry_index+1] || field
           constant = "#{fn.to_s.upcase}_GET"
           parsed = begin
@@ -517,7 +519,7 @@ module Seriamp
           rescue NameError
             send("parse_#{fn}", value, field)
           else
-            parse_table(value, field, table)
+            parse_table(value, field, table, index)
           end
           case parsed
           when Hash
@@ -525,16 +527,17 @@ module Seriamp
           else
             result.update(field => parsed)
           end
+          index += size
         end
         result
       end
 
-      def parse_table(value, field, table)
+      def parse_table(value, field, table, index)
         # Some values are nil, e.g. sleep
         if table.key?(value)
           table[value]
         else
-          raise UnexpectedResponse, "Bad value for field #{field}: #{value}"
+          raise UnexpectedResponse, "Bad value for field #{field}: #{value} (at DT#{index})"
         end
       end
 

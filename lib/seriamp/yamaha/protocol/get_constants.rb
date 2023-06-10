@@ -563,6 +563,8 @@ module Seriamp
         MULTI_CH_CENTER_OUT_GET = {
           '0' => 'Center',
           '1' => 'Main',
+          # HTR-5890 can return this value
+          '2' => '???',
         }.freeze
 
         MULTI_CH_SUBWOOFER_OUT_GET = {

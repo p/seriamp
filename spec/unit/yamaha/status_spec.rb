@@ -122,6 +122,121 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
+    context 'HTR-5890' do
+
+      let(:status_middle) do
+        -'@E019000240005198771713242701112200000010210110028282823253B282828280000001414000000141051100000200401200002828282523283B28282851770000211'
+      end
+
+      let(:status_response) do
+        "R0177F8A#{status_middle}48"
+      end
+
+      let(:expected) do
+        {
+          :busy=>false,
+          :main_power=>true,
+          :zone2_power=>false,
+          :zone3_power=>false,
+          :input_name=>"MD/TAPE",
+          :multi_ch_input=>false,
+          :input_mode=>"Auto",
+          :mute=>false,
+          :zone2_input_name=>"DVD",
+          :zone2_mute=>true,
+          :main_volume=>-23.5,
+          :zone2_volume=>-40.0,
+          :program_name=>"7ch Stereo",
+          :effect=>true,
+          :es_key=>"Auto",
+          :osd_message=>"Short",
+          :sleep=>30,
+          :tuner_page=>"C",
+          :tuner_number=>8,
+          :night_mode=>"Off",
+          :pure_direct=>true,
+          :speaker_a=>true,
+          :speaker_b=>true,
+          :playback_mode=>"PCM",
+          :sample_rate=>"44100",
+          :es_status=>"Off",
+          :thr_bypass=>false,
+          :red_dts_wait=>false,
+          :headphone=>false,
+          :tuner_band=>"FM",
+          :tuned=>false,
+          :trigger1=>true,
+          :trigger1_control=>"Zone2",
+          :dts_96_24=>false,
+          :trigger2_control=>"Zone2",
+          :trigger2=>true,
+          :speaker_b_zone=>"Zone1",
+          :zone2_speaker=>false,
+          :main_right_level=>0.0,
+          :main_left_level=>0.0,
+          :center_level=>0.0,
+          :surround_right_level=>-2.5,
+          :surround_left_level=>-1.5,
+          :surround_back_right_level=>9.5,
+          :surround_back_left_level=>0.0,
+          :front_effect_right_level=>0.0,
+          :front_effect_left_level=>0.0,
+          :subwoofer_level=>0.0,
+          :night_mode_parameter=>"Low",
+          :speaker_lfe_level=>-10.0,
+          :headphone_lfe_level=>-10.0,
+          :audio_delay=>0,
+          :input_mode_setting=>"Last",
+          :dimmer=>0,
+          :osd_shift=>0,
+          :gray_back=>true,
+          :video_conversion=>true,
+          :speaker_dynamic_range=>"Max",
+          :headphone_dynamic_range=>"Max",
+          :zone2_volume_out=>"Variable",
+          :memory_guard=>false,
+          :center_speaker_setting=>"None",
+          :main_speaker_setting=>"Large",
+          :surround_speaker_setting=>"Large",
+          :surround_back_speaker_setting=>"None",
+          :front_effect_speaker_setting=>true,
+          :bass_out=>"Front/Main",
+          # This is important.
+          :multi_ch_center_out=>"???",
+          :multi_ch_subwoofer_out=>"Subwoofer",
+          :main_level=>"Normal",
+          :test_mode=>"Off",
+          :multi_ch_main_left_level=>0.0,
+          :multi_ch_main_right_level=>0.0,
+          :multi_ch_center_level=>0.0,
+          :multi_ch_surround_left_level=>-1.5,
+          :multi_ch_surround_right_level=>-2.5,
+          :multi_ch_surround_back_left_level=>0.0,
+          :multi_ch_surround_back_right_level=>9.5,
+          :multi_ch_front_effect_left_level=>0.0,
+          :multi_ch_front_effect_right_level=>0.0,
+          :multi_ch_subwoofer_level=>0.0,
+          :zone3_input_name=>"DVD",
+          :zone3_mute=>true,
+          :zone3_volume=>-40.0,
+          :multi_ch_select_1500=>"6ch",
+          :multi_ch_surround_out=>"Surround",
+          :subwoofer_position=>"L-R",
+          :subwoofer_crossover=>80,
+          :component_osd=>true,
+          :presence_surround_back_select=>"Surround Back",
+          :model_code=>"R0177",
+          :model_name=>"RX-V1500/HTR-5890",
+          :firmware_version=>"F",
+          :raw_string=>"@E019000240005198771713242701112200000010210110028282823253B282828280000001414000000141051100000200401200002828282523283B28282851770000211"
+        }
+      end
+
+      it 'works' do
+        parsed.should == expected
+      end
+    end
+
     context 'RX-V1800' do
 
       let(:status_middle) do
