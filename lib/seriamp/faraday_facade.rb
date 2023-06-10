@@ -24,8 +24,10 @@ module Seriamp
     attr_reader :base_url
 
     def get(uri)
-      conn.get(uri) do |req|
-        configure_request(req)
+      wrap_errors(:get, uri) do
+        conn.get(uri) do |req|
+          configure_request(req)
+        end
       end
     end
 
@@ -43,10 +45,12 @@ module Seriamp
     end
 
     def put(uri, body: nil)
-      conn.put(uri) do |req|
-        configure_request(req)
-        if body
-          req.body = body
+      wrap_errors(:put, uri) do
+        conn.put(uri) do |req|
+          configure_request(req)
+          if body
+            req.body = body
+          end
         end
       end
     end
@@ -60,10 +64,12 @@ module Seriamp
     end
 
     def post(uri, body: nil)
-      conn.post(uri) do |req|
-        configure_request(req)
-        if body
-          req.body = body
+      wrap_errors(:post, uri, body) do
+        conn.post(uri) do |req|
+          configure_request(req)
+          if body
+            req.body = body
+          end
         end
       end
     end
@@ -71,9 +77,10 @@ module Seriamp
     def post!(url, **opts)
       post(url, **opts).tap do |resp|
         unless resp.success?
-          body = resp.body
-          if body.length > 1000
-            body = body[..500] + '...' + body[-500..]
+          body = if resp.body.length > 1000
+            resp[..500] + '...' + resp[-500..]
+          else
+            resp.body
           end
           raise HttpError, "Bad status: #{resp.status} for #{URI.join(base_url, url)}: #{body}"
         end
@@ -88,6 +95,18 @@ module Seriamp
       req.options.timeout = options[:timeout]
       req.options.read_timeout = options[:timeout]
       req.options.open_timeout = options[:timeout]
+    end
+
+    def wrap_errors(method, uri, body = nil)
+      yield
+    rescue Faraday::Error => exc
+      extra = ''
+      if body
+        extra << " with #{body}"
+      end
+      # Use Addressable::URI if the stdlib one doesn't work
+      full_url = URI.join(base_url, uri)
+      raise exc.class, "#{exc} for #{method.to_s.upcase} #{full_url}#{extra}"
     end
   end
 end
