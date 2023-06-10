@@ -35,7 +35,7 @@ module Seriamp
     module_function def consume_data(bio, logger, msg, wait: nil)
       warned = false
       buf = +''
-      while IO.select([bio.io], nil, nil, wait || 0)
+      while bio.readable?(wait || 0)
         unless warned
           logger&.warn(msg)
           warned = true

@@ -269,13 +269,14 @@ module Seriamp
       end
 
       def with_timeout(&block)
-        Timeout.timeout(timeout, CommunicationTimeout, &block)
+        Timeout.timeout(timeout, CommunicationTimeout, "Timeout waiting for a response from amplifier (waited #{'%.1f' % timeout} seconds)", &block)
       end
 
       def read_line(f, cmd)
         with_timeout do
           resp = +''
-          deadline = Utils.monotime + timeout
+          started = Utils.monotime
+          deadline = started + timeout
           loop do
             begin
               buf = f.read_nonblock(1024)
@@ -286,9 +287,9 @@ module Seriamp
             rescue IO::WaitReadable
               budget = deadline - Utils.monotime
               if budget < 0
-                raise CommunicationTimeout
+                raise CommunicationTimeout, "Timeout waiting for a response from amplifier (waited #{'%.1f' % (Utils.monotime - started)} seconds)"
               end
-              IO.select([f.io], nil, nil, budget)
+              f.readable?(budget)
             end
           end
           resp

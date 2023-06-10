@@ -5,6 +5,7 @@ ENV['RACK_ENV'] = 'test'
 require 'byebug'
 require 'seriamp/all'
 require 'rack/test'
+require 'test_backends'
 
 module InstanceMethods
   def tty_double

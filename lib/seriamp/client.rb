@@ -86,7 +86,7 @@ module Seriamp
 
     def with_device(&block)
       if @io
-        if IO.select(nil, nil, [@io.io], 0)
+        if @io.errored?
           logger&.debug("Closing stale device handle due to I/O error")
           close
         end
@@ -270,7 +270,7 @@ module Seriamp
           if budget < 0
             raise CommunicationTimeout, "Timeout waiting for a response from receiver (waited #{'%.1f' % (Utils.monotime - started)} seconds)"
           end
-          IO.select([@io.io], nil, nil, budget)
+          @io.readable?(budget)
         end
       end
       nil

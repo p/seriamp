@@ -32,6 +32,14 @@ module Seriamp
         attr_reader :io
 
         def_delegators :io, :close, :sysread, :syswrite, :read_nonblock, :readline
+
+        def readable?(timeout = 0)
+          !!IO.select([io], nil, nil, timeout)
+        end
+
+        def errored?
+          !!IO.select(nil, nil, [io], 0)
+        end
       end
     end
   end

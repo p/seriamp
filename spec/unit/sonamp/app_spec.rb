@@ -170,4 +170,19 @@ describe Seriamp::Sonamp::App do
       JSON.parse(last_response.body).should == {'1' => true, '2' => true, '3' => false, '4' => false}
     end
   end
+
+  context 'when device is not responding' do
+    let(:client) do
+      Seriamp::Sonamp::Client.new(device: '/dev/fake', backend: :timeout)
+    end
+
+    describe 'get /' do
+      it 'returns timeout error' do
+        get '/'
+
+        last_response.status.should == 200
+        JSON.parse(last_response.body).should == {}
+      end
+    end
+  end
 end
