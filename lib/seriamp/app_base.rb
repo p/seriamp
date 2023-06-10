@@ -55,5 +55,9 @@ module Seriamp
     error NoDevice do |e|
       render_error(500, "Error: #{e.class}: #{e}")
     end
+
+    error CommunicationTimeout do |e|
+      render_error(500, "Error: #{e.class}: #{e}")
+    end
   end
 end

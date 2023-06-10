@@ -49,6 +49,14 @@ module InstanceMethods
   def mock_scope(&block)
     RSpec::Mocks.with_temporary_scope(&block)
   end
+
+  def get_json(uri)
+    get(uri, nil, 'HTTP_ACCEPT' => 'application/json')
+  end
+
+  def response_json
+    JSON.parse(last_response.body)
+  end
 end
 
 RSpec.configure do |rspec|

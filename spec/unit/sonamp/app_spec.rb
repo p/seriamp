@@ -177,11 +177,15 @@ describe Seriamp::Sonamp::App do
     end
 
     describe 'get /' do
-      it 'returns timeout error' do
-        get '/'
+      context 'json' do
+        it 'returns timeout error' do
+          get_json '/'
 
-        last_response.status.should == 200
-        JSON.parse(last_response.body).should == {}
+          last_response.status.should == 500
+          response_json.should == {
+            'error' => "Error: Seriamp::CommunicationTimeout: Timeout waiting for a response from amplifier (waited 3.0 seconds)",
+          }
+        end
       end
     end
   end
