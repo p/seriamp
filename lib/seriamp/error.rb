@@ -6,6 +6,7 @@ module Seriamp
   class NotApplicable < Error; end
   class NoResponse < Error; end
   class UnexpectedResponse < Error; end
+  class UnhandledResponse < Error; end
   class HandshakeFailure < UnexpectedResponse; end
   class CommunicationTimeout < Error; end
 

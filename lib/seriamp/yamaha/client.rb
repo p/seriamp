@@ -537,7 +537,7 @@ module Seriamp
         if table.key?(value)
           table[value]
         else
-          raise UnexpectedResponse, "Bad value for field #{field}: #{value} (at DT#{index})"
+          raise UnhandledResponse, "Bad value for field #{field}: #{value} (at DT#{index})"
         end
       end
 
@@ -548,7 +548,7 @@ module Seriamp
         when '1'
           true
         else
-          raise UnexpectedResponse, "Bad value for boolean field #{field}: #{value}"
+          raise UnhandledResponse, "Bad value for boolean field #{field}: #{value}"
         end
       end
 

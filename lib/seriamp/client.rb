@@ -282,6 +282,10 @@ module Seriamp
         yield
       rescue NotApplicable
         raise
+      rescue Seriamp::UnhandledResponse
+        # The response was valid but we don't handle it.
+        # Retrying the operation is pointless in this case.
+        raise
       rescue Seriamp::Error, IOError, SystemCallError => exc
         if try <= retries
           logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
