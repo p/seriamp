@@ -194,6 +194,23 @@ EOT
           # public_send.
           channel = $1.downcase.gsub('-', '_')
           client.public_send("set_#{channel}_level", Float(args.shift))
+        when /\A(.*)-distance\z/
+          # TODO validate the method name before passing user input to
+          # public_send.
+          channel = $1.downcase.gsub('-', '_')
+          unit = case value = args.shift
+          when 'f', 'F'
+            :feet
+          when 'm', 'M'
+            :meters
+          else
+            raise "First argument must be unit (m/M or f/F): #{value}"
+          end
+          if args.any?
+            client.public_send("set_#{channel}_distance_#{unit}", Float(args.shift))
+          else
+            client.public_send("#{channel}_distance_#{unit}")
+          end
         when 'osd-message'
           client.osd_message(args.shift)
         when 'advanced-setup'

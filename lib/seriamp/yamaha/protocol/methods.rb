@@ -151,6 +151,37 @@ module Seriamp
           end
         end
 
+        {
+          front_left: '2',
+          front_right: '3',
+          center: '0',
+          surround_left: '4',
+          surround_right: '5',
+          surround_back_left: '6',
+          surround_back_right: '7',
+          subwoofer: 'A',
+          presence_left: '8',
+          presence_right: '9',
+        }.each do |channel, prefix|
+          define_method("#{channel}_distance_meters") do
+            extended_command("0410#{prefix}0")
+          end
+
+          define_method("set_#{channel}_distance_meters") do |distance|
+            encoded = encode_sequence_3(distance, '01E', 0.3, 24, 0.01)
+            extended_command("0411#{prefix}0#{encoded}")
+          end
+
+          define_method("#{channel}_distance_feet") do
+            extended_command("0410#{prefix}1")
+          end
+
+          define_method("set_#{channel}_distance_feet") do |distance|
+            encoded = encode_sequence_3(distance, '00A', 0, 80, 0.1)
+            extended_command("0411#{prefix}1#{encoded}")
+          end
+        end
+
         def get_main_volume_text
           extract_text(system_command("2001"))[3...].strip
         end
