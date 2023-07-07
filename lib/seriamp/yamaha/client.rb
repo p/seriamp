@@ -327,6 +327,28 @@ module Seriamp
             {zone2_volume: parse_half_db_volume(data, :zone2_volume)}
           when 'A2'
             {zone3_volume: parse_half_db_volume(data, :zone3_volume)}
+          when '40'
+            {front_right_level: parse_speaker_level(data, 'report response')}
+          when '41'
+            {front_left_level: parse_speaker_level(data, 'report response')}
+          when '42'
+            {center_level: parse_speaker_level(data, 'report response')}
+          when '43'
+            {surround_right_level: parse_speaker_level(data, 'report response')}
+          when '44'
+            {surround_left_level: parse_speaker_level(data, 'report response')}
+          when '45'
+            {presence_right_level: parse_speaker_level(data, 'report response')}
+          when '46'
+            {presence_left_level: parse_speaker_level(data, 'report response')}
+          when '47'
+            {surround_back_right_level: parse_speaker_level(data, 'report response')}
+          when '48'
+            {surround_back_left_level: parse_speaker_level(data, 'report response')}
+          when '49'
+            {subwoofer_level: parse_speaker_level(data, 'report response')}
+          when '4A'
+            {subwoofer_2_level: parse_speaker_level(data, 'report response')}
           when '4B'
             {zone2_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4C'

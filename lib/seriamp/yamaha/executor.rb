@@ -189,6 +189,11 @@ EOT
           else
             raise "Wrong number of arguments: #{args}"
           end
+        when /\A(.*)-level\z/
+          # TODO validate the method name before passing user input to
+          # public_send.
+          channel = $1.downcase.gsub('-', '_')
+          client.public_send("set_#{channel}_level", Float(args.shift))
         when 'osd-message'
           client.osd_message(args.shift)
         when 'advanced-setup'

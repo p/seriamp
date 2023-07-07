@@ -131,8 +131,24 @@ module Seriamp
           remote_command("7E#{state ? '2' : '6'}6")
         end
 
-        def set_subwoofer_level(level)
-          system_command("49#{'%02x' % level}")
+        {
+          front_left: '41',
+          front_right: '40',
+          center: '42',
+          surround_left: '44',
+          surround_right: '43',
+          surround_back_left: '48',
+          surround_back_right: '47',
+          subwoofer: '49',
+          subwoofer_1: '49',
+          subwoofer_2: '4A',
+          presence_left: '46',
+          presence_right: '45',
+        }.each do |channel, prefix|
+          define_method("set_#{channel}_level") do |level|
+            encoded = encode_sequence(level, '14', -10, 10, 0.5)
+            system_command(prefix + encoded)
+          end
         end
 
         def get_main_volume_text
