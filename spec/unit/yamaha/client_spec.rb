@@ -108,6 +108,9 @@ describe Seriamp::Yamaha::Client do
       '4E 13' => {zone3_treble: 9},
       '80 01' => {test: true},
       '8C 01' => {pure_direct: true},
+      'A7 00' => {eq_select: 'Auto PEQ'},
+      'A7 01' => {eq_select: 'GEQ'},
+      'A7 02' => {eq_select: 'Off'},
     }.each do |_response_content, _expected_state|
       response_content, expected_state = _response_content, _expected_state
 

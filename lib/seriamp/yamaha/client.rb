@@ -357,6 +357,8 @@ module Seriamp
             {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
             {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
+          when 'A7'
+            {eq_select: EQ_SELECT_GET.fetch(Integer(data).to_s)}
           else
             logger&.warn("Unhandled response: #{command} (#{data})")
             nil

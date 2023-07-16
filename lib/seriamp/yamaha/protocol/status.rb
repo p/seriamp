@@ -418,7 +418,7 @@ module Seriamp
             [:subwoofer_phase],
             [1],
             [:test_mode, :bool],
-            [1],
+            [:eq_select], # Claimed RX-V1700 only but RX-V2700 changes the state also.
             [:wallpaper], # RX-V2700 only
             [3],
             [:hdmi_audio, :inverted_bool],
