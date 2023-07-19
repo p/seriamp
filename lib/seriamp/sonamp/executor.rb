@@ -34,6 +34,13 @@ module Seriamp
             client.set_power(zone, state)
           end
           nil
+        when 'bbe'
+          zones = parse_zone(args.shift)
+          state = Utils.parse_on_off(args.shift)
+          zones.each do |zone|
+            client.set_bbe(zone, state)
+          end
+          nil
         when 'zvol'
           zones = parse_zone(args.shift)
           volume = Integer(args.shift)
