@@ -58,8 +58,11 @@ the first command displays the current volume on the front panel while
 making no change to the level, the second and subsequent commands (in a short
 interval) actually change the volume. This behavior is obviously
 problematic when the receiver is controlled by multiple clients
-simultaneously. RX-V2700 changes the volume level with every up/down remote
-command received over the serial port.
+simultaneously. RX-V1700 and newer changes the volume level with every up/down
+remote command received over the serial port.
+
+Higher level models (RX-V2x00/RX-V3x00) mirror the behavor of RX-V1x00 of the
+same generation.
 
 ## Custom OSD Message
 

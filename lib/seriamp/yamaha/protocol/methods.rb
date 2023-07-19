@@ -81,6 +81,20 @@ module Seriamp
         end
 
         def main_volume_up
+          # In RX-V1700 and newer, the volume up/down commands sent via
+          # the serial connection increase or decrease the volume by one
+          # step, i.e. by 0.5 dB. This is in contrast to the volume up/down
+          # buttons on the remote which, on first press, display the current
+          # volume but don't change it, and on the second and subsequent
+          # presses (in a short interval) actually change the volume by one
+          # step. In RX-V1500, the volume up/down commands sent via the serial
+          # connection operate identically to the remote buttons, i.e. the
+          # first up/down command shows the current volume on the receiver
+          # front panel but doesn't change the volume itself.
+          # My guess is RX-V1600 is more likely to behave like RX-V1700 than
+          # RX-V1500.
+          # Higher level models (RX-V2x00/RX-V3x00) mirror the behavor of
+          # RX-V1x00 of the same generation.
           remote_command('7A1A')
         end
 
