@@ -58,7 +58,7 @@ module Seriamp
         end
 
         post "/#{zone}/volume/up" do
-          client.public_send("#{zone}_volume_up")
+          value = client.public_send("#{zone}_volume_up")
           # For RX-V1500 and presumably older, the first command shows
           # current volume on the front panel of the receiver but does not
           # change the volume. All of my hardware is now RX-V1700 or newer
@@ -71,30 +71,34 @@ module Seriamp
           # For me this would be innecessary overhead thus it's not currently
           # implemented.
           #client.public_send("#{zone}_volume_up")
-          plain_response client.main_volume
+
+          return_zone_volume(zone, value)
         end
 
-        post "/#{zone}/volume/up/:step" do |step|
-          client.public_send("#{zone}_volume_up")
-          step.to_i.times do
-            client.public_send("#{zone}_volume_up")
+        post "/#{zone}/volume/up/:steps" do |steps|
+          value = client.public_send("#{zone}_volume_up")
+          (Integer(steps) - 1).times do
+            value = client.public_send("#{zone}_volume_up")
           end
-          plain_response client.main_volume
+
+          return_zone_volume(zone, value)
         end
 
         post "/#{zone}/volume/down" do
-          client.public_send("#{zone}_volume_down")
+          value = client.public_send("#{zone}_volume_down")
           # Se the note under volume up method.
           #client.public_send("#{zone}_volume_down")
-          plain_response client.main_volume
+
+          return_zone_volume(zone, value)
         end
 
         post "/#{zone}/volume/down/:step" do |step|
-          client.public_send("#{zone}_volume_down")
-          step.to_i.times do
+          value = client.public_send("#{zone}_volume_down")
+          (Integer(steps) - 1).times do
             client.public_send("#{zone}_volume_down")
           end
-          plain_response client.main_volume
+
+          return_zone_volume(zone, value)
         end
 
         put "/#{zone}/input" do
@@ -177,11 +181,29 @@ module Seriamp
         end
       end
 
+      def return_full_status?
+        request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
+      end
+
+      def return_json?
+        request.env['HTTP_ACCEPT'] == 'application/json'
+      end
+
       def standard_response
-        if request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
+        if return_full_status?
           render_json(client.status)
         else
           empty_response
+        end
+      end
+
+      def return_zone_volume(zone, value)
+        if return_full_status?
+          standard_response
+        elsif return_json?
+          render_json("#{zone}_volume" => value)
+        else
+          plain_response value
         end
       end
     end

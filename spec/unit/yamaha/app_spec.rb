@@ -37,14 +37,15 @@ describe Seriamp::Yamaha::App do
 
   describe 'post /main/volume/down' do
     it 'works' do
-      client.should receive(:main_volume_down)
-      client.should receive(:main_volume_down)
-      client.should receive(:main_volume).and_return(42)
+      #client.should receive(:main_volume_down).and_return(42)
+      client.should receive(:main_volume_down).and_return(45)
+      #client.should receive(:main_volume_down)
+      #client.should receive(:main_volume).and_return(42)
 
       post '/main/volume/down', '2'
 
       last_response.status.should == 200
-      last_response.body.should == '42'
+      last_response.body.should == '45'
     end
   end
 

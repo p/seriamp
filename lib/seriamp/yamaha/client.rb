@@ -137,7 +137,12 @@ module Seriamp
           with_retry do
             cmd = "#{STX}0#{cmd}#{ETX}"
             if read_response
-              dispatch_and_parse(cmd)
+              resp = dispatch_and_parse(cmd)
+              # Response should have been to our RS-232 command, verify.
+              if resp.fetch(:control_type) != :rs232c
+                raise UnhandledResponse, "Response was not to our command: #{resp}"
+              end
+              resp.fetch(:state)
             else
               dispatch(cmd, read_response: false)
             end

@@ -95,19 +95,19 @@ module Seriamp
           # RX-V1500.
           # Higher level models (RX-V2x00/RX-V3x00) mirror the behavor of
           # RX-V1x00 of the same generation.
-          remote_command('7A1A')
+          remote_command('7A1A').fetch(:main_volume)
         end
 
         def main_volume_down
-          remote_command('7A1B')
+          remote_command('7A1B').fetch(:main_volume)
         end
 
         def zone2_volume_up
-          remote_command('7ADA')
+          remote_command('7ADA').fetch(:zone2_volume)
         end
 
         def zone2_volume_down
-          remote_command('7ADB')
+          remote_command('7ADB').fetch(:zone2_volume)
         end
 
         # Sets zone 3 volume.
@@ -119,11 +119,11 @@ module Seriamp
         end
 
         def zone3_volume_up
-          remote_command('7AFD')
+          remote_command('7AFD').fetch(:zone3_volume)
         end
 
         def zone3_volume_down
-          remote_command('7AFE')
+          remote_command('7AFE').fetch(:zone3_volume)
         end
 
         def set_main_mute(state)
