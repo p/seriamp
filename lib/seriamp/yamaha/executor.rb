@@ -231,7 +231,8 @@ EOT
           payload_length = Integer(status[7..8], 16)
           puts '---'
           start = fields.length
-          fields = build_fields(Client::STATUS_FIELDS, model_name)
+          #fields = build_fields(Client::STATUS_FIELDS, model_name)
+          fields = {}
           0.upto(payload_length-1).each do |i|
             puts "%3d %3s # DT%-2d %s" % [start+i, status[start+i], i, fields[i]]
           end

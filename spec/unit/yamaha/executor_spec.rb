@@ -21,5 +21,21 @@ describe Seriamp::Yamaha::Executor do
         executor.run_command('remote-command-nr', '7A88').should == 42
       end
     end
+
+    context 'dev-status' do
+      let(:status_middle) do
+        -'@E0190002040050B94D3403140300000108200F1020001002828282828282828282800030114140000A00400511000000000002000200000000000200000010504D00012100070E01FFFF0110000A0014A0014210A0A00FF10110'
+      end
+
+      let(:status_string) do
+        "R0226JB5#{status_middle}1E"
+      end
+
+      it 'works' do
+        client.should receive(:status_string).and_return(status_string)
+        executor.run_command('dev-status')
+        # Does not raise
+      end
+    end
   end
 end
