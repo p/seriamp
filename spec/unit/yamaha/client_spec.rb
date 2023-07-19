@@ -111,6 +111,8 @@ describe Seriamp::Yamaha::Client do
       'A7 00' => {eq_select: 'Auto PEQ'},
       'A7 01' => {eq_select: 'GEQ'},
       'A7 02' => {eq_select: 'Off'},
+      'A8 00' => {tone_auto_bypass: true},
+      'A8 01' => {tone_auto_bypass: false},
     }.each do |_response_content, _expected_state|
       response_content, expected_state = _response_content, _expected_state
 
