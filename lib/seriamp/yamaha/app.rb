@@ -59,7 +59,18 @@ module Seriamp
 
         post "/#{zone}/volume/up" do
           client.public_send("#{zone}_volume_up")
-          client.public_send("#{zone}_volume_up")
+          # For RX-V1500 and presumably older, the first command shows
+          # current volume on the front panel of the receiver but does not
+          # change the volume. All of my hardware is now RX-V1700 or newer
+          # which behaves sensibly, i.e. when the volume up/down command is
+          # received over the serial connection it always immediately
+          # changes the volume.
+          # Older receivers can be supported by examining the status
+          # response and determining the model number from that, then sending
+          # two commands for the older models.
+          # For me this would be innecessary overhead thus it's not currently
+          # implemented.
+          #client.public_send("#{zone}_volume_up")
           plain_response client.main_volume
         end
 
@@ -73,7 +84,8 @@ module Seriamp
 
         post "/#{zone}/volume/down" do
           client.public_send("#{zone}_volume_down")
-          client.public_send("#{zone}_volume_down")
+          # Se the note under volume up method.
+          #client.public_send("#{zone}_volume_down")
           plain_response client.main_volume
         end
 
