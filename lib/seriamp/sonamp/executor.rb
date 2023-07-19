@@ -11,7 +11,27 @@ module Seriamp
       attr_reader :client
       attr_reader :options
 
+      ZONE_BOOLEAN_COMMANDS = %w(
+        power
+        bbe
+        bbe_boost
+        bbe_low_boost
+        bbe_high_boost
+        zone_mute
+      ).freeze
+
+      ZONE_INTEGER_COMMANDS = %w(
+        zone_volume
+      ).freeze
+
+      ALIASES = {
+        'zvol' => 'zone_volume',
+        'zmute' => 'zone_mute',
+      }.freeze
+
       def run_command(cmd, *args)
+        cmd = cmd.gsub('-', '_')
+        cmd = ALIASES.fetch(cmd, cmd)
         case cmd
         when 'detect'
           device = Seriamp::Detect::Serial.detect_device(Sonamp, *args, logger: logger, timeout: options[:timeout])
@@ -27,25 +47,18 @@ module Seriamp
           client.set_power(2, false)
           client.set_power(3, false)
           client.set_power(4, false)
-        when 'power'
+        when *ZONE_BOOLEAN_COMMANDS
           zones = parse_zone(args.shift)
           state = Utils.parse_on_off(args.shift)
           zones.each do |zone|
-            client.set_power(zone, state)
+            client.public_send("set_#{cmd}", zone, state)
           end
           nil
-        when 'bbe'
+        when *ZONE_INTEGER_COMMANDS
           zones = parse_zone(args.shift)
-          state = Utils.parse_on_off(args.shift)
+          value = Integer(args.shift)
           zones.each do |zone|
-            client.set_bbe(zone, state)
-          end
-          nil
-        when 'zvol'
-          zones = parse_zone(args.shift)
-          volume = Integer(args.shift)
-          zones.each do |zone|
-            client.set_zone_volume(zone, volume)
+            client.public_send("set_#{cmd}", zone, value)
           end
           nil
         when 'cvol'
@@ -53,13 +66,6 @@ module Seriamp
           volume = Integer(args.shift)
           channels.each do |channel|
             client.set_channel_volume(channel, volume)
-          end
-          nil
-        when 'zmute'
-          zones = parse_zone(args.shift)
-          mute = Utils.parse_on_off(args.shift)
-          zones.each do |zone|
-            client.set_zone_mute(zone, mute)
           end
           nil
         when 'cmute'
