@@ -231,10 +231,9 @@ EOT
           payload_length = Integer(status[7..8], 16)
           puts '---'
           start = fields.length
-          #fields = build_fields(Client::STATUS_FIELDS, model_name)
-          fields = {}
+          fields = build_status_fields(model_name)
           0.upto(payload_length-1).each do |i|
-            puts "%3d %3s # DT%-2d %s" % [start+i, status[start+i], i, fields[i]]
+            puts "%3d %3s # DT%-3d %s" % [start+i, status[start+i], i, fields[i]]
           end
           puts '---'
           start += payload_length
@@ -274,24 +273,24 @@ EOT
         Float(value)
       end
 
-      def build_fields(fields, model_name)
-        stop = false
-        fields.map do |field|
-          if stop
-            nil
+      def build_status_fields(model_name)
+        list = Protocol::Status::STATUS_FIELDS[model_name]
+        return {} unless list
+        fields = []
+        list.each do |spec|
+          case spec.first
+          when Integer
+            size = spec.first
+            label = spec[1]
           else
-            if Array === field
-              if model_name.public_send(field[0], field[1])
-                if field[2].nil?
-                  stop = true
-                end
-                field[2]
-              end
-            else
-              field
-            end
+            size = 1
+            label = spec.first
           end
-        end.compact
+          1.upto(size) do
+            fields << (label || '--')
+          end
+        end
+        fields
       end
     end
   end
