@@ -65,7 +65,7 @@ module Seriamp
             [2, :headphone_lfe_level, :speaker_level],
             [2, :audio_delay],
             [4],
-            [:input_mode_setting],
+            [:input_mode_setting, :auto_last],
             [:dimmer],
             [:osd_message],
             [2, :osd_shift],
@@ -166,7 +166,7 @@ module Seriamp
             [2, :headphone_lfe_level, :speaker_level],
             [2, :audio_delay],
             [4],
-            [:input_mode_setting],
+            [:input_mode_setting, :auto_last],
             [:dimmer],
             [:osd_message],
             [2, :osd_shift],
@@ -265,8 +265,8 @@ module Seriamp
             [2, :headphone_lfe_level, :speaker_level],
             [2, :audio_delay],
             [3],
-            [:decoder_mode_setting],
-            [:audio_select_setting],
+            [:decoder_mode_setting, :auto_last],
+            [:audio_select_setting, :auto_last],
             [:dimmer],
             [1],
             [2, :osd_shift], # RX-V1700
@@ -395,8 +395,8 @@ module Seriamp
             [2, :audio_delay],
             [2, :initial_volume, :half_db_volume], # RX-V2700 only
             [:max_volume], # RX-V2700 only
-            [:decoder_mode_setting],
-            [:audio_select_setting],
+            [:decoder_mode_setting, :auto_last],
+            [:audio_select_setting, :auto_last],
             [:dimmer],
             [1],
             # [2, :osd_shift], # RX-V1700
@@ -528,8 +528,8 @@ module Seriamp
             [2, :audio_delay],
             [2, :initial_volume, :half_db_volume],
             [:max_volume],
-            [:decoder_mode_setting],
-            [:audio_select_setting],
+            [:decoder_mode_setting, :auto_last],
+            [:audio_select_setting, :auto_last],
             [:dimmer],
             [1],
             # [2, :osd_shift], # RX-V1800
@@ -661,8 +661,8 @@ module Seriamp
             [2, :audio_delay],
             [2, :initial_volume, :half_db_volume],
             [:max_volume],
-            [:decoder_mode_setting],
-            [:audio_select_setting],
+            [:decoder_mode_setting, :auto_last],
+            [:audio_select_setting, :auto_last],
             [:dimmer],
             [1],
             [2, :osd_shift], # RX-V1800
@@ -737,6 +737,16 @@ module Seriamp
             [2, :zone3_bass, :zone_tone],
             [2, :zone3_treble, :zone_tone],
             [2, :status_flags],
+            # The following fields are not documented in RX-V1800/RX-V3800
+            # RS-232 documentation, but they show up in receiver output and
+            # RX-V1900 documentation shows them in black (i.e. they are not
+            # added in RX-V1900).
+            [2, :auto_audio_delay],
+            [:hdmi_lip_sync, :bool],
+            [:extended_surround_setting, :auto_last],
+            [:adaptive_dsp_level, :auto_off],
+            [:adaptive_drc, :auto_off],
+            [:_3d_dsp, :bool],
           ].freeze,
         }.freeze
       end

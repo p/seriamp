@@ -690,6 +690,12 @@ describe Seriamp::Yamaha::Client do
           :dts_96_24=>false,
           :pre_emphasis=>false,
           :dpl_encoded=>false,
+          _3d_dsp: false,
+          adaptive_drc: 'Off',
+          adaptive_dsp_level: 'Off',
+          auto_audio_delay: '--',
+          extended_surround_setting: 'Auto',
+          hdmi_lip_sync: true,
           :raw_string=>status_middle,
         }
       end

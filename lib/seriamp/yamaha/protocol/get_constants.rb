@@ -119,12 +119,15 @@ module Seriamp
           '10' => 'Multi-Channel',
         }.freeze
 
-        DECODER_MODE_SETTING_GET = {
+        AUTO_LAST_GET = {
           '0' => 'Auto',
           '1' => 'Last',
         }.freeze
 
-        AUDIO_SELECT_SETTING_GET = DECODER_MODE_SETTING_GET
+        AUTO_OFF_GET = {
+          '0' => 'Auto',
+          '1' => 'Off',
+        }.freeze
 
         DECODER_MODE_GET = {
           '0' => 'Auto',
@@ -296,11 +299,6 @@ module Seriamp
           '2' => 'DTS',
           '4' => 'Analog',
           '5' => 'Analog Only',
-        }.freeze
-
-        INPUT_MODE_SETTING_GET = {
-          '0' => 'Auto',
-          '1' => 'Last',
         }.freeze
 
         SAMPLE_RATE_1_GET = {
@@ -768,6 +766,8 @@ module Seriamp
 
         # RX-V1500 only goes to 160 ms
         AUDIO_DELAY_GET = Hash[(0..240).map { |i| [i, '%02X' % i ] }].invert.freeze
+
+        AUTO_AUDIO_DELAY_GET = AUDIO_DELAY_GET.merge('FF' => '--').freeze
 
         SPEAKER_A_GET = OFF_ON_GET
 
