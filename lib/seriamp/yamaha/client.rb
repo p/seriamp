@@ -78,6 +78,13 @@ module Seriamp
         end
       end
 
+      def current_status
+        unless @current_status
+          status
+        end
+        @current_status.dup
+      end
+
       def clear_cache
         @status = nil
       end
@@ -213,6 +220,18 @@ module Seriamp
           parse_extended_response(resp[1...-1])
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
+        end.tap do |resp|
+          if @current_status &&
+            @current_status[:model_code] && resp[:model_code] &&
+            @current_status[:model_code] != resp[:model_code]
+          then
+            @current_status = nil
+          end
+          if @current_status
+            @current_status.update(resp)
+          else
+            @current_status = resp.dup
+          end
         end
       end
 

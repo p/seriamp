@@ -174,4 +174,16 @@ describe Seriamp::Yamaha::Client do
       end
     end
   end
+
+  xdescribe '#current_status' do
+    let(:client) { described_class.new }
+
+    it 'preserves state' do
+      client.should receive(:open_device)
+      client.should receive(:dispatch_and_parse).and_return(
+        model_code: 'R0272', firmware_version: '', raw_string: '',
+        main_power: true)
+      client.current_status.should == {}
+    end
+  end
 end
