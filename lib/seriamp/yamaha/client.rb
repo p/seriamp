@@ -213,25 +213,33 @@ module Seriamp
       def parse_response(resp)
         case first_byte = resp[0]
         when STX
-          parse_framed_stx_response(resp)
+          parse_framed_stx_response(resp).tap do |resp|
+            update_current_status(resp.fetch(:state))
+          end
         when DC2
-          parse_status_response(resp)
+          parse_status_response(resp).tap do |resp|
+            update_current_status(resp)
+          end
         when DC4
-          parse_extended_response(resp[1...-1])
+          parse_extended_response(resp[1...-1]).tap do |resp|
+            raise NotImplementedError
+          end
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
-        end.tap do |resp|
-          if @current_status &&
-            @current_status[:model_code] && resp[:model_code] &&
-            @current_status[:model_code] != resp[:model_code]
-          then
-            @current_status = nil
-          end
-          if @current_status
-            @current_status.update(resp)
-          else
-            @current_status = resp.dup
-          end
+        end
+      end
+
+      def update_current_status(resp)
+        if @current_status &&
+          @current_status[:model_code] && resp[:model_code] &&
+          @current_status[:model_code] != resp[:model_code]
+        then
+          @current_status = nil
+        end
+        if @current_status
+          @current_status.update(resp)
+        else
+          @current_status = resp.dup
         end
       end
 

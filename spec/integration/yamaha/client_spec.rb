@@ -38,4 +38,19 @@ describe 'Yamaha integration' do
       result[:gain].should be_a(Float)
     end
   end
+
+  xdescribe '#current_status' do
+    it 'preserves state' do
+=begin
+      client.should receive(:open_device)
+      client.should receive(:dispatch_and_parse).and_return(
+        model_code: 'R0272', firmware_version: '', raw_string: '',
+        main_power: true)
+=end
+      #client.status
+      client.current_status.should == {}
+      client.set_main_volume(-21)
+      client.current_status.should == {}
+    end
+  end
 end
