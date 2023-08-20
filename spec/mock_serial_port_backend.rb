@@ -4,10 +4,11 @@ module Seriamp
   module Backend
     module MockSerialPortBackend
 
+      class EndOfExchanges < StandardError; end
       class UnexpectedWrite < StandardError; end
 
       class Device
-        def initialize(exchanges)
+        def initialize(exchanges, **opts)
           @exchanges = exchanges
           @exchange_index = 0
           @exchange_pos = 0
@@ -20,12 +21,19 @@ module Seriamp
         attr_reader :exchanges
         attr_reader :exchange_index
 
-        def read
+        def eof?
+          !!@eof
+        end
+
+        def read_nonblock(max = nil)
+          raise EndOfExchanges if eof?
+
           exchange = exchanges[exchange_index]
           if exchange.nil?
+            @eof = true
             return nil
           end
-          if exchange.first == 'w'
+          if exchange.first == :w
             raise "Exchange #{exchange_index} is a write, read attempted"
           end
           exchange.last.tap do
@@ -33,10 +41,10 @@ module Seriamp
           end
         end
 
-        def write(contents)
+        def syswrite(contents)
           exchange = exchanges[exchange_index]
           if exchange.nil?
-            raise UnexpectedWrite, 'End of exchanges - write attempted'
+            raise UnexpectedWrite, "End of exchanges - write attempted: #{contents}"
           end
 
           if contents != exchange.last
@@ -47,11 +55,12 @@ module Seriamp
         end
 
         def readable?(timeout = 0)
-          !!IO.select([io], nil, nil, timeout)
+          exchange = exchanges[exchange_index]
+          exchange&.first == :r
         end
 
         def errored?
-          !!IO.select(nil, nil, [io], 0)
+          false
         end
       end
     end

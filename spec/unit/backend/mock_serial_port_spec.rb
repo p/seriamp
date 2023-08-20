@@ -5,9 +5,9 @@ require 'spec_helper'
 describe Seriamp::Backend::MockSerialPortBackend::Device do
   let(:exchanges) do
     [
-      ['w', 'write'],
-      ['r', 'read'],
-      ['r', 'read2'],
+      [:w, 'write'],
+      [:r, 'read'],
+      [:r, 'read2'],
     ]
   end
 
@@ -21,53 +21,53 @@ describe Seriamp::Backend::MockSerialPortBackend::Device do
     end
   end
 
-  describe '#write' do
+  describe '#syswrite' do
     it 'accepts expected writes' do
       lambda do
-        device.write('write')
+        device.syswrite('write')
       end.should_not raise_error
     end
 
     it 'rejects writes with wrong contents' do
       lambda do
-        device.write('writex')
+        device.syswrite('writex')
       end.should raise_error(Seriamp::Backend::MockSerialPortBackend::UnexpectedWrite)
     end
 
     it 'rejects writes at wrong times' do
-      device.write('write')
+      device.syswrite('write')
       lambda do
-        device.write('writex')
+        device.syswrite('writex')
       end.should raise_error(Seriamp::Backend::MockSerialPortBackend::UnexpectedWrite)
     end
   end
 
-  describe '#read' do
+  describe '#read_nonblock' do
     let(:exchanges) do
       [
-        ['r', 'read'],
-        ['r', 'read2'],
+        [:r, 'read'],
+        [:r, 'read2'],
       ]
     end
 
     it 'reads one exchange at a time' do
-      device.read.should == 'read'
-      device.read.should == 'read2'
+      device.read_nonblock.should == 'read'
+      device.read_nonblock.should == 'read2'
     end
 
     context 'after writes' do
       let(:exchanges) do
         [
-          ['w', 'write'],
-          ['r', 'read'],
-          ['r', 'read2'],
+          [:w, 'write'],
+          [:r, 'read'],
+          [:r, 'read2'],
         ]
       end
 
       it 'reads exchanges after writes' do
-        device.write('write')
-        device.read.should == 'read'
-        device.read.should == 'read2'
+        device.syswrite('write')
+        device.read_nonblock.should == 'read'
+        device.read_nonblock.should == 'read2'
       end
     end
   end

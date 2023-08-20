@@ -174,4 +174,169 @@ describe Seriamp::Yamaha::Client do
       end
     end
   end
+
+  describe '#current_status' do
+    let(:exchanges) do
+      [
+        [:w, "001"],
+        [:r, "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"],
+      ]
+    end
+
+    let(:client) do
+      described_class.new(backend: :mock_serial_port, device: exchanges)
+    end
+
+    let(:initial_status) do
+      {
+        :ready=>"OK",
+        :main_power=>true,
+        :zone2_power=>false,
+        :zone3_power=>false,
+        :input_name=>"PHONO",
+        :audio_select=>"Auto",
+        :mute=>false,
+        :zone2_input_name=>"DVD",
+        :zone2_mute=>false,
+        :main_volume=>-15.0,
+        :zone2_volume=>-40.0,
+        :program_name=>"Straight",
+        :es_key=>"Auto",
+        :osd_message=>"Short",
+        :sleep=>nil,
+        :tuner_page=>"A",
+        :tuner_number=>6,
+        :night_mode=>"Off",
+        :night_mode_parameter=>"Low",
+        :format=>"Analog",
+        :sample_rate=>"Analog",
+        :channel_indicator=>"2/0",
+        :headphone=>false,
+        :tuner_band=>"FM",
+        :lfe_indicator=>"---",
+        :trigger1=>true,
+        :decoder_mode=>"Auto",
+        :dual_mono_out=>"All",
+        :trigger1_control=>"All",
+        :trigger2_control=>"All",
+        :trigger2=>true,
+        :zone2_speaker_out=>"Ext",
+        :front_right_level=>0.0,
+        :front_left_level=>0.0,
+        :center_level=>-1.0,
+        :surround_right_level=>-1.0,
+        :surround_left_level=>-1.0,
+        :surround_back_right_level=>-1.0,
+        :surround_back_left_level=>-1.0,
+        :presence_right_level=>0.0,
+        :presence_left_level=>0.0,
+        :subwoofer_level=>0.0,
+        :xm_preset_page=>"A",
+        :xm_preset_number=>1,
+        :xm_search_mode=>"All",
+        :on_screen=>"30",
+        :xm_channel_number=>1,
+        :speaker_lfe_level=>-10.0,
+        :headphone_lfe_level=>-10.0,
+        :audio_delay=>0,
+        :initial_volume=>nil,
+        :max_volume=>16.5,
+        :decoder_mode_setting=>"Last",
+        :audio_select_setting=>"Last",
+        :dimmer=>0,
+        :gui_position_h=>0,
+        :gui_position_v=>0,
+        :gray_back=>true,
+        :video_conversion=>true,
+        :speaker_dynamic_range=>"Max",
+        :headphone_dynamic_range=>"Max",
+        :zone2_volume_out=>"Variable",
+        :zone3_volume_out=>"Variable",
+        :memory_guard=>false,
+        :center_speaker_setting=>"None",
+        :front_speaker_setting=>"Large",
+        :surround_speaker_setting=>"None",
+        :surround_back_speaker_setting=>"None",
+        :zone3_speaker_out=>"Ext",
+        :presence_speaker_setting=>false,
+        :bass_out=>"Both",
+        :subwoofer_phase=>"Normal",
+        :test_mode=>false,
+        :eq_select=>"Auto PEQ",
+        :wallpaper=>"Yes",
+        :hdmi_audio=>true,
+        :component_ip=>false,
+        :hdmi_ip=>true,
+        :gui_language=>"English",
+        :hdmi_upscaling=>"720p",
+        :hdmi_aspect=>"Through",
+        :zone_osd=>"Zone2 & Zone3",
+        :decoder_select=>"Pro Logic",
+        :tuner_remote_id=>"ID1",
+        :advanced_setup=>false,
+        :amp_remote_id=>"ID1",
+        :speaker_impedance=>8,
+        :tuner_setup=>"AM9/FM0",
+        :pure_direct=>true,
+        :zone3_input_name=>"DVD",
+        :zone3_mute=>false,
+        :zone3_volume=>-40.0,
+        :remote_sensor=>false,
+        :multi_ch_select=>"6ch",
+        :remote_id_xm=>"ID1",
+        :biamp=>false,
+        :subwoofer_crossover=>80,
+        :tv_format=>"NTSC",
+        :presence_surround_back_select=>"Surround Back",
+        :zone2_bass=>0,
+        :zone2_treble=>0,
+        :tone_auto_bypass=>true,
+        :wake_on_rs232=>true,
+        :bit_rate=>"---",
+        :dialog_level=>"---",
+        :fl_scroll=>"Continue",
+        :multi_ch_bgv=>"Last",
+        :ipod_charge_standby=>true,
+        :ipod_repeat=>"Off",
+        :ipod_shuffle=>"Off",
+        :net_usb_repeat=>"Off",
+        :net_usb_shuffle=>false,
+        :zone2_max_volume=>16.5,
+        :zone2_initial_volume=>nil,
+        :zone2_balance=>0.0,
+        :zone3_max_volume=>16.5,
+        :zone3_initial_volume=>nil,
+        :zone3_balance=>0.0,
+        :net_usb_source=>"USB",
+        :monitor_check=>true,
+        :zone3_bass=>0,
+        :zone3_treble=>0,
+        :dd_karaoke=>false,
+        :dd_61=>false,
+        :dts_es_matrix_61=>false,
+        :dts_es_discrete_61=>false,
+        :dts_96_24=>false,
+        :pre_emphasis=>false,
+        :dpl_encoded=>false,
+        :model_code=>"R0212",
+        :model_name=>"RX-V2700",
+        :firmware_version=>"I",
+        :raw_string=>
+        "@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A00"
+      }.freeze
+    end
+
+    it 'preserves state' do
+=begin
+      client.should receive(:open_device)
+      client.should receive(:dispatch_and_parse).and_return(
+        model_code: 'R0272', firmware_version: '', raw_string: '',
+        main_power: true)
+=end
+      #client.status
+      client.current_status.should == initial_status
+      client.set_main_volume(-21)
+      client.current_status.should == {}
+    end
+  end
 end
