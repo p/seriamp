@@ -47,11 +47,16 @@ module Seriamp
             raise UnexpectedWrite, "End of exchanges - write attempted: #{contents}"
           end
 
+          if exchange.first == :r
+            raise UnexpectedWrite, "Exchange #{exchange_index} is a read, write attempted"
+          end
+
           if contents != exchange.last
             raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents}"
           end
 
           @exchange_index += 1
+          nil
         end
 
         def readable?(timeout = 0)

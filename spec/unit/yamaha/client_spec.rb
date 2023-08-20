@@ -180,11 +180,13 @@ describe Seriamp::Yamaha::Client do
       [
         [:w, "001"],
         [:r, "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"],
+        [:w, "2309d"],
+        [:r, "\x0200269D\x03"],
       ]
     end
 
     let(:client) do
-      described_class.new(backend: :mock_serial_port, device: exchanges)
+      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
     end
 
     let(:initial_status) do
@@ -335,8 +337,9 @@ describe Seriamp::Yamaha::Client do
 =end
       #client.status
       client.current_status.should == initial_status
+      initial_status.fetch(:main_volume).should == -15
       client.set_main_volume(-21)
-      client.current_status.should == {}
+      client.current_status.should == initial_status.merge(main_volume: -21)
     end
   end
 end
