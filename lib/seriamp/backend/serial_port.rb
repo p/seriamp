@@ -10,9 +10,9 @@ module Seriamp
       class Device
         extend Forwardable
 
-        def initialize(device, logger: nil, modem_params: nil)
+        def initialize(device_path, logger: nil, modem_params: nil)
           @logger = logger
-          @io = SerialPort.open(device)
+          @io = SerialPort.open(device_path)
 
           modem_params&.each do |k, v|
             @io.send("#{k}=", v)
