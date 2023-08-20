@@ -181,6 +181,10 @@ module Seriamp
         end
       end
 
+      def return_current_status?
+        request.env['HTTP_ACCEPT'] == 'application/x-seriamp-current-status'
+      end
+
       def return_full_status?
         request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
       end
@@ -190,7 +194,9 @@ module Seriamp
       end
 
       def standard_response
-        if return_full_status?
+        if return_current_status?
+          render_json(client.current_status)
+        elsif return_full_status?
           render_json(client.status)
         else
           empty_response
