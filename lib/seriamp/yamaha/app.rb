@@ -204,7 +204,7 @@ module Seriamp
       end
 
       def return_zone_volume(zone, value)
-        if return_full_status?
+        if return_current_status? || return_full_status?
           standard_response
         elsif return_json?
           render_json("#{zone}_volume" => value)
