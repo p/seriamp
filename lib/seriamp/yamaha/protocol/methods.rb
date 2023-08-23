@@ -363,6 +363,17 @@ module Seriamp
             end
           end
         end
+
+        def volume_trim(input_name = nil)
+          if input_name
+            input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
+            extended_command("0120#{input_id}")
+          end
+        end
+
+        def set_volume_trim(input_name, value)
+          input_id = VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name)
+        end
       end
     end
   end

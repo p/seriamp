@@ -62,6 +62,7 @@ module Seriamp
         READY_REPORT_GET = prefix_keys_with_zero(READY_GET)
 
         # RX-V1 and RX-V3200 need a different table.
+        # RX-V1600: volume trim
         INPUT_NAME_1_GET = {
           '0' => 'PHONO',
           '1' => 'CD',
@@ -118,6 +119,34 @@ module Seriamp
           '0E' => 'XM',
           '10' => 'Multi-Channel',
         }.freeze
+
+        # RX-V1700: volume trim.
+        # Similar to but not compatible with INPUT_NAME_2_GET.
+        # RX-V1600 has different constants.
+        VOLUME_TRIM_INPUT_NAME_2_GET = {
+          '00' => 'PHONO',
+          '01' => 'CD',
+          '02' => 'TUNER',
+          '03' => 'CD-R',
+          '04' => 'MD/TAPE',
+          '05' => 'DVD',
+          '06' => 'DTV',
+          '07' => 'CBL/SAT',
+          '08' => 'SAT',
+          '09' => 'VCR1',
+          '0A' => 'DVR/VCR2',
+          '0B' => 'VCR3',
+          '0C' => 'V-AUX',
+          #'0D' => 'Multi-Channel',
+          '0E' => 'XM',
+          '10' => 'Multi-Channel',
+          '20' => 'Dock',
+          '21' => 'PC/MCX', # RX-V2700 only
+          '22' => 'Net Radio', # RX-V2700 only
+          '23' => 'USB', # RX-V2700 only
+        }.freeze
+
+        VOLUME_TRIM_INPUT_NAME_2_SET = VOLUME_TRIM_INPUT_NAME_2_GET.invert
 
         AUTO_LAST_GET = {
           '0' => 'Auto',

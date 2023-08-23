@@ -9,6 +9,7 @@ require 'seriamp/yamaha/protocol/status'
 require 'seriamp/yamaha/protocol/extended/generic_response'
 require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
+require 'seriamp/yamaha/protocol/extended/volume_trim_response'
 require 'seriamp/client'
 
 module Seriamp
@@ -222,7 +223,7 @@ module Seriamp
           end
         when DC4
           parse_extended_response(resp[1...-1]).tap do |resp|
-            raise NotImplementedError
+            update_current_status(resp.to_state)
           end
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
@@ -297,6 +298,8 @@ module Seriamp
           else
             Protocol::Extended::GraphicEqResponse
           end
+        when '012'
+          Protocol::Extended::VolumeTrimResponse
         else
           Protocol::Extended::GenericResponse
         end

@@ -211,6 +211,19 @@ EOT
           else
             client.public_send("#{channel}_distance_#{unit}")
           end
+        when 'volume-trim'
+          case args.length
+          when 0
+            pp client.volume_trim
+          when 1
+            p client.volume_trim(args.shift)
+          when 2
+            input_name = args.shift
+            gain = cmd_line_float(args.shift)
+            client.set_volume_trim(input_name, gain)
+          else
+            raise "Bogus volume-trim usage"
+          end
         when 'osd-message'
           client.osd_message(args.shift)
         when 'advanced-setup'
