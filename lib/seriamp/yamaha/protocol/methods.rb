@@ -372,7 +372,9 @@ module Seriamp
         end
 
         def set_volume_trim(input_name, value)
-          input_id = VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name)
+          input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
+          value = encode_sequence(value, '00', -6, 6, 0.5)
+          extended_command("0121#{input_id}#{value}")
         end
       end
     end

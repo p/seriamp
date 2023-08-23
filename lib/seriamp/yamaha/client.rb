@@ -223,7 +223,13 @@ module Seriamp
           end
         when DC4
           parse_extended_response(resp[1...-1]).tap do |resp|
-            update_current_status(resp.to_state)
+            if resp
+              # Extended commands have empty responses, i.e. the receiver
+              # does not report the state back.
+              # We need to store the state ourselves then based on the
+              # issued command or perform a query.
+              update_current_status(resp.to_state)
+            end
           end
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
@@ -299,7 +305,11 @@ module Seriamp
             Protocol::Extended::GraphicEqResponse
           end
         when '012'
-          Protocol::Extended::VolumeTrimResponse
+          if command_data.empty?
+            nil
+          else
+            Protocol::Extended::VolumeTrimResponse
+          end
         else
           Protocol::Extended::GenericResponse
         end
