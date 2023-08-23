@@ -154,6 +154,11 @@ module Seriamp
         empty_response
       end
 
+      put "/input/:input_name/volume_trim" do |input_name|
+        client.set_volume_trim(input_name.gsub('_', '/'), Float(request.body.read))
+        empty_response
+      end
+
       error Error do |exc|
         case request.env['HTTP_ACCEPT']
         when 'application/json'
