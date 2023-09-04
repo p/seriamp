@@ -13,7 +13,8 @@ module Seriamp
     private
 
     def accept_json?
-      request.env['HTTP_ACCEPT'] == 'application/json'
+      accept = request.env['HTTP_ACCEPT']
+      accept == 'application/json' || accept == 'application/x-seriamp-current-status'
     end
 
     def render_json(data)

@@ -18,8 +18,7 @@ describe 'Yamaha app integration' do
       end
     end
 
-    context 'json' do
-      let(:request) { facade.get('/', headers: {accept: 'application/json'}) }
+    shared_examples 'json' do
 
       it 'returns sensible response' do
         request.status.should == 500
@@ -28,6 +27,16 @@ describe 'Yamaha app integration' do
           'error' => 'Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory - /dev/nonexistent',
         }
       end
+    end
+
+    context 'json' do
+      let(:request) { facade.get('/', headers: {accept: 'application/json'}) }
+      include_examples 'json'
+    end
+
+    context 'current status' do
+      let(:request) { facade.get('/', headers: {accept: 'application/x-seriamp-current-status'}) }
+      include_examples 'json'
     end
   end
 end
