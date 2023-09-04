@@ -12,7 +12,15 @@ module Seriamp
 
     private
 
-    def accept_json?
+    def return_current_status?
+      request.env['HTTP_ACCEPT'] == 'application/x-seriamp-current-status'
+    end
+
+    def return_full_status?
+      request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
+    end
+
+    def return_json?
       accept = request.env['HTTP_ACCEPT']
       accept == 'application/json' || accept == 'application/x-seriamp-current-status'
     end
@@ -23,7 +31,7 @@ module Seriamp
     end
 
     def empty_response
-      if accept_json?
+      if return_json?
         render_json({})
       else
         [204, '']
@@ -40,7 +48,7 @@ module Seriamp
         error = "#{error.class}: #{error}"
       end
 
-      if accept_json?
+      if return_json?
         headers['content-type'] = 'application/json'
         [code, {error: error}.to_json]
       else
