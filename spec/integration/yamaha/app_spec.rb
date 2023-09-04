@@ -8,11 +8,26 @@ describe 'Yamaha app integration' do
   context 'when explicitly referencing nonexistent device path' do
     run_app 18990, 'bin/yamaha-web', '-d', '/dev/nonexistent', '--', '-p', '18990'
 
-    let(:request) { facade.get('/') }
+    context 'plain text' do
+      let(:request) { facade.get('/') }
 
-    it 'returns sensible' do
-      request.status.should == 200
-      request.headers['content-type'].should == 'application/json'
+      it 'returns sensible response' do
+        request.status.should == 500
+        request.headers['content-type'].should == 'text/plain'
+        request.body.should == 'Error: Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory - /dev/nonexistent'
+      end
+    end
+
+    context 'json' do
+      let(:request) { facade.get('/', headers: {accept: 'application/json'}) }
+
+      it 'returns sensible response' do
+        request.status.should == 500
+        request.headers['content-type'].should == 'application/json'
+        JSON.parse(request.body).should == {
+          'error' => 'Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory - /dev/nonexistent',
+        }
+      end
     end
   end
 end

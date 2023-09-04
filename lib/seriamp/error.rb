@@ -1,5 +1,6 @@
 module Seriamp
   class Error < StandardError; end
+  class IndeterminateDevice < Error; end
   class NoDevice < Error; end
   class BadDevice < Error; end
   class InvalidCommand < Error; end

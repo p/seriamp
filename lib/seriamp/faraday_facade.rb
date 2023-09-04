@@ -23,10 +23,10 @@ module Seriamp
     attr_reader :options
     attr_reader :base_url
 
-    def get(uri)
+    def get(uri, **opts)
       wrap_errors(:get, uri) do
-        conn.get(uri) do |req|
-          configure_request(req)
+        conn.get(uri, **opts) do |req|
+          configure_request(req, **opts)
         end
       end
     end
@@ -91,10 +91,13 @@ module Seriamp
 
     attr_reader :conn
 
-    def configure_request(req)
+    def configure_request(req, **opts)
       req.options.timeout = options[:timeout]
       req.options.read_timeout = options[:timeout]
       req.options.open_timeout = options[:timeout]
+      if headers = opts[:headers]
+        req.headers.update(headers)
+      end
     end
 
     def wrap_errors(method, uri, body = nil)

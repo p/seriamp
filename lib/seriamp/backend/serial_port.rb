@@ -12,7 +12,11 @@ module Seriamp
 
         def initialize(device_path, logger: nil, modem_params: nil)
           @logger = logger
-          @io = SerialPort.open(device_path)
+          begin
+            @io = SerialPort.open(device_path)
+          rescue Errno::ENOENT => exc
+            raise NoDevice, "Device path missing: #{device_path}: #{exc.class}: #{exc}"
+          end
 
           modem_params&.each do |k, v|
             @io.send("#{k}=", v)

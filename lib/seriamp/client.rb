@@ -141,7 +141,7 @@ module Seriamp
         if @device
           logger&.info("Using #{device} as TTY device")
         else
-          raise NoDevice, "No device specified and device could not be detected automatically"
+          raise IndeterminateDevice, "No device specified and device could not be detected automatically"
         end
       end
 

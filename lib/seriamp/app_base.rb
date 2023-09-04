@@ -35,12 +35,16 @@ module Seriamp
     end
 
     def render_error(code, error)
+      if error.is_a?(Exception)
+        error = "#{error.class}: #{error}"
+      end
+
       if accept_json?
         headers['content-type'] = 'application/json'
         [code, {error: error}.to_json]
       else
         headers['content-type'] = 'text/plain'
-        [code, error]
+        [code, "Error: #{error}"]
       end
     end
 
@@ -49,15 +53,19 @@ module Seriamp
     end
 
     error InvalidOnOffValue do |e|
-      render_error(422, "Error: #{e.class}: #{e}")
+      render_error(422, e)
+    end
+
+    error IndeterminateDevice do |e|
+      render_error(500, e)
     end
 
     error NoDevice do |e|
-      render_error(500, "Error: #{e.class}: #{e}")
+      render_error(500, e)
     end
 
     error CommunicationTimeout do |e|
-      render_error(500, "Error: #{e.class}: #{e}")
+      render_error(500, e)
     end
   end
 end
