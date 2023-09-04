@@ -8,6 +8,47 @@ require 'rack/test'
 require 'test_backends'
 require 'mock_serial_port_backend'
 
+module Utils
+  module_function def localhost_host
+    @localhost_host ||= begin
+      socket = Socket.tcp('localhost', 49499, connect_timeout: 0.05)
+      socket.close
+      'localhost'
+    rescue Errno::EADDRNOTAVAIL
+      '127.0.0.1'
+    end
+  end
+
+  module_function def app_integration_endpoint(port)
+    "http://#{localhost_host}:#{port}"
+  end
+end
+
+module ClassMethods
+  def run_app(port, *args)
+    args = args.flatten
+
+    around do |example|
+      unless port_available?(port)
+        raise "Port not available: #{port}"
+      end
+
+      pid = fork do
+        exec(*args)
+      end
+
+      wait_for_port_listening(port)
+
+      example.run
+
+      Process.kill('TERM', pid)
+      Process.waitpid(pid)
+
+      wait_for_port_available(port)
+    end
+  end
+end
+
 module InstanceMethods
   def tty_double
     double('tty device').tap do |device|
@@ -58,6 +99,54 @@ module InstanceMethods
   def response_json
     JSON.parse(last_response.body)
   end
+
+  def port_available?(port, timeout: 1)
+    socket = Socket.tcp(Utils.localhost_host, port, connect_timeout: timeout)
+    if socket
+      socket.close
+      false
+    else
+      raise NotImplementedError
+    end
+  rescue Errno::ECONNREFUSED
+    true
+  end
+
+  def port_listening?(port, timeout: 1)
+    socket = Socket.tcp(Utils.localhost_host, port, connect_timeout: timeout)
+    if socket
+      socket.close
+      true
+    else
+      raise NotImplementedError
+    end
+  rescue Errno::ECONNREFUSED
+    false
+  end
+
+  def wait_for_port_listening(port)
+    start = Seriamp::Utils.monotime
+    loop do
+      if port_listening?(port, timeout: 0.2)
+        return
+      end
+      sleep 0.1
+      break if Seriamp::Utils.monotime - start >= 2
+    end
+    raise "Port not listening: #{port}"
+  end
+
+  def wait_for_port_available(port)
+    start = Seriamp::Utils.monotime
+    loop do
+      if port_available?(port, timeout: 0.2)
+        return
+      end
+      sleep 0.1
+      break if Seriamp::Utils.monotime - start >= 2
+    end
+    raise "Port not available: #{port}"
+  end
 end
 
 RSpec.configure do |rspec|
@@ -68,5 +157,6 @@ RSpec.configure do |rspec|
     mocks.syntax = [:should, :expect]
   end
 
+  rspec.extend ClassMethods
   rspec.include InstanceMethods
 end
