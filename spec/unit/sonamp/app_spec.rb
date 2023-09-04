@@ -44,14 +44,14 @@ describe Seriamp::Sonamp::App do
     end
   end
 
-  describe '/zone/:zone/power' do
+  describe 'put /zone/:zone/power' do
     it 'works' do
       client.should_receive(:set_power).with(2, true)
 
       put '/zone/2/power', 'true'
 
       last_response.status.should == 204
-      p last_response.body.should == ''
+      last_response.body.should == ''
     end
 
     context 'when value is invalid' do
@@ -62,6 +62,32 @@ describe Seriamp::Sonamp::App do
 
         last_response.status.should == 422
         last_response.body.should =~ /\AError: .* bogus/
+      end
+    end
+
+    context 'when status return is requested' do
+      let(:client_status) do
+        {
+          power: {1 => true, 2 => false, 3 => true, 4 => false},
+          fault: {1 => true, 2 => false, 3 => true, 4 => false},
+        }
+      end
+
+      let(:returned_status) do
+        {
+          'power' => {'1' => true, '2' => false, '3' => true, '4' => false},
+          'fault' => {'1' => true, '2' => false, '3' => true, '4' => false},
+        }
+      end
+
+      it 'returns the status' do
+        client.should_receive(:set_power).with(2, true)
+        client.should receive(:status).and_return(client_status)
+
+        put '/zone/2/power', 'true', {'HTTP_ACCEPT' => 'application/x-seriamp-current-status'}
+
+        last_response.status.should == 200
+        last_payload.should == returned_status
       end
     end
   end

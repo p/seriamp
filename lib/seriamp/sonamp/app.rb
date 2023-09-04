@@ -72,7 +72,7 @@ module Seriamp
       put '/zone/:zone/power' do |zone|
         state = Utils.parse_on_off(request.body.read)
         client.set_power(Integer(zone), state)
-        empty_response
+        standard_response
       end
 
       get '/zone/:zone/volume' do |zone|
@@ -113,6 +113,29 @@ module Seriamp
       end
 
       private
+
+      def return_current_status?
+        request.env['HTTP_ACCEPT'] == 'application/x-seriamp-current-status'
+      end
+
+      def return_full_status?
+        request.env['HTTP_ACCEPT'] == 'application/x-seriamp-status'
+      end
+
+      def return_json?
+        request.env['HTTP_ACCEPT'] == 'application/json'
+      end
+
+      def standard_response
+        if return_current_status?
+          render_json(client.status)
+          #render_json(client.current_status)
+        elsif return_full_status?
+          render_json(client.status)
+        else
+          empty_response
+        end
+      end
 
       def client
         settings.client || begin
