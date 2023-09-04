@@ -183,7 +183,7 @@ describe Seriamp::Sonamp::App do
 
           last_response.status.should == 500
           response_json.should == {
-            'error' => "Error: Seriamp::CommunicationTimeout: Timeout waiting for a response from amplifier (waited 3.0 seconds)",
+            'error' => "Seriamp::CommunicationTimeout: Timeout waiting for a response from amplifier (waited 3.0 seconds)",
           }
         end
       end
