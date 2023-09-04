@@ -109,7 +109,7 @@ module Seriamp
           args = line.strip.split(/\s+/)
           executor.run_command(args.first, *args[1..])
         end
-        empty_response
+        standard_response
       end
 
       private
