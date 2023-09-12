@@ -22,6 +22,13 @@ describe Seriamp::Yamaha::Executor do
       end
     end
 
+    context 'main-speaker-tone-bass' do
+      it 'works' do
+        client.should receive(:set_main_speaker_tone_bass).with(frequency: 125, gain: 3.0).and_return(42)
+        executor.run_command('main-speaker-tone-bass', '3', '125').should == 42
+      end
+    end
+
     context 'dev-status' do
       let(:status_middle) do
         -'@E0190002040050B94D3403140300000108200F1020001002828282828282828282800030114140000A00400511000000000002000200000000000200000010504D00012100070E01FFFF0110000A0014A0014210A0A00FF10110'

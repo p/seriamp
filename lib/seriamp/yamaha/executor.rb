@@ -158,14 +158,15 @@ EOT
           output, tone = $1, $2
           if args.any?
             if args.length == 1
-              args = [cmd_line_float(args.shift)]
+              value = cmd_line_float(args.shift)
+              client.public_send("set_main_#{output}_tone_#{tone}", value)
             else
-              args = [
+              args = {
                 gain: cmd_line_float(args.shift),
                 frequency: Integer(args.shift),
-              ]
+              }
+              client.public_send("set_main_#{output}_tone_#{tone}", **args)
             end
-            client.public_send("set_main_#{output}_tone_#{tone}", *args)
           else
             client.public_send("main_#{output}_tone_#{tone}")
           end
