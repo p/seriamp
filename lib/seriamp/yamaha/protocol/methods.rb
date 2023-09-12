@@ -323,7 +323,13 @@ module Seriamp
                 raise ArgumentError, "Gain out of range: must be -6..6: #{gain}"
               end
               gain_enc = serialize_volume(gain, -6, 0, 0.5)
-              frequency_enc = 0
+              frequency_enc = begin
+                {
+                  125 => 0,
+                  350 => 1,
+                  500 => 2,
+                }.fetch(freq)
+              end
               extended_command("0331#{output_value}#{tone_value}#{frequency_enc}#{gain_enc}")
             end
           end
