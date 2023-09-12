@@ -134,7 +134,8 @@ describe Seriamp::Yamaha::Client do
 
     before do
       setup_requests_responses(device, rr)
-      SerialPort.should receive(:open).and_return(device)
+      # If argument checks fail, device won't be opened.
+      allow(SerialPort).to receive(:open).and_return(device)
       allow(IO).to receive(:select)
     end
 
@@ -185,6 +186,16 @@ describe Seriamp::Yamaha::Client do
         # No return value yet
         client.set_main_speaker_tone_bass(frequency: 125, gain: 2).should be nil
       end
+
+      context 'treble frequency' do
+        let(:rr) { [] }
+
+        it 'raises error' do
+          lambda do
+            client.set_main_speaker_tone_bass(frequency: 8000, gain: 2)
+          end.should raise_error(ArgumentError, /Invalid turnover frequency/)
+        end
+      end
     end
 
     describe '#set_main_speaker_tone_treble' do
@@ -197,6 +208,16 @@ describe Seriamp::Yamaha::Client do
       it 'works' do
         # No return value yet
         client.set_main_speaker_tone_treble(frequency: 8000, gain: 2).should be nil
+      end
+
+      context 'bass frequency' do
+        let(:rr) { [] }
+
+        it 'raises error' do
+          lambda do
+            client.set_main_speaker_tone_treble(frequency: 125, gain: 2)
+          end.should raise_error(ArgumentError, /Invalid turnover frequency/)
+        end
       end
     end
   end
