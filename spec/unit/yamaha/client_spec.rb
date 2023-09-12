@@ -173,6 +173,32 @@ describe Seriamp::Yamaha::Client do
         client.set_zone3_volume(-70).should == -70.0
       end
     end
+
+    describe '#set_main_speaker_tone_bass' do
+      let(:rr) do
+        [
+          %W(\x14200903310001083\x03 \x14200403308C\x03),
+        ]
+      end
+
+      it 'works' do
+        # No return value yet
+        client.set_main_speaker_tone_bass(frequency: 125, gain: 2).should be nil
+      end
+    end
+
+    describe '#set_main_speaker_tone_treble' do
+      let(:rr) do
+        [
+          %W(\x14200903310121086\x03 \x14200403308C\x03),
+        ]
+      end
+
+      it 'works' do
+        # No return value yet
+        client.set_main_speaker_tone_treble(frequency: 8000, gain: 2).should be nil
+      end
+    end
   end
 
   describe '#current_status' do

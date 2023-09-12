@@ -300,9 +300,16 @@ module Seriamp
         end
 
         BASS_FREQUENCY_MAP = {
-          125 => 0,
-          350 => 1,
-          500 => 2,
+          bass: {
+            125 => 0,
+            350 => 1,
+            500 => 2,
+          }.freeze,
+          treble: {
+            2500 => 0,
+            3500 => 1,
+            8000 => 2,
+          }.freeze,
         }.freeze
 
         {bass: '0', treble: '1'}.each do |tone, tone_value|
@@ -329,10 +336,11 @@ module Seriamp
                 raise ArgumentError, "Gain out of range: must be -6..6: #{gain}"
               end
               gain_enc = serialize_volume(gain, -6, 0, 0.5)
+              freq_map = BASS_FREQUENCY_MAP.fetch(tone)
               frequency_enc = begin
-                BASS_FREQUENCY_MAP.fetch(freq)
+                freq_map.fetch(freq)
               rescue KeyError
-                raise ArgumentError, "Invalid turnover frequency: #{freq}: must be one of: #{BASS_FREQUENCY_MAP.keys.map(&:to_s).join(', ')}"
+                raise ArgumentError, "Invalid turnover frequency: #{freq}: must be one of: #{freq_map.keys.map(&:to_s).join(', ')}"
               end
               extended_command("0331#{output_value}#{tone_value}#{frequency_enc}#{gain_enc}")
             end
