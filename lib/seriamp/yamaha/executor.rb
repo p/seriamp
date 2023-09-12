@@ -24,8 +24,11 @@ presence-speaker-layout arg
 bass-out arg
 subwoofer-phase arg
 subwoofer-crossover arg
-main-tone-bass-speaker gain [frequency]
+main-(speaker|headphone)-tone-(bass|treble) gain [frequency]
 graphic-eq [channel [band [value]]]
+(front|center|surround|surround-back|subwoofer)-level value
+(front|center|surround|surround-back|subwoofer)-distance value
+volume-trim channel value
 osd-message message
 advanced-setup bool
 speaker-impedance 4|8
