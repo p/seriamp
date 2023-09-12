@@ -299,6 +299,12 @@ module Seriamp
           system_command("7E#{value}")
         end
 
+        BASS_FREQUENCY_MAP = {
+          125 => 0,
+          350 => 1,
+          500 => 2,
+        }.freeze
+
         {bass: '0', treble: '1'}.each do |tone, tone_value|
           {speaker: '0', headphone: '1'}.each do |output, output_value|
             define_method("main_#{output}_tone_#{tone}") do
@@ -324,11 +330,9 @@ module Seriamp
               end
               gain_enc = serialize_volume(gain, -6, 0, 0.5)
               frequency_enc = begin
-                {
-                  125 => 0,
-                  350 => 1,
-                  500 => 2,
-                }.fetch(freq)
+                BASS_FREQUENCY_MAP.fetch(freq)
+              rescue KeyError
+                raise ArgumentError, "Invalid turnover frequency: #{freq}: must be one of: #{BASS_FREQUENCY_MAP.keys.map(&:to_s).join(', ')}"
               end
               extended_command("0331#{output_value}#{tone_value}#{frequency_enc}#{gain_enc}")
             end

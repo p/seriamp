@@ -162,7 +162,7 @@ EOT
             else
               args = [
                 gain: cmd_line_float(args.shift),
-                frequency: cmd_line_float(args.shift),
+                frequency: Integer(args.shift),
               ]
             end
             client.public_send("set_main_#{output}_tone_#{tone}", *args)
