@@ -37,6 +37,15 @@ module Seriamp
             }
           end
 
+          def to_state
+            {
+              output: output,
+              tone: tone,
+              frequency: frequency,
+              gain: gain,
+            }
+          end
+
           private
 
           OUTPUT_MAP = {
