@@ -114,6 +114,14 @@ module Seriamp
         empty_response
       end
 
+      %i(bass treble).each do |tone|
+        put "/main/speaker/tone/bass" do
+          state = Float(request.body.read)
+          client.public_send("set_main_speaker_tone_#{tone}", state)
+          empty_response
+        end
+      end
+
       put "/center_speaker_layout" do
         client.set_center_speaker_layout(request.body.read)
         empty_response

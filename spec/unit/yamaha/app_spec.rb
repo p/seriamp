@@ -49,6 +49,18 @@ describe Seriamp::Yamaha::App do
     end
   end
 
+  describe 'put /main/speaker/tone/bass' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:set_main_speaker_tone_bass).with(-4.5)
+
+      put '/main/speaker/tone/bass', '-4.5'
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
+
   describe 'post /' do
     it 'works' do
       client.should receive(:set_main_power).with(true)
