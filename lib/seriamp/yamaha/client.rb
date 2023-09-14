@@ -215,6 +215,8 @@ module Seriamp
         case first_byte = resp[0]
         when STX
           parse_framed_stx_response(resp).tap do |resp|
+            # Sometimes the response isn't parsed (yet) by seriamp,
+            # which causes state to be missing here...
             update_current_status(resp.fetch(:state))
           end
         when DC2
@@ -402,6 +404,31 @@ module Seriamp
             {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
             {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
+          when '70'
+            if data[0] != '0'
+              raise NotImplementedError
+            end
+            {center_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
+          when '71'
+            if data[0] != '0'
+              raise NotImplementedError
+            end
+            {front_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
+          when '72'
+            if data[0] != '0'
+              raise NotImplementedError
+            end
+            {surround_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
+          when '73'
+            if data[0] != '0'
+              raise NotImplementedError
+            end
+            {surround_back_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
+          when '74'
+            if data[0] != '0'
+              raise NotImplementedError
+            end
+            {presence_speaker_layout: PRESENCE_SPEAKER_SETTING_GET.fetch(data[1])}
           when 'A7'
             {eq_select: EQ_SELECT_GET.fetch(Integer(data).to_s)}
           when 'A8'

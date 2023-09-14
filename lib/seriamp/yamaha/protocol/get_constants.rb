@@ -576,6 +576,11 @@ module Seriamp
           '4' => 'None',
         }.freeze
 
+        PRESENCE_SPEAKER_SETTING_GET = {
+          '0' => 'Yes',
+          '1' => 'None',
+        }.freeze
+
         BASS_OUT_GET = {
           '0' => 'Subwoofer',
           '1' => 'Front/Main',

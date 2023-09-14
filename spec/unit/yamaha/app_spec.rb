@@ -61,6 +61,30 @@ describe Seriamp::Yamaha::App do
     end
   end
 
+  describe 'put /main/front/left/speaker/level' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:set_front_left_level).with(-4.5)
+
+      put '/main/front/left/speaker/level', '-4.5'
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
+
+  describe 'put /main/front/speaker/layout' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:set_front_speaker_layout).with('large')
+
+      put '/main/front/speaker/layout', 'large'
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
+
   describe 'post /' do
     it 'works' do
       client.should receive(:set_main_power).with(true)

@@ -220,6 +220,30 @@ describe Seriamp::Yamaha::Client do
         end
       end
     end
+
+    describe '#set_front_left_level' do
+      let(:rr) do
+        [
+          %W(\x022411F\x03 \x0200411F\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_front_left_level(-4.5).should == {front_left_level: -4.5}
+      end
+    end
+
+    describe '#set_front_speaker_layout' do
+      let(:rr) do
+        [
+          %W(\x0227100\x03 \x02007100\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_front_speaker_layout('large').should == {front_speaker_layout: 'Large'}
+      end
+    end
   end
 
   describe '#current_status' do

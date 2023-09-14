@@ -159,6 +159,7 @@ module Seriamp
           presence_left: '46',
           presence_right: '45',
         }.each do |channel, prefix|
+          # TODO does this affect headphones?
           define_method("set_#{channel}_level") do |level|
             encoded = encode_sequence(level, '14', -10, 10, 0.5)
             system_command(prefix + encoded)
