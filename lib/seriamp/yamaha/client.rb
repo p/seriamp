@@ -328,6 +328,14 @@ module Seriamp
         parse_stx_response(resp[1...-1])
       end
 
+      SPEAKER_LAYOUT_MAP = {
+        '70' => [:center_speaker_layout, SPEAKER_SETTING_GET],
+        '71' => [:front_speaker_layout, SPEAKER_SETTING_GET],
+        '72' => [:surround_speaker_layout, SPEAKER_SETTING_GET],
+        '73' => [:surround_back_speaker_layout, SB_SPEAKER_SETTING_GET],
+        '74' => [:presence_speaker_layout, PRESENCE_SPEAKER_SETTING_GET],
+      }.freeze
+
       def parse_stx_response(resp)
         control_type = parse_flag(resp[0], {
           '0' => :rs232c,
@@ -404,31 +412,12 @@ module Seriamp
             {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
             {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
-          when '70'
+          when *SPEAKER_LAYOUT_MAP.keys
             if data[0] != '0'
               raise NotImplementedError
             end
-            {center_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
-          when '71'
-            if data[0] != '0'
-              raise NotImplementedError
-            end
-            {front_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
-          when '72'
-            if data[0] != '0'
-              raise NotImplementedError
-            end
-            {surround_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
-          when '73'
-            if data[0] != '0'
-              raise NotImplementedError
-            end
-            {surround_back_speaker_layout: SPEAKER_SETTING_GET.fetch(data[1])}
-          when '74'
-            if data[0] != '0'
-              raise NotImplementedError
-            end
-            {presence_speaker_layout: PRESENCE_SPEAKER_SETTING_GET.fetch(data[1])}
+            key, hash = SPEAKER_LAYOUT_MAP.fetch(command)
+            {key => hash.fetch(data[1])}
           when 'A7'
             {eq_select: EQ_SELECT_GET.fetch(Integer(data).to_s)}
           when 'A8'
