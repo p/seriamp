@@ -28,6 +28,9 @@ main-(speaker|headphone)-tone-(bass|treble) gain [frequency]
 graphic-eq [channel [band [value]]]
 (front|center|surround|surround-back|subwoofer)-level value
 (front|center|surround|surround-back|subwoofer)-distance value
+distance [ft|m]
+distance (front|center|surround|surround-back|subwoofer) [ft|m]
+distance (front|center|surround|surround-back|subwoofer) value [ft|m]
 volume-trim channel value
 osd-message message
 advanced-setup bool
@@ -198,6 +201,33 @@ EOT
           # public_send.
           channel = $1.downcase.gsub('-', '_')
           client.public_send("set_#{channel}_level", Float(args.shift))
+        when 'distance'
+          args_orig = args
+          args = args.map { |arg| arg.downcase.gsub('-', '_') }
+          if args.last == 'ft'
+            unit = 'feet'
+            args.pop
+          elsif args.last == 'm'
+            unit = 'meters'
+            args.pop
+          else
+            unit = 'feet'
+          end
+          # TODO validate channels
+          case args.length
+          when 2
+            client.public_send("set_#{args[0]}_distance_#{unit}", Float(args[1]))
+          when 1
+            client.public_send("#{args[0]}_distance_#{unit}")
+          when 0
+            Client::CHANNEL_KEYS.each do |channel|
+              value = client.public_send("#{channel}_distance_#{unit}")
+              channel_name = channel.to_s.gsub(/(_(.))/) { |m| ' ' + $2.upcase }.sub(/^(.)/) { |m| m.upcase }
+              puts "#{channel_name}: #{value.distance} #{value.unit}"
+            end
+          else
+            raise "Wrong number of arguments: #{args_orig}"
+          end
         when /\A(.*)-distance\z/
           # TODO validate the method name before passing user input to
           # public_send.

@@ -7,6 +7,7 @@ require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
 require 'seriamp/yamaha/protocol/status'
 require 'seriamp/yamaha/protocol/extended/generic_response'
+require 'seriamp/yamaha/protocol/extended/distance_response'
 require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
 require 'seriamp/yamaha/protocol/extended/volume_trim_response'
@@ -294,6 +295,12 @@ module Seriamp
         end
 
         cls = case command_id
+        when '012'
+          if command_data.empty?
+            nil
+          else
+            Protocol::Extended::VolumeTrimResponse
+          end
         when '033'
           if command_data.empty?
             nil
@@ -306,11 +313,11 @@ module Seriamp
           else
             Protocol::Extended::GraphicEqResponse
           end
-        when '012'
+        when '041'
           if command_data.empty?
             nil
           else
-            Protocol::Extended::VolumeTrimResponse
+            Protocol::Extended::DistanceResponse
           end
         else
           Protocol::Extended::GenericResponse
@@ -327,6 +334,20 @@ module Seriamp
         end
         parse_stx_response(resp[1...-1])
       end
+
+      # TODO what happens to surround back channels when there's only one?
+      CHANNEL_KEYS = %i(
+        front_left
+        front_right
+        center
+        surround_left
+        surround_right
+        surround_back_left
+        surround_back_right
+        subwoofer
+        presence_left
+        presence_right
+      ).freeze
 
       SPEAKER_LAYOUT_MAP = {
         '70' => [:center_speaker_layout, SPEAKER_SETTING_GET],
