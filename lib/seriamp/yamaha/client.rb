@@ -134,6 +134,7 @@ module Seriamp
               @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
               @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
               @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
+              @io.clear_rts
             end
           end
         end
@@ -200,9 +201,14 @@ module Seriamp
 
       ZERO_ORD = '0'.ord
 
+=begin unused
       def write_command(cmd)
-        @io.syswrite(cmd.encode('ascii'))
+        with_device do
+          @io.syswrite(cmd.encode('ascii'))
+          @io.clear_rts
+        end
       end
+=end
 
       def response_complete?
         read_buf.end_with?(self.class.const_get(:ETX))

@@ -44,6 +44,12 @@ module Seriamp
         def errored?
           !!IO.select(nil, nil, [io], 0)
         end
+
+        # Called after writing is finished to reduce the noise induced in
+        # the amplifier by the serial port cabling.
+        def clear_rts
+          io.rts = 0
+        end
       end
     end
   end

@@ -214,6 +214,7 @@ module Seriamp
               with_timeout do
                 @io.syswrite("#{cmd}\x0d")
               end
+              @io.clear_rts
               resp = ''
               needed_lines = resp_lines_range.to_a.length
               loop do

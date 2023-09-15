@@ -177,6 +177,7 @@ module Seriamp
           if read_response
             self.read_response
           end
+          @io.clear_rts
         end.tap do
           elapsed = Utils.monotime - start
           logger&.debug("#{self.class.name}: #{sanitized_cmd} succeeded in #{'%.2f' % elapsed} s")
