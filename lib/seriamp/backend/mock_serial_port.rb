@@ -37,6 +37,9 @@ module Seriamp
         def errored?
           !!IO.select(nil, nil, [io], 0)
         end
+
+        def clear_rts
+        end
       end
     end
   end
