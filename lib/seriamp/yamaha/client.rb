@@ -80,6 +80,12 @@ module Seriamp
         end
       end
 
+      def all_status
+        status.merge(
+          tone,
+        )
+      end
+
       def current_status
         unless @current_status
           status

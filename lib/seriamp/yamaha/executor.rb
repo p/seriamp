@@ -36,6 +36,7 @@ osd-message message
 advanced-setup bool
 speaker-impedance 4|8
 status
+all-status
 dev-status
 EOT
       end
@@ -268,6 +269,8 @@ EOT
           client.set_speaker_impedance(cmd_line_integer(args.shift))
         when 'status'
           pp client.status
+        when 'all-status'
+          pp client.all_status
         when 'dev-status'
           status = client.status_string
           fields = Client::STATUS_HEAD_FIELDS

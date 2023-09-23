@@ -313,8 +313,39 @@ module Seriamp
           }.freeze,
         }.freeze
 
-        {bass: '0', treble: '1'}.each do |tone, tone_value|
-          {speaker: '0', headphone: '1'}.each do |output, output_value|
+        def tone
+          {}.tap do |result|
+            %i(speaker headphone).each do |output|
+              this_result = public_send("main_#{output}_tone")
+              result.update(prefix_keys(this_result, :"main_#{output}_tone_"))
+            end
+          end
+        end
+
+        private def prefix_keys(hash, prefix)
+          Hash[hash.map do |k, v|
+            prefixed_k = "#{prefix}#{k}"
+            if Symbol === k
+              prefixed_k = prefixed_k.to_sym
+            end
+            [prefixed_k, v]
+          end]
+        end
+
+        {speaker: '0', headphone: '1'}.each do |output, output_value|
+          define_method("main_#{output}_tone") do
+            result = {}
+            {bass: '0', treble: '1'}.each do |tone, tone_value|
+              this_result = extended_command("0330#{output_value}#{tone_value}")
+              result.update(
+                "#{tone}_frequency": this_result.frequency,
+                "#{tone}_gain": this_result.gain,
+              )
+            end
+            result
+          end
+
+          {bass: '0', treble: '1'}.each do |tone, tone_value|
             define_method("main_#{output}_tone_#{tone}") do
               result = extended_command("0330#{output_value}#{tone_value}")
               {frequency: result.frequency, gain: result.gain}
