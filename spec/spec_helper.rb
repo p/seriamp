@@ -57,6 +57,7 @@ module InstanceMethods
       allow(device).to receive(:stop_bits=)
       allow(device).to receive(:parity=)
       allow(device).to receive(:flow_control=)
+      allow(device).to receive(:rts=)
       allow(device).to receive(:close)
     end
   end
