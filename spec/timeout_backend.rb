@@ -1,13 +1,9 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-
 module Seriamp
   module Backend
     module TimeoutBackend
       class Device
-        extend Forwardable
-
         def initialize(device, **opts)
         end
 

@@ -5,8 +5,8 @@ ENV['RACK_ENV'] = 'test'
 require 'byebug'
 require 'seriamp/all'
 require 'rack/test'
-require 'test_backends'
 require 'mock_serial_port_backend'
+require 'timeout_backend'
 
 module Utils
   module_function def localhost_host
