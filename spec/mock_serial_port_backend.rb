@@ -67,6 +67,9 @@ module Seriamp
         def errored?
           false
         end
+
+        def clear_rts
+        end
       end
     end
   end

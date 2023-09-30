@@ -22,6 +22,9 @@ module Seriamp
         def read_nonblock(chunk)
           nil
         end
+
+        def clear_rts
+        end
       end
     end
   end
