@@ -222,7 +222,8 @@ module Seriamp
         end
 
         def set_main_input(source)
-          source_code = MAIN_INPUTS_SET.fetch(source.downcase.gsub(/[^a-z]/, '_'))
+          canonical_source = source.downcase.gsub(/[^a-z]/, '_')
+          source_code = fetch_hash(MAIN_INPUTS_SET, canonical_source, 'input name', source)
           remote_command("7A#{source_code}")
         end
 
@@ -425,6 +426,16 @@ module Seriamp
           input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
           value = encode_sequence(value, '00', -6, 6, 0.5)
           extended_command("0121#{input_id}#{value}")
+        end
+
+        private
+
+        def fetch_hash(hash, key, value_desc, original_value)
+          if hash.key?(key)
+            hash[key]
+          else
+            raise InvalidSettingValue, "Invalid value for #{value_desc}: #{original_value}; valid values are: #{hash.keys.join(', ')}"
+          end
         end
       end
     end
