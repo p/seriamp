@@ -244,6 +244,48 @@ describe Seriamp::Yamaha::Client do
         client.set_front_speaker_layout('large').should == {front_speaker_layout: 'Large'}
       end
     end
+
+    describe '#volume_trim' do
+      context 'rx-v1700+' do
+        let(:rr) do
+          [
+            %W(\x142006012004EF\x03 \x1420080120040C64\x03),
+          ]
+        end
+
+        let(:expected_cls) { Seriamp::Yamaha::Protocol::Extended::VolumeTrimResponse }
+
+        let(:expected) do
+          {
+            md_tape_volume_trim: 0.0,
+          }
+        end
+
+        let(:result) do
+          client.volume_trim('md/tape')
+        end
+
+        it 'works' do
+          result.should be_a(expected_cls)
+          result.to_state.should == expected
+        end
+      end
+    end
+
+    describe '#set_volume_trim' do
+      context 'rx-v1700+' do
+        let(:rr) do
+          [
+            %W(\x142008012104095B\x03 \x142004012089\x03),
+          ]
+        end
+
+        it 'works' do
+          # No response at this time.
+          client.set_volume_trim('md/tape', -1.5).should be nil
+        end
+      end
+    end
   end
 
   describe '#current_status' do
