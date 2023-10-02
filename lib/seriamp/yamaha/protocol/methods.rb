@@ -416,6 +416,8 @@ module Seriamp
         end
 
         def volume_trim(input_name = nil)
+          # RX-V1600 use a single byte for input ID,
+          # RX-V2500 does not support volume trim over serial.
           if input_name
             input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
             extended_command("0120#{input_id}")
@@ -423,6 +425,8 @@ module Seriamp
         end
 
         def set_volume_trim(input_name, value)
+          # RX-V1600 use a single byte for input ID,
+          # RX-V2500 does not support volume trim over serial.
           input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
           value = encode_sequence(value, '00', -6, 6, 0.5)
           extended_command("0121#{input_id}#{value}")
