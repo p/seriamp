@@ -18,6 +18,10 @@ module Seriamp
       end
 
       def encode_sequence(value, min_serialized, min, max, step)
+        if value < min || value > max
+          # TODO consider a more specialized exception class.
+          raise ArgumentError, "Sequence value out of range: #{value}: accepted range is #{min}..#{max}"
+        end
         delta = Integer((value - min) / step)
         base_value = Integer(min_serialized, 16)
         final_value = base_value + delta

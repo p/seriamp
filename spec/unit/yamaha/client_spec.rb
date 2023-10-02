@@ -284,6 +284,19 @@ describe Seriamp::Yamaha::Client do
           # No response at this time.
           client.set_volume_trim('md/tape', -1.5).should be nil
         end
+
+        context 'when value is out of range' do
+          let(:rr) do
+            [
+            ]
+          end
+
+          it 'raises ArgumentError' do
+            lambda do
+              client.set_volume_trim('md/tape', 7)
+            end.should raise_error(ArgumentError)
+          end
+        end
       end
     end
   end
