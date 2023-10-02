@@ -306,31 +306,19 @@ module Seriamp
           raise UnexpectedResponse, "Unexpected status byte: #{status}: #{data}"
         end
 
+        if command_data.empty?
+          return nil
+        end
+
         cls = case command_id
         when '012'
-          if command_data.empty?
-            nil
-          else
-            Protocol::Extended::VolumeTrimResponse
-          end
+          Protocol::Extended::VolumeTrimResponse
         when '033'
-          if command_data.empty?
-            nil
-          else
-            Protocol::Extended::MainToneResponse
-          end
+          Protocol::Extended::MainToneResponse
         when '030'
-          if command_data.empty?
-            nil
-          else
-            Protocol::Extended::GraphicEqResponse
-          end
+          Protocol::Extended::GraphicEqResponse
         when '041'
-          if command_data.empty?
-            nil
-          else
-            Protocol::Extended::DistanceResponse
-          end
+          Protocol::Extended::DistanceResponse
         else
           Protocol::Extended::GenericResponse
         end
