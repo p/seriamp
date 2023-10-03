@@ -183,7 +183,7 @@ module Seriamp
           end
 
           define_method("set_#{channel}_distance_meters") do |distance|
-            encoded = encode_sequence_3(distance, '01E', 0.3, 24, 0.01)
+            encoded = encode_sequence(distance, '01E', 0.3, 24, 0.01)
             extended_command("0411#{prefix}0#{encoded}")
           end
 
@@ -192,7 +192,7 @@ module Seriamp
           end
 
           define_method("set_#{channel}_distance_feet") do |distance|
-            encoded = encode_sequence_3(distance, '00A', 0, 80, 0.1)
+            encoded = encode_sequence(distance, '00A', 0, 80, 0.1)
             extended_command("0411#{prefix}1#{encoded}")
           end
         end
@@ -430,6 +430,23 @@ module Seriamp
           input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
           value = encode_sequence(value, '00', -6, 6, 0.5)
           extended_command("0121#{input_id}#{value}")
+        end
+
+        # jack_number is 1-based, e.g. HDMI 1, component A, optical 1
+        def io_assignment(jack_type, jack_number)
+          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type)
+          jack_number_enc = encode_sequence(jack_number, '0', 1, 6, 1)
+          extended_command("0100#{jack_type_enc}#{jack_number_enc}")
+        end
+
+        def set_io_assignment(jack_type, jack_number, input_name)
+          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type)
+          jack_number_enc = encode_sequence(jack_number, '0', 1, 6, 1)
+          # NB not all input names are valid for assignment.
+          # Not ass assignable inputs can be assigned to all physical jacks -
+          # for example, MD/TAPE cannot be assigned to HDMI jacks.
+          value = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
+          extended_command("0101#{jack_type_enc}#{jack_number_enc}#{value}")
         end
 
         private

@@ -299,6 +299,48 @@ describe Seriamp::Yamaha::Client do
         end
       end
     end
+
+    describe '#io_assignment' do
+      context 'rx-v1700+' do
+        let(:rr) do
+          [
+            %W(\x142006010062F1\x03 \x1420080100620659\x03),
+          ]
+        end
+
+        let(:expected_cls) { Seriamp::Yamaha::Protocol::Extended::IoAssignmentResponse }
+
+        let(:expected) do
+          {
+            hdmi_in_3_io_assignment: 'DTV',
+          }
+        end
+
+        let(:result) do
+          client.io_assignment(:hdmi_in, 3)
+        end
+
+        it 'works' do
+          result.should be_a(expected_cls)
+          result.to_state.should == expected
+        end
+      end
+    end
+
+    describe '#set_io_assignment' do
+      context 'rx-v1700+' do
+        let(:rr) do
+          [
+            %W(\x1420080101621156\x03 \x142004010087\x03),
+          ]
+        end
+
+        it 'works' do
+          # No response at this time.
+          client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be nil
+        end
+      end
+    end
   end
 
   describe '#current_status' do

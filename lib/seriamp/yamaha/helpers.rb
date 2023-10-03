@@ -25,20 +25,7 @@ module Seriamp
         delta = Integer((value - min) / step)
         base_value = Integer(min_serialized, 16)
         final_value = base_value + delta
-        if final_value < 0 || final_value >= 0x100
-          raise "Value out of range in serializer: #{final_value} for #{value}"
-        end
-        '%02X' % final_value
-      end
-
-      def encode_sequence_3(value, min_serialized, min, max, step)
-        delta = Integer((value - min) / step)
-        base_value = Integer(min_serialized, 16)
-        final_value = base_value + delta
-        if final_value < 0 || final_value >= 0x1000
-          raise "Value out of range in serializer: #{final_value} for #{value}"
-        end
-        '%03X' % final_value
+        "%0#{min_serialized.length}X" % final_value
       end
     end
   end

@@ -11,6 +11,7 @@ require 'seriamp/yamaha/protocol/extended/distance_response'
 require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
 require 'seriamp/yamaha/protocol/extended/volume_trim_response'
+require 'seriamp/yamaha/protocol/extended/io_assignment_response'
 require 'seriamp/client'
 
 module Seriamp
@@ -319,6 +320,8 @@ module Seriamp
           Protocol::Extended::GraphicEqResponse
         when '041'
           Protocol::Extended::DistanceResponse
+        when '010'
+          Protocol::Extended::IoAssignmentResponse
         else
           Protocol::Extended::GenericResponse
         end

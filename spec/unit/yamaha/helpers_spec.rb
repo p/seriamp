@@ -62,4 +62,18 @@ describe Seriamp::Yamaha::Helpers do
       end
     end
   end
+
+  describe '#encode_sequence' do
+    it 'encodes to 1-byte value' do
+      host.encode_sequence(4, '1', 0, 5, 1).should == '5'
+    end
+
+    it 'encodes to 2-byte value' do
+      host.encode_sequence(4, '01', 0, 5, 1).should == '05'
+    end
+
+    it 'encodes to 3-byte value' do
+      host.encode_sequence(4, '001', 0, 5, 1).should == '005'
+    end
+  end
 end

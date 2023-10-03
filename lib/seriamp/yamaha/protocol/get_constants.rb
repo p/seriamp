@@ -108,6 +108,7 @@ module Seriamp
           '03' => 'CD-R',
           '04' => 'MD/TAPE',
           '05' => 'DVD',
+          # 06 is DTV/CBL in newer receivers
           '06' => 'DTV',
           '07' => 'CBL/SAT',
           '08' => 'SAT',
@@ -115,9 +116,11 @@ module Seriamp
           '0A' => 'DVR/VCR2',
           '0B' => 'VCR3/DVR',
           '0C' => 'V-AUX/DOCK',
+          # 0D is "LD-RF" in RX-V1800/RX-V3800 I/O assignment spec
           '0D' => 'NET/USB',
           '0E' => 'XM',
           '10' => 'Multi-Channel',
+          '11' => 'BD/HD DVD',
         }.freeze
 
         # RX-V1700: volume trim.
@@ -130,6 +133,7 @@ module Seriamp
           '03' => 'CD-R',
           '04' => 'MD/TAPE',
           '05' => 'DVD',
+          # 06 is DTV/CBL on RX-V1800/RX-V3800
           '06' => 'DTV',
           '07' => 'CBL/SAT',
           '08' => 'SAT',
@@ -140,10 +144,11 @@ module Seriamp
           #'0D' => 'Multi-Channel',
           '0E' => 'XM',
           '10' => 'Multi-Channel',
+          '11' => 'BD/HD DVD', # Added in RX--V1800/RX-V3800
           '20' => 'Dock',
-          '21' => 'PC/MCX', # RX-V2700 only
-          '22' => 'Net Radio', # RX-V2700 only
-          '23' => 'USB', # RX-V2700 only
+          '21' => 'PC/MCX', # RX-V2700, RX-V3800 only
+          '22' => 'Net Radio', # RX-V2700, RX-V3800 only
+          '23' => 'USB', # RX-V2700, RX-V3800 only
         }.freeze
 
         VOLUME_TRIM_INPUT_NAME_2_SET = VOLUME_TRIM_INPUT_NAME_2_GET.invert
@@ -817,6 +822,17 @@ module Seriamp
           '00' => false,
           '01' => true,
         }.freeze
+
+        IO_ASSIGNMENT_JACK_TYPE_GET = {
+          '0' => :coaxial_in,
+          '1' => :optical_out,
+          '2' => :optical_in,
+          '3' => :component_in,
+          '4' => :i_link,
+          '6' => :hdmi_in,
+        }.freeze
+
+        IO_ASSIGNMENT_JACK_TYPE_SET = IO_ASSIGNMENT_JACK_TYPE_GET.invert.freeze
 
         GET_MAP = {
           '00' => [:ready, :ready_report],
