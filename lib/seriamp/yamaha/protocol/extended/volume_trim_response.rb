@@ -31,7 +31,7 @@ module Seriamp
           end
 
           def to_state
-            {"#{input_name.gsub('/', '_').downcase}_volume_trim": gain}
+            {"#{input_name.gsub(%r,[/ -],, '_').downcase}_volume_trim": gain}
           end
         end
       end

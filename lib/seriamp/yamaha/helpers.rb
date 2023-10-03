@@ -27,6 +27,16 @@ module Seriamp
         final_value = base_value + delta
         "%0#{min_serialized.length}X" % final_value
       end
+
+      def hash_get_with_upcase(hash, key)
+        hash.fetch(key)
+      rescue KeyError => exc
+        begin
+          hash.fetch(key.upcase)
+        rescue KeyError
+          raise exc
+        end
+      end
     end
   end
 end

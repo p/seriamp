@@ -249,7 +249,7 @@ EOT
         when 'volume-trim'
           case args.length
           when 0
-            pp client.volume_trim
+            pp client.all_volume_trims
           when 1
             p client.volume_trim(args.shift)
           when 2

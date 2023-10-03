@@ -415,21 +415,53 @@ module Seriamp
           end
         end
 
-        def volume_trim(input_name = nil)
+        def volume_trim(input_name)
           # RX-V1600 use a single byte for input ID,
           # RX-V2500 does not support volume trim over serial.
-          if input_name
-            input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
-            extended_command("0120#{input_id}")
-          end
+          input_id = hash_get_with_upcase(
+            GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET, input_name)
+          extended_command("0120#{input_id}")
         end
 
         def set_volume_trim(input_name, value)
           # RX-V1600 use a single byte for input ID,
           # RX-V2500 does not support volume trim over serial.
-          input_id = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
+          input_id = hash_get_with_upcase(
+            GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET, input_name)
           value = encode_sequence(value, '00', -6, 6, 0.5)
           extended_command("0121#{input_id}#{value}")
+        end
+
+        # RX-V3800
+        VOLUME_TRIM_REQS = [
+          'PHONO',
+          'CD',
+          'TUNER',
+          'CD-R',
+          'MD/TAPE',
+          'DVD',
+          # Should be DTV/CBL
+          'DTV',
+          # Should be VCR
+          'VCR1',
+          # Should be DVR
+          'DVR/VCR2',
+          'V-AUX',
+          'XM',
+          'Multi-Channel',
+          'BD/HD DVD',
+          'Dock',
+          'PC/MCX',
+          'Net Radio',
+          'USB',
+        ].freeze
+
+        def all_volume_trims
+          status = {}
+          VOLUME_TRIM_REQS.each do |req|
+            status.update(volume_trim(req).to_state)
+          end
+          status
         end
 
         # jack_number is 1-based, e.g. HDMI 1, component A, optical 1
@@ -445,10 +477,12 @@ module Seriamp
           # NB not all input names are valid for assignment.
           # Not ass assignable inputs can be assigned to all physical jacks -
           # for example, MD/TAPE cannot be assigned to HDMI jacks.
-          value = GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.fetch(input_name.upcase)
+          value = hash_get_with_upcase(
+            GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET, input_name)
           extended_command("0101#{jack_type_enc}#{jack_number_enc}#{value}")
         end
 
+        # RX-V3800
         JACKS = {
           coaxial_in: 3,
           optical_out: 2,
