@@ -449,6 +449,23 @@ module Seriamp
           extended_command("0101#{jack_type_enc}#{jack_number_enc}#{value}")
         end
 
+        JACKS = {
+          coaxial_in: 3,
+          optical_out: 2,
+          optical_in: 4,
+          hdmi_in: 4,
+        }.freeze
+
+        def all_io_assignments
+          status = {}
+          JACKS.each do |jack_type, jack_count|
+            1.upto(jack_count) do |jack_num|
+              status.update(io_assignment(jack_type, jack_num).to_state)
+            end
+          end
+          status
+        end
+
         private
 
         def fetch_hash(hash, key, value_desc, original_value)

@@ -259,6 +259,22 @@ EOT
           else
             raise "Bogus volume-trim usage"
           end
+        when 'assign', 'io-assignment'
+          case args.length
+          when 0
+            pp client.all_io_assignments
+          when 2
+            jack_type = args[0]
+            jack_number = Integer(args[1])
+            p client.io_assignment(jack_type, jack_number)
+          when 3
+            jack_type = args[0]
+            jack_number = Integer(args[1])
+            input_name = args[2]
+            client.set_io_assignment(jack_type, jack_number, input_name)
+          else
+            raise "Bogus io-assignment usage"
+          end
         when 'osd-message'
           client.osd_message(args.shift)
         when 'advanced-setup'
