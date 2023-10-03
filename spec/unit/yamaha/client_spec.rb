@@ -335,9 +335,18 @@ describe Seriamp::Yamaha::Client do
           ]
         end
 
-        it 'works' do
-          # No response at this time.
-          client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be nil
+        context 'canonical case' do
+          it 'works' do
+            # No response at this time.
+            client.set_io_assignment(:hdmi_in, 3, 'BD/HD DVD').should be nil
+          end
+        end
+
+        context 'lower case' do
+          it 'works' do
+            # No response at this time.
+            client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be nil
+          end
         end
       end
     end
