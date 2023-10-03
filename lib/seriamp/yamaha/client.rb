@@ -84,6 +84,7 @@ module Seriamp
       def all_status
         status.merge(
           tone,
+          all_io_assignments,
         )
       end
 
