@@ -21,7 +21,6 @@ module Seriamp
             # setting/retrieval via this function.
             # Note that not all inputs mentioned in the input trim input list
             # can be assigned.
-            p value
             @input_name = GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[2..3])
           end
 

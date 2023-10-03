@@ -350,6 +350,48 @@ describe Seriamp::Yamaha::Client do
         end
       end
     end
+
+    describe '#all_io_assignments' do
+      context 'rx-v3800' do
+        let(:rr) do
+          [
+            %W(\x142006010000E9\x03 \x142008010000014C\x03),
+            %W(\x142006010001EA\x03 \x1420080100010551\x03),
+            %W(\x142006010002EB\x03 \x1420080100020A5E\x03),
+            %W(\x142006010010EA\x03 \x142008010010034F\x03),
+            %W(\x142006010011EB\x03 \x1420080100110451\x03),
+            %W(\x142006010020EB\x03 \x1420080100200451\x03),
+            %W(\x142006010021EC\x03 \x1420080100211150\x03),
+            %W(\x142006010022ED\x03 \x1420080100220554\x03),
+            %W(\x142006010023EE\x03 \x1420080100230656\x03),
+            %W(\x142006010060EF\x03 \x1420080100600F67\x03),
+            %W(\x142006010061F0\x03 \x1420080100610557\x03),
+            %W(\x142006010062F1\x03 \x1420080100621155\x03),
+            %W(\x142006010063F2\x03 \x1420080100630A65\x03),
+          ]
+        end
+
+        let(:expected) do
+          {:coaxial_in_1_io_assignment=>"CD",
+           :coaxial_in_2_io_assignment=>"DVD",
+           :coaxial_in_3_io_assignment=>"DVR/VCR2",
+           :optical_out_1_io_assignment=>"CD-R",
+           :optical_out_2_io_assignment=>"MD/TAPE",
+           :optical_in_1_io_assignment=>"MD/TAPE",
+           :optical_in_2_io_assignment=>"BD/HD DVD",
+           :optical_in_3_io_assignment=>"DVD",
+           :optical_in_4_io_assignment=>"DTV",
+           :hdmi_in_1_io_assignment=>"None",
+           :hdmi_in_2_io_assignment=>"DVD",
+           :hdmi_in_3_io_assignment=>"BD/HD DVD",
+           :hdmi_in_4_io_assignment=>"DVR/VCR2"}
+        end
+
+        it 'works' do
+          client.all_io_assignments.should == expected
+        end
+      end
+    end
   end
 
   describe '#current_status' do
