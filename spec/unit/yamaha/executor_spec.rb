@@ -45,4 +45,10 @@ describe Seriamp::Yamaha::Executor do
       end
     end
   end
+
+  describe '.usage' do
+    it 'works' do
+      described_class.usage
+    end
+  end
 end
