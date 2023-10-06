@@ -55,4 +55,10 @@ describe Seriamp::Sonamp::Executor do
       executor.run_command('cmute', *%w(2 on)).should be nil
     end
   end
+
+  describe '.usage' do
+    it 'works' do
+      described_class.usage
+    end
+  end
 end

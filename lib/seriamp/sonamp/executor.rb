@@ -3,6 +3,24 @@
 module Seriamp
   module Sonamp
     class Executor
+      def self.usage
+        <<-EOT
+Sonamp module commands:
+
+detect
+status
+power <zone> <value>
+bbe <zone> <value>
+bbe_boost <zone> <value>
+bbe_low_boost <zone> <value>
+bbe_high_boost <zone> <value>
+zone_mute|zmute <zone> <value>
+zone_volume|zvol <zone> <value>
+cmute <channel> <value>
+cvol <channel> <value>
+EOT
+      end
+
       def initialize(client, **opts)
         @client = client
         @options = opts.dup.freeze
