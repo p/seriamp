@@ -92,4 +92,18 @@ describe Seriamp::Sonamp::Client do
       client.set_bbe_boost(2, true).should be nil
     end
   end
+
+  describe '#set_bbe_high_boost' do
+    include_context 'communication'
+
+    let(:rr) do
+      [
+        %w(:BH21 BH21),
+      ]
+    end
+
+    it 'works' do
+      client.set_bbe_high_boost(2, true).should be nil
+    end
+  end
 end
