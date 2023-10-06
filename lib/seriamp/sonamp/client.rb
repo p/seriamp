@@ -107,7 +107,9 @@ module Seriamp
       end
 
       def set_bbe_boost(zone, state)
-        set_zone_value('BB', zone, convert_boolean_out(state))
+        serialized = convert_boolean_out(state)
+        set_zone_value('BB', zone, serialized,
+          expected_response: "BB#{zone}#{serialized}#{serialized}")
       end
 
       def set_bbe_high_boost(zone, state)
@@ -297,12 +299,12 @@ module Seriamp
         end
       end
 
-      def set_zone_value(cmd_prefix, zone, value)
+      def set_zone_value(cmd_prefix, zone, value, expected_response: nil)
         if zone < 1 || zone > 4
           raise ArgumentError, "Zone must be between 1 and 4: #{zone}"
         end
         cmd = ":#{cmd_prefix}#{zone}#{value}"
-        expected = cmd[1...cmd.length]
+        expected = expected_response || cmd[1...cmd.length]
         dispatch_assert(cmd, expected)
       end
 

@@ -16,13 +16,18 @@ describe Seriamp::Sonamp::Client do
     tty_double
   end
 
-  describe '#status' do
+  shared_context 'communication' do
     before do
       SerialPort.should receive(:open).and_return(device)
       allow(IO).to receive(:select)
+      setup_sonamp_requests_responses(device, rr)
     end
+  end
 
-    let(:rr) {
+  describe '#status' do
+    include_context 'communication'
+
+    let(:rr) do
       [
         %w(:VER? VER1.00),
         %w(:TP? TP1),
@@ -39,7 +44,7 @@ describe Seriamp::Sonamp::Client do
         %w(:VTIG? VTI11 VTI21 VTI31 VTI41 VTIA1),
         %w(:TVLG? TVL11 TVL21 TVL31 TVL41 TVL51 TVL61 TVL71 TVL81),
       ]
-    }
+    end
 
     let(:expected_status) do
       {
@@ -62,7 +67,6 @@ describe Seriamp::Sonamp::Client do
     end
 
     it 'works' do
-      setup_sonamp_requests_responses(device, rr)
       client.status.should == expected_status
     end
 
@@ -70,9 +74,22 @@ describe Seriamp::Sonamp::Client do
       let(:extra_client_options) { {thread_safe: true} }
 
       it 'works' do
-        setup_sonamp_requests_responses(device, rr)
         client.status.should == expected_status
       end
+    end
+  end
+
+  describe '#set_bbe_boost' do
+    include_context 'communication'
+
+    let(:rr) do
+      [
+        %w(:BB21 BB211),
+      ]
+    end
+
+    it 'works' do
+      client.set_bbe_boost(2, true).should be nil
     end
   end
 end
