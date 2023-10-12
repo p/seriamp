@@ -29,6 +29,13 @@ describe Seriamp::Yamaha::Executor do
       end
     end
 
+    context 'assign' do
+      it 'works' do
+        client.should receive(:set_io_assignment).with('optical_in', 3, 'md/tape').and_return(42)
+        executor.run_command('assign', 'optical_in', '3', 'md/tape').should == 42
+      end
+    end
+
     context 'dev-status' do
       let(:status_middle) do
         -'@E0190002040050B94D3403140300000108200F1020001002828282828282828282800030114140000A00400511000000000002000200000000000200000010504D00012100070E01FFFF0110000A0014A0014210A0A00FF10110'

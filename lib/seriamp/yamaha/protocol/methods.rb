@@ -466,13 +466,13 @@ module Seriamp
 
         # jack_number is 1-based, e.g. HDMI 1, component A, optical 1
         def io_assignment(jack_type, jack_number)
-          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type)
+          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type.to_sym)
           jack_number_enc = encode_sequence(jack_number, '0', 1, 6, 1)
           extended_command("0100#{jack_type_enc}#{jack_number_enc}")
         end
 
         def set_io_assignment(jack_type, jack_number, input_name)
-          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type)
+          jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type.to_sym)
           jack_number_enc = encode_sequence(jack_number, '0', 1, 6, 1)
           # NB not all input names are valid for assignment.
           # Not ass assignable inputs can be assigned to all physical jacks -

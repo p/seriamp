@@ -324,6 +324,17 @@ describe Seriamp::Yamaha::Client do
           result.should be_a(expected_cls)
           result.to_state.should == expected
         end
+
+        context 'string for source' do
+          let(:result) do
+            client.io_assignment('hdmi_in', 3)
+          end
+
+          it 'works' do
+            result.should be_a(expected_cls)
+            result.to_state.should == expected
+          end
+        end
       end
     end
 
@@ -335,17 +346,24 @@ describe Seriamp::Yamaha::Client do
           ]
         end
 
-        context 'canonical case' do
+        context 'canonical case for destination' do
           it 'works' do
             # No response at this time.
             client.set_io_assignment(:hdmi_in, 3, 'BD/HD DVD').should be nil
           end
         end
 
-        context 'lower case' do
+        context 'lower case for destination' do
           it 'works' do
             # No response at this time.
             client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be nil
+          end
+        end
+
+        context 'string for source' do
+          it 'works' do
+            # No response at this time.
+            client.set_io_assignment('hdmi_in', 3, 'bd/hd dvd').should be nil
           end
         end
       end
