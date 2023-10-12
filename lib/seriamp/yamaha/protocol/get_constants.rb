@@ -170,7 +170,7 @@ module Seriamp
           '2' => 'AAC',
         }.freeze
 
-        AUDIO_SELECT_GET = {
+        AUDIO_SOURCE_GET = {
           '0' => 'Auto', # Confirmed RX-V1500
           '2' => 'DTS', # Confirmed RX-V1500
           '3' => 'Coax / Opt', # Unconfirmed

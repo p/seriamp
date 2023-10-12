@@ -7,6 +7,12 @@ module Seriamp
 
         private
 
+        # Mapping notes:
+        #
+        # What the specification calls "Audio Select" (values:
+        # auto/analog/coax/optical/hdmi) seriamp calls "Audio Source".
+        # What the specification calls "Audio Select Setting" (values:
+        # auto/last) seriamp calls "Program Select".
         STATUS_FIELDS = {
           # RX-V1500
           'R0177' => [
@@ -215,7 +221,7 @@ module Seriamp
             [:ready],
             [:power],
             [2, :input_name, :input_name_2],
-            [:audio_select],
+            [:audio_source],
             [:mute, :bool],
             [:zone2_input_name, :input_name_1],
             [:zone2_mute, :bool],
@@ -266,7 +272,7 @@ module Seriamp
             [2, :audio_delay],
             [3],
             [:decoder_mode_setting, :auto_last],
-            [:audio_select_setting, :auto_last],
+            [:program_select, :auto_last],
             [:dimmer],
             [1],
             [2, :osd_shift], # RX-V1700
@@ -344,7 +350,7 @@ module Seriamp
             [:ready],
             [:power],
             [2, :input_name, :input_name_2],
-            [:audio_select],
+            [:audio_source],
             [:mute, :bool],
             [:zone2_input_name, :input_name_1],
             [:zone2_mute, :bool],
@@ -396,7 +402,7 @@ module Seriamp
             [2, :initial_volume, :half_db_volume], # RX-V2700 only
             [:max_volume], # RX-V2700 only
             [:decoder_mode_setting, :auto_last],
-            [:audio_select_setting, :auto_last],
+            [:program_select, :auto_last],
             [:dimmer],
             [1],
             # [2, :osd_shift], # RX-V1700
@@ -479,7 +485,7 @@ module Seriamp
             [:ready],
             [:power],
             [2, :input_name, :input_name_2],
-            [:audio_select],
+            [:audio_source],
             [:mute, :bool],
             [:zone2_input_name, :input_name_1_1800],
             [:zone2_mute, :bool],
@@ -529,7 +535,7 @@ module Seriamp
             [2, :initial_volume, :half_db_volume],
             [:max_volume],
             [:decoder_mode_setting, :auto_last],
-            [:audio_select_setting, :auto_last],
+            [:program_select, :auto_last],
             [:dimmer],
             [1],
             # [2, :osd_shift], # RX-V1800
@@ -612,7 +618,7 @@ module Seriamp
             [:ready],
             [:power],
             [2, :input_name, :input_name_2],
-            [:audio_select],
+            [:audio_source],
             [:mute, :bool],
             [:zone2_input_name, :input_name_1_1800],
             [:zone2_mute, :bool],
@@ -662,7 +668,7 @@ module Seriamp
             [2, :initial_volume, :half_db_volume],
             [:max_volume],
             [:decoder_mode_setting, :auto_last],
-            [:audio_select_setting, :auto_last],
+            [:program_select, :auto_last],
             [:dimmer],
             [1],
             [2, :osd_shift], # RX-V1800

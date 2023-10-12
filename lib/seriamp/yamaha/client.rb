@@ -102,7 +102,7 @@ module Seriamp
 
       %i(
         model_code firmware_version system_status power main_power zone2_power
-        zone3_power input input_name audio_select audio_select_name
+        zone3_power input input_name audio_source
         main_volume zone2_volume zone3_volume
         program program_name sleep night night_name
         format sample_rate
@@ -400,7 +400,7 @@ module Seriamp
           when '22'
             {
               decoder_mode: DECODER_MODE_GET.fetch(data[0]),
-              audio_select: AUDIO_SELECT_GET.fetch(data[1]),
+              audio_source: AUDIO_SOURCE_GET.fetch(data[1]),
             }
           when '26'
             {main_volume: parse_half_db_volume(data, :main_volume)}
