@@ -410,6 +410,31 @@ describe Seriamp::Yamaha::Client do
         end
       end
     end
+
+    describe '#program_select' do
+      let(:rr) do
+        [
+          ["001",
+          "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"],
+        ]
+      end
+
+      it 'works' do
+        client.program_select.should == 'Last'
+      end
+    end
+
+    describe '#set_program_select' do
+      let(:rr) do
+        [
+          %W(\x0226001\x03 \x02006001\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_program_select('Last').should be == {program_select: 'Last'}
+      end
+    end
   end
 
   describe '#current_status' do

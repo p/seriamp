@@ -275,6 +275,16 @@ EOT
           else
             raise "Bogus io-assignment usage"
           end
+        # This is called "audio select setting" in the specification.
+        when 'program-select'
+          case args.length
+          when 0
+            puts client.program_select
+          when 1
+            client.set_program_select(args.first)
+          else
+            raise "Bogus program-select usage"
+          end
         when 'osd-message'
           client.osd_message(args.shift)
         when 'advanced-setup'

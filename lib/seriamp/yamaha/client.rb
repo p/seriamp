@@ -102,7 +102,7 @@ module Seriamp
 
       %i(
         model_code firmware_version system_status power main_power zone2_power
-        zone3_power input input_name audio_source
+        zone3_power input input_name audio_source program_select
         main_volume zone2_volume zone3_volume
         program program_name sleep night night_name
         format sample_rate
@@ -438,6 +438,14 @@ module Seriamp
             {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
             {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
+          when '60'
+            if data.length != 2
+              raise "Unexpected payload for 60: #{data}"
+            end
+            if data[0] != ?0
+              raise "Unexpected payload for 60: #{data}"
+            end
+            {program_select: AUTO_LAST_GET.fetch(data[1])}
           when *SPEAKER_LAYOUT_MAP.keys
             if data[0] != '0'
               raise NotImplementedError

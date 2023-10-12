@@ -500,6 +500,11 @@ module Seriamp
           status
         end
 
+        def set_program_select(value)
+          enc_value = AUTO_LAST_SET.fetch(value.to_s.downcase)
+          system_command("600#{enc_value}")
+        end
+
         private
 
         def fetch_hash(hash, key, value_desc, original_value)

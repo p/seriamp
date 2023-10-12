@@ -137,6 +137,11 @@ module Seriamp
           160 => '07',
           200 => '08',
         }.freeze
+
+        AUTO_LAST_SET = {
+          'auto' => '0',
+          'last' => '1',
+        }.freeze
       end
     end
   end
