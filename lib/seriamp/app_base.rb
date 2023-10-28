@@ -10,6 +10,10 @@ module Seriamp
     set :client, nil
     set :retries, true
 
+    def configured_device
+      settings.device || ENV['SERIAMP_DEVICE']
+    end
+
     private
 
     def return_current_status?
