@@ -188,7 +188,7 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Yamaha::Client.new(settings.device,
+          @client ||= Yamaha::Client.new(device: settings.device,
             logger: settings.logger, retries: settings.retries, thread_safe: true)
         end
       end

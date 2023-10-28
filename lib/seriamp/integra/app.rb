@@ -105,7 +105,7 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Integra::Client.new(settings.device,
+          @client ||= Integra::Client.new(device: settings.device,
             logger: settings.logger, retries: settings.retries, thread_safe: true)
         end
       end
