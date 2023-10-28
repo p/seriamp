@@ -158,7 +158,12 @@ module Seriamp
             if read_response
               resp = dispatch_and_parse(cmd)
               # Response should have been to our RS-232 command, verify.
-              if resp.fetch(:control_type) != :rs232c
+              begin
+                control_type = resp.fetch(:control_type)
+              rescue KeyError
+                raise NotImplementedError, "Response was missing control type: #{resp}"
+              end
+              if control_type != :rs232c
                 raise UnhandledResponse, "Response was not to our command: #{resp}"
               end
               resp.fetch(:state)
@@ -233,7 +238,12 @@ module Seriamp
           parse_framed_stx_response(resp).tap do |resp|
             # Sometimes the response isn't parsed (yet) by seriamp,
             # which causes state to be missing here...
-            update_current_status(resp.fetch(:state))
+            begin
+              state = resp.fetch(:state)
+            rescue KeyError
+              raise NotImplementedError, "Response was missing state: #{resp}"
+            end
+            update_current_status(state)
           end
         when DC2
           parse_status_response(resp).tap do |resp|
