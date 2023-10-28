@@ -35,7 +35,11 @@ module Seriamp
               logger&.debug("Found #{mod} device at #{device}")
               queue << device
             end
-          rescue CommunicationTimeout, IOError, SystemCallError => exc
+          # Need to rescue all exceptions here otherwise caller may get stuck.
+          #rescue CommunicationTimeout, IOError, SystemCallError => exc
+          rescue Interrupt, SystemExit, MemoryError
+            raise
+          rescue Exception => exc
             logger&.debug("Failed on #{mod} #{device}: #{exc.class}: #{exc}")
           end
         end
