@@ -302,6 +302,18 @@ module Seriamp
       end
     end
 
+    def retry_for_interval(interval)
+      deadline = Utils.monotime + interval
+      begin
+        yield
+      rescue Seriamp::Error => exc
+        if Utils.monotime < deadline
+          logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry (#{interval} seconds)")
+          retry
+        end
+      end
+    end
+
     def extend_next_deadline(delta)
       # 2 seconds here is definitely insufficient for RX-V1500 powering on
       @next_earliest_deadline = Utils.monotime + delta

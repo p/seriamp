@@ -12,6 +12,8 @@ module Seriamp
         include Yamaha::Helpers
         include Extended::Constants
 
+        POWER_ON_TIMEOUT = 5
+
         def advanced_setup(state)
           system_command("B00#{state ? '1' : '0'}")
         end
@@ -42,9 +44,15 @@ module Seriamp
         #
         # @param [ true | false ] state Desired power state.
         def set_main_power(state)
-          # Sometimes this command returns power state and sometimes it does not?
-          remote_command("7E7#{state ? 'E' : 'F'}")
-          extend_next_deadline if state
+          if state
+            retry_for_interval(POWER_ON_TIMEOUT) do
+              # Sometimes this command returns power state and sometimes it does not?
+              remote_command("7E7E")
+            end
+            extend_next_deadline
+          else
+            remote_command("7E7F")
+          end
           nil
         end
 
