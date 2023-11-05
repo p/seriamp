@@ -12,7 +12,9 @@ module Seriamp
     class App < AppBase
 
       get '/' do
-        clear_cache
+        if params[:fresh]
+          clear_cache
+        end
         render_json(client.status)
       end
 

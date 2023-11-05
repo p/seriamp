@@ -20,6 +20,21 @@ describe Seriamp::Yamaha::App do
   let(:client_cls) { Seriamp::Yamaha::Client }
   let(:client) { double('yamaha client') }
 
+  describe 'get /' do
+    let(:status) do
+      {ready: 'OK', main_power: true}.freeze
+    end
+
+    it 'works' do
+      client.should receive(:status).and_return(status)
+
+      get '/'
+
+      last_response.status.should == 200
+      JSON.parse(last_response.body).should == Utils.stringify_keys(status)
+    end
+  end
+
   describe 'get /power' do
   end
 

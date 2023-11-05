@@ -22,6 +22,12 @@ module Utils
   module_function def app_integration_endpoint(port)
     "http://#{localhost_host}:#{port}"
   end
+
+  module_function def stringify_keys(hash)
+    Hash[hash.map do |k, v|
+      [k.to_s, v]
+    end]
+  end
 end
 
 module ClassMethods
