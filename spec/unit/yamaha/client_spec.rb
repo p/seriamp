@@ -437,21 +437,11 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
-  describe '#current_status' do
-    let(:exchanges) do
-      [
-        [:w, "001"],
-        [:r, "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"],
-        [:w, "2309d"],
-        [:r, "\x0200269D\x03"],
-      ]
-    end
+  let(:status_alpha_exchange) do
+    [:r, "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"]
+  end
 
-    let(:client) do
-      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
-    end
-
-    let(:initial_status) do
+  let(:status_alpha) do
       {
         :ready=>"OK",
         :main_power=>true,
@@ -588,6 +578,41 @@ describe Seriamp::Yamaha::Client do
         :raw_string=>
         "@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A00"
       }.freeze
+  end
+
+  describe '#status' do
+    let(:exchanges) do
+      [
+        [:w, "001"],
+        status_alpha_exchange,
+      ]
+    end
+
+    let(:client) do
+      described_class.new(backend: :mock_serial_port, device: exchanges)
+    end
+
+    it 'works' do
+      client.status.should == status_alpha
+    end
+  end
+
+  describe '#current_status' do
+    let(:exchanges) do
+      [
+        [:w, "001"],
+        status_alpha_exchange,
+        [:w, "2309d"],
+        [:r, "\x0200269D\x03"],
+      ]
+    end
+
+    let(:client) do
+      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
+    end
+
+    let(:initial_status) do
+      status_alpha
     end
 
     it 'preserves state' do
