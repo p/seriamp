@@ -25,13 +25,33 @@ describe Seriamp::Yamaha::App do
       {ready: 'OK', main_power: true}.freeze
     end
 
-    it 'works' do
-      client.should receive(:status).and_return(status)
+    context 'basic usage' do
+      it 'works' do
+        client.should receive(:current_status).and_return(status)
 
-      get '/'
+        get '/'
 
-      last_response.status.should == 200
-      JSON.parse(last_response.body).should == Utils.stringify_keys(status)
+        last_response.status.should == 200
+        JSON.parse(last_response.body).should == Utils.stringify_keys(status)
+      end
+    end
+
+    context 'persistent client' do
+      it 'returns current status' do
+        client.should receive(:current_status).and_return(status)
+
+        get '/'
+
+        last_response.status.should == 200
+        JSON.parse(last_response.body).should == Utils.stringify_keys(status)
+
+        client.should receive(:current_status).and_return(status)
+
+        get '/'
+
+        last_response.status.should == 200
+        JSON.parse(last_response.body).should == Utils.stringify_keys(status)
+      end
     end
   end
 
