@@ -448,6 +448,12 @@ module Seriamp
             {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
           when '4E'
             {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
+          when '56'
+            if data == 'FF'
+              {hdmi_auto_audio_delay: nil}
+            else
+              {hdmi_auto_audio_delay: parse_sequence(data, '00', 0, 240, 1)}
+            end
           when '60'
             if data.length != 2
               raise "Unexpected payload for 60: #{data}"
