@@ -501,6 +501,20 @@ module Seriamp
           '05' => 'Unavailable',
         }.freeze
 
+        NET_USB_MESSAGE_GET = {
+          '00' => 'Please Wait',
+          '01' => 'Connected',
+          '02' => 'Disconnected',
+          '03' => 'Access Error',
+          '04' => 'List Updated',
+          '05' => 'Startup Server',
+          '06' => 'Unable to Play',
+          '07' => 'Connect Error',
+          '08' => 'Bookmark On',
+          '09' => 'Bookmark Off',
+          '0A' => 'Not Found',
+        }.freeze
+
         OFF_ON_GET = {
           '00' => false,
           '01' => true,
@@ -838,6 +852,7 @@ module Seriamp
         GET_MAP = {
           '00' => [:ready, :ready_report],
           '06' => :xm_message,
+          '08' => :net_usb_message,
           '10' => :format,
           '11' => [:sample_rate, :sample_rate_2],
           '12' => [:channel_indicator, :channel_indicator_report],

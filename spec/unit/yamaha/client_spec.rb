@@ -74,6 +74,7 @@ describe Seriamp::Yamaha::Client do
       '00 01' => {ready: 'Busy'},
       '00 02' => {ready: 'Standby'},
       '06 00' => {xm_message: 'Check Antenna'},
+      '08 00' => {net_usb_message: 'Please Wait'},
       '10 01' => {format: 'PCM'},
       '10 FE' => {format: '???'},
       '11 08' => {sample_rate: '44100'},
