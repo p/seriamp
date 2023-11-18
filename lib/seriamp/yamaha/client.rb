@@ -407,6 +407,19 @@ module Seriamp
           value
         else
           case command
+          when '15'
+            if data.length != 2
+              raise NotImplementedError
+            end
+            value = case Integer(data, 16)
+            when 0xFF
+              nil
+            when 0x00..0x1F
+              parse_sequence(data, '00', -31, 0, 1)
+            else
+              raise NotImplementedError
+            end
+            {dialog: value}
           when '22'
             {
               decoder_mode: DECODER_MODE_GET.fetch(data[0]),
