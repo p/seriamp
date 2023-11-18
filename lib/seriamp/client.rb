@@ -227,6 +227,9 @@ module Seriamp
       if delimiter.empty?
         raise ArgumentError, 'Delimiter cannot be empty'
       end
+      if read_buf.empty?
+        raise NoResponse, 'Attempting to extract a delimited response from an empty buffer'
+      end
       index = read_buf.index(delimiter)
       if index
         read_buf[0..index+delimiter.length-1]

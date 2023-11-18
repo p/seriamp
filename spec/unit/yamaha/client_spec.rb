@@ -145,6 +145,18 @@ describe Seriamp::Yamaha::Client do
       allow(IO).to receive(:select)
     end
 
+    context 'when receiving a system response before rs232c response' do
+      let(:rr) do
+        [
+          %W(\x0207A18\x03 \x02301109\x03 \x02002104\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_main_input('md/tape').should == {input_name: 'MD/TAPE'}
+      end
+    end
+
     describe '#set_main_volume' do
       let(:rr) do
         [

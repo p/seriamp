@@ -155,20 +155,28 @@ module Seriamp
         with_lock do
           with_retry do
             cmd = "#{STX}0#{cmd}#{ETX}"
+            dispatch(cmd, read_response: false)
             if read_response
-              resp = dispatch_and_parse(cmd)
+              resp = nil
               # Response should have been to our RS-232 command, verify.
-              begin
-                control_type = resp.fetch(:control_type)
-              rescue KeyError
-                raise NotImplementedError, "Response was missing control type: #{resp}"
-              end
-              if control_type != :rs232c
-                raise UnhandledResponse, "Response was not to our command: #{resp}"
+              loop do
+                with_device do
+                  self.read_response
+                end
+                resp = get_command_response
+                begin
+                  control_type = resp.fetch(:control_type)
+                rescue KeyError
+                  raise NotImplementedError, "Response was missing control type: #{resp}"
+                end
+                if control_type != :rs232c
+                  # Receiver can be sending system responses, ignore them.
+                  #raise UnhandledResponse, "Response was not to our command: #{resp}"
+                  next
+                end
+                break
               end
               resp.fetch(:state)
-            else
-              dispatch(cmd, read_response: false)
             end
           end
         end
