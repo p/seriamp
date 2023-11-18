@@ -420,6 +420,8 @@ module Seriamp
               raise NotImplementedError
             end
             {dialog: value}
+          when '16'
+            parse_status_flags(data, 'STX response')
           when '22'
             {
               decoder_mode: DECODER_MODE_GET.fetch(data[0]),
