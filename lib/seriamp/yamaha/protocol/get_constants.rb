@@ -308,6 +308,14 @@ module Seriamp
           '41' => 'Enhancer 2ch High',
           '42' => 'Enhancer 7ch Low',
           '43' => 'Enhancer 7ch High',
+          # RX-V3800 produces this value (44).
+          # It's used for USB playback.
+          # I cannot find documentation for it since the "standard"
+          # RX-V1800/RX-V3800 protocol only describes the status fields
+          # and not the meaning of field values.
+          # RX-V1900 protocol doesn't describe it either, perhaps because
+          # this field is USB-specific and RX-V1900 doesn't play USB.
+          '44' => 'Straight Enhancer',
           '80' => 'Straight',
         }.freeze
 
