@@ -486,8 +486,8 @@ module Seriamp
           when 'A8'
             {tone_auto_bypass: data == '00'}
           else
-            logger&.warn("Unhandled response: #{command} (#{data})")
-            nil
+            #logger&.warn("Unhandled response: #{command} (#{data})")
+            raise UnhandledResponse, "Unhandled STX response: command: #{command}; data: #{data}"
           end
         end
         {control_type: control_type}.tap do |res|

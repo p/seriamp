@@ -442,8 +442,12 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  let(:status_response) do
+    "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"
+  end
+
   let(:status_alpha_exchange) do
-    [:r, "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"]
+    [:r, status_response]
   end
 
   let(:status_alpha) do
@@ -599,6 +603,26 @@ describe Seriamp::Yamaha::Client do
 
     it 'works' do
       client.status.should == status_alpha
+    end
+
+    context 'when status is preceded by pushed state' do
+      context 'when pushed state is not recognized' do
+        let(:unhandled_pushed_response) do
+          "\x0230FFFF\x03"
+        end
+
+        let(:exchanges) do
+          [
+            [:r, unhandled_pushed_response],
+            [:w, "001"],
+            status_alpha_exchange,
+          ]
+        end
+
+        it 'returns correct status' do
+          client.status.should == status_alpha
+        end
+      end
     end
   end
 

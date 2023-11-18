@@ -194,9 +194,19 @@ module Seriamp
         break if read_buf.empty?
 
         resp = extract_one_response!
-        resp = parse_response(resp)
+        parsed_resp = begin
+          parse_response(resp)
+        rescue UnhandledResponse
+          # seriamp doesn't know how to parse the response,
+          # and the response was not expected to begin with.
+          # Let this slide because otherwise any unhandled response
+          # (and there are many cases where such can be produced)
+          # causes desired operation to potentially fail.
+          logger&.warn("Unhandled unread response: #{resp}")
+          next
+        end
 
-        logger&.warn("Unread response: #{resp}")
+        logger&.warn("Unread response: #{parsed_resp}")
       end
     end
 
