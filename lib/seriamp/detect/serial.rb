@@ -37,7 +37,7 @@ module Seriamp
             end
           # Need to rescue all exceptions here otherwise caller may get stuck.
           #rescue CommunicationTimeout, IOError, SystemCallError => exc
-          rescue Interrupt, SystemExit, MemoryError
+          rescue Interrupt, SystemExit, NoMemoryError
             raise
           rescue Exception => exc
             logger&.debug("Failed on #{mod} #{device}: #{exc.class}: #{exc}")
