@@ -86,7 +86,7 @@ module Seriamp
 
     def with_device(&block)
       if @io
-        if @io.errored?
+        if @errored || @io.errored?
           logger&.debug("Closing stale device handle due to I/O error")
           close
         end
@@ -113,6 +113,7 @@ module Seriamp
       if @io
         @io.close rescue nil
         @io = nil
+        @errored = false
       end
     end
 
@@ -304,15 +305,22 @@ module Seriamp
         if try <= retries
           logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
           try += 1
-          if detect_device?
-            @device = nil
-          end
+          reset_device
           Utils.sleep_before_retry
           retry
         else
           raise
         end
+      rescue CommunicationTimeout
+        reset_device
       end
+    end
+
+    def reset_device
+      if detect_device?
+        @device = nil
+      end
+      @errored = true
     end
 
     def retry_for_interval(interval)
