@@ -4,9 +4,11 @@ module Seriamp
   module Yamaha
     module Protocol
       module Extended
-        class GraphicEqResponse < GenericResponse
+        class GraphicEqResponse < ResponseBase
           include Yamaha::Helpers
           include Constants
+
+          register '030'
 
           def initialize(cmd, value)
             super

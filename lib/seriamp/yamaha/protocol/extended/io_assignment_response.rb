@@ -4,8 +4,10 @@ module Seriamp
   module Yamaha
     module Protocol
       module Extended
-        class IoAssignmentResponse < GenericResponse
+        class IoAssignmentResponse < ResponseBase
           include Yamaha::Helpers
+
+          register '010'
 
           def initialize(cmd, value)
             super

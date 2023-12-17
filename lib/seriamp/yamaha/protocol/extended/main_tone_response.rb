@@ -4,8 +4,10 @@ module Seriamp
   module Yamaha
     module Protocol
       module Extended
-        class MainToneResponse < GenericResponse
+        class MainToneResponse < ResponseBase
           include Yamaha::Helpers
+
+          register '033'
 
           def initialize(cmd, value)
             super

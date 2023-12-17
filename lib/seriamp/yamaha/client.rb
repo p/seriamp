@@ -6,6 +6,7 @@ require 'seriamp/backend'
 require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
 require 'seriamp/yamaha/protocol/status'
+require 'seriamp/yamaha/protocol/extended/response_base'
 require 'seriamp/yamaha/protocol/extended/generic_response'
 require 'seriamp/yamaha/protocol/extended/distance_response'
 require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
@@ -320,20 +321,8 @@ module Seriamp
           return nil
         end
 
-        cls = case command_id
-        when '012'
-          Protocol::Extended::VolumeTrimResponse
-        when '033'
-          Protocol::Extended::MainToneResponse
-        when '030'
-          Protocol::Extended::GraphicEqResponse
-        when '041'
-          Protocol::Extended::DistanceResponse
-        when '010'
-          Protocol::Extended::IoAssignmentResponse
-        else
+        cls = Yamaha::Protocol::Extended::ResponseBase.registered_responses[command_id] ||
           Protocol::Extended::GenericResponse
-        end
         cls&.new(command_id, command_data)
       end
 

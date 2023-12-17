@@ -4,8 +4,10 @@ module Seriamp
   module Yamaha
     module Protocol
       module Extended
-        class DistanceResponse < GenericResponse
+        class DistanceResponse < ResponseBase
           include Yamaha::Helpers
+
+          register '041'
 
           def initialize(cmd, value)
             super

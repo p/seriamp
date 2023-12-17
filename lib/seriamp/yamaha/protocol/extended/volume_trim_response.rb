@@ -4,8 +4,10 @@ module Seriamp
   module Yamaha
     module Protocol
       module Extended
-        class VolumeTrimResponse < GenericResponse
+        class VolumeTrimResponse < ResponseBase
           include Yamaha::Helpers
+
+          register '012'
 
           def initialize(cmd, value)
             super
