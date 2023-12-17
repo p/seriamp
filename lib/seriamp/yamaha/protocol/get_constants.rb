@@ -857,6 +857,14 @@ module Seriamp
 
         IO_ASSIGNMENT_JACK_TYPE_SET = IO_ASSIGNMENT_JACK_TYPE_GET.invert.freeze
 
+        SPEAKER_LAYOUT_MAP = {
+          '70' => [:center_speaker_layout, SPEAKER_SETTING_GET],
+          '71' => [:front_speaker_layout, SPEAKER_SETTING_GET],
+          '72' => [:surround_speaker_layout, SPEAKER_SETTING_GET],
+          '73' => [:surround_back_speaker_layout, SB_SPEAKER_SETTING_GET],
+          '74' => [:presence_speaker_layout, PRESENCE_SPEAKER_SETTING_GET],
+        }.freeze
+
         GET_MAP = {
           '00' => [:ready, :ready_report],
           '06' => :xm_message,

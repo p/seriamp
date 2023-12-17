@@ -372,14 +372,6 @@ module Seriamp
         presence_right
       ).freeze
 
-      SPEAKER_LAYOUT_MAP = {
-        '70' => [:center_speaker_layout, SPEAKER_SETTING_GET],
-        '71' => [:front_speaker_layout, SPEAKER_SETTING_GET],
-        '72' => [:surround_speaker_layout, SPEAKER_SETTING_GET],
-        '73' => [:surround_back_speaker_layout, SB_SPEAKER_SETTING_GET],
-        '74' => [:presence_speaker_layout, PRESENCE_SPEAKER_SETTING_GET],
-      }.freeze
-
       def parse_stx_response(resp)
         control_type = parse_flag(resp[0], {
           '0' => :rs232c,
