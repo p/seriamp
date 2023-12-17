@@ -636,6 +636,24 @@ describe Seriamp::Yamaha::Client do
           client.status.should == status_alpha
         end
       end
+
+      context 'when pushed state is recognized' do
+        let(:handled_pushed_response) do
+          "\x02304A30\x03"
+        end
+
+        let(:exchanges) do
+          [
+            [:r, handled_pushed_response],
+            [:w, "001"],
+            status_alpha_exchange,
+          ]
+        end
+
+        it 'returns correct status' do
+          client.status.should == status_alpha
+        end
+      end
     end
   end
 
@@ -669,6 +687,45 @@ describe Seriamp::Yamaha::Client do
       initial_status.fetch(:main_volume).should == -15
       client.set_main_volume(-21)
       client.current_status.should == initial_status.merge(main_volume: -21)
+    end
+
+    context 'when status is preceded by pushed state' do
+      context 'when pushed state is not recognized' do
+        let(:unhandled_pushed_response) do
+          "\x0230FFFF\x03"
+        end
+
+        let(:exchanges) do
+          [
+            [:r, unhandled_pushed_response],
+            [:w, "001"],
+            status_alpha_exchange,
+          ]
+        end
+
+        it 'returns correct status' do
+          client.current_status.should == status_alpha
+        end
+      end
+
+      context 'when pushed state is recognized' do
+        let(:handled_pushed_response) do
+          "\x02304A30\x03"
+        end
+
+        let(:exchanges) do
+          [
+            [:r, handled_pushed_response],
+            [:w, "001"],
+            status_alpha_exchange,
+          ]
+        end
+
+        it 'returns correct status' do
+          client.current_status.should_not == status_alpha
+          client.current_status.should == status_alpha.merge(subwoofer_2_level: 4.0)
+        end
+      end
     end
   end
 end
