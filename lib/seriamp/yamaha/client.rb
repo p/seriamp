@@ -223,15 +223,6 @@ module Seriamp
 
       ZERO_ORD = '0'.ord
 
-=begin unused
-      def write_command(cmd)
-        with_device do
-          @io.syswrite(cmd.encode('ascii'))
-          @io.clear_rts
-        end
-      end
-=end
-
       def response_complete?
         read_buf.end_with?(self.class.const_get(:ETX))
       end
@@ -309,8 +300,6 @@ module Seriamp
         command_id = data[...3]
         status = data[3]
         command_data = data[4..]
-
-        #p [command_id,status,command_data]
 
         case status
         when '0'
@@ -603,13 +592,6 @@ module Seriamp
       }.freeze
 
       MODEL_IDS = MODEL_NAMES.invert.freeze
-
-      PURE_DIRECT_FIELD = {
-        'R0177' => 28,
-        'R0178' => 126,
-        'R0212' => 126,
-        'R0226' => 126,
-      }.freeze
 
       def parse_status_response(resp)
         if resp.length < 10
