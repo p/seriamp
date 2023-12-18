@@ -85,3 +85,9 @@ When pure direct is off, nothing appears to happen on the front panel.
 
 While testing with Python, I ran into [this issue](https://bugs.python.org/issue20074) -
 to open a TTY in Python, buffering must be disabled.
+
+## Lack of Value
+
+Some fields have a value of "---" returned by the receiver, presumably to
+indicate a lack of value in that position (for example, bit rate for
+analog input). Seriamp returns such values as `nil`.

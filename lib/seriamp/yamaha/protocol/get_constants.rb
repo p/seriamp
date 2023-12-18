@@ -334,7 +334,7 @@ module Seriamp
           '0B' => 'WMA',
           '0C' => 'MP3',
           'FE' => '???',
-          'FF' => '---',
+          'FF' => nil,
         }.freeze
 
         INPUT_MODE_GET = {
@@ -374,7 +374,7 @@ module Seriamp
           'OF' => '192000',
           '10' => 'DSD', # 2.8224 MHz
           'FE' => '???',
-          'FF' => '---',
+          'FF' => nil,
         }.freeze
 
         CHANNEL_INDICATOR_GET = {
@@ -391,19 +391,19 @@ module Seriamp
           'A' => '2/4',
           'B' => '3/4',
           'C' => 'MLT',
-          'F' => '---',
+          'F' => nil,
         }.freeze
 
         CHANNEL_INDICATOR_REPORT_GET = prefix_keys_with_zero(CHANNEL_INDICATOR_GET)
 
         LFE_INDICATOR_GET = {
           '0' => '0.1',
-          'F' => '---',
+          'F' => nil,
         }.freeze
 
         LFE_INDICATOR_REPORT_GET = {
           '00' => '0.1',
-          'FF' => '---',
+          'FF' => nil,
         }.freeze
 
         BIT_RATE_GET = {
@@ -446,7 +446,7 @@ module Seriamp
           '24' => 'Open',
           '25' => 'Variable',
           '26' => 'Losless',
-          'FF' => '---',
+          'FF' => nil,
         }.freeze
 
         DUAL_MONO_OUT_GET = {

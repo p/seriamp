@@ -31,7 +31,7 @@ module Seriamp
       def parse_dialog_level(value, field_name)
         case value
         when 'FF'
-          '---'
+          nil
         else
           parse_sequence(value, '00' -31, 0, 1)
         end
