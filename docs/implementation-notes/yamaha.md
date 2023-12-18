@@ -13,6 +13,13 @@ To monitor serial communications under Linux, I used
 [slsnif](https://github.com/aeruder/slsnif) which I found via
 [this summary of serial port monitoring tools](https://serverfault.com/questions/112957/sniff-serial-port-on-linux).
 
+## RS232 vs RS232C
+
+The RS232 standard has had several revisions, the most recent one being
+RS232C. Thus, technically, the standard is in fact called "RS232C",
+but practically the "C" can be omitted because any equipment that speaks
+RS232 would be speaking RS232C.
+
 ## Yamaha Timeout
 
 The manual specifies that commands should be responded to in 500 ms and to

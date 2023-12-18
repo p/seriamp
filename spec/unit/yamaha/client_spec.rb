@@ -18,7 +18,7 @@ describe Seriamp::Yamaha::Client do
       let(:response) { "\u0002002002\u0003" }
       it 'parses' do
         parsed.should == {
-          control_type: :rs232c,
+          control_type: :rs232,
           state: {main_power: true, zone2_power: false, zone3_power: false},
         }
       end
@@ -65,7 +65,7 @@ describe Seriamp::Yamaha::Client do
     shared_examples 'returns correct result' do
       let(:resp) { "0 0 #{response_content}".gsub(' ', '') }
       it 'returns correct result' do
-        parsed.should == {control_type: :rs232c, state: expected_state}
+        parsed.should == {control_type: :rs232, state: expected_state}
       end
     end
 
@@ -145,7 +145,7 @@ describe Seriamp::Yamaha::Client do
       allow(IO).to receive(:select)
     end
 
-    context 'when receiving a system response before rs232c response' do
+    context 'when receiving a system response before rs232 response' do
       let(:rr) do
         [
           %W(\x0207A18\x03 \x02301109\x03 \x02002104\x03),

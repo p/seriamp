@@ -3,7 +3,7 @@
 Seriamp is a Ruby library plus a collection of utilities and daemons to
 control a variety of receivers and amplifiers via serial connection (RS-232)
 or network (Ethernet/IP). The primary targets of Seriamp are Yamaha
-RS-232C-capable receivers and Sonance Sonamp 875D SE/Mk2 amplifiers, as
+RS-232-capable receivers and Sonance Sonamp 875D SE/Mk2 amplifiers, as
 those are the models I primarily use, but some code is written for
 Yamaha YNCA protocol (usable over both RS-232C and Ethernet) and
 Onkyo/Integra/post-2014 Pioneer Elite receivers (which all use the
@@ -61,7 +61,7 @@ those should in theory be operable via the remote, but not the main zone.
 Normally the only way to adjust main zone tone controls is to walk to the
 receiver and operate the front panel knobs/buttons.
 
-The extended RS232C protocol however provides commands to alter tone for the
+The extended RS232 protocol however provides commands to alter tone for the
 main zone, and can be used to implement remote tone control functionality.
 
 ### Night Mode via High Pass Filter

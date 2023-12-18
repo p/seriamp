@@ -172,7 +172,7 @@ module Seriamp
                 rescue KeyError
                   raise NotImplementedError, "Response was missing control type: #{resp}"
                 end
-                if control_type != :rs232c
+                if control_type != :rs232
                   # Receiver can be sending system responses, ignore them.
                   #raise UnhandledResponse, "Response was not to our command: #{resp}"
                   next
@@ -189,7 +189,7 @@ module Seriamp
         with_lock do
           with_retry do
             resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
-            if resp.fetch(:control_type) != :rs232c
+            if resp.fetch(:control_type) != :rs232
               raise "Wrong control type: #{resp[:control_type]}"
             end
             if guard = resp[:guard]
@@ -354,7 +354,7 @@ module Seriamp
 
       def parse_stx_response(resp)
         control_type = parse_flag(resp[0], {
-          '0' => :rs232c,
+          '0' => :rs232,
           '1' => :remote,
           '2' => :key,
           '3' => :system,
