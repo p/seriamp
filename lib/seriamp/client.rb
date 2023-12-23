@@ -302,10 +302,10 @@ module Seriamp
         # Retrying the operation is pointless in this case.
         raise
       rescue Seriamp::Error, IOError, SystemCallError => exc
+        reset_device
         if try <= retries
           logger&.warn("Error during operation: #{exc.class}: #{exc} - will retry")
           try += 1
-          reset_device
           Utils.sleep_before_retry
           retry
         else
@@ -313,6 +313,7 @@ module Seriamp
         end
       rescue CommunicationTimeout
         reset_device
+        raise
       end
     end
 
