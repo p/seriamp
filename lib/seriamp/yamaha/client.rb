@@ -154,7 +154,10 @@ module Seriamp
         nil
       end
 
-      def remote_command(cmd, read_response: true)
+      def remote_command(cmd, read_response: true, expect_response_state: nil, include_response_state: nil)
+        if expect_response_state || include_response_state and !read_response
+          raise ArgumentError, "Cannot accept response requirements when asked not to read the response"
+        end
         with_lock do
           with_retry do
             cmd = "#{STX}0#{cmd}#{ETX}"
@@ -175,6 +178,11 @@ module Seriamp
                 if control_type != :rs232
                   # Receiver can be sending system responses, ignore them.
                   #raise UnhandledResponse, "Response was not to our command: #{resp}"
+                  update_current_status(resp)
+                  next
+                end
+                if expect_response_state && !resp.fetch(:state).keys.include?(expect_response_state)
+                  logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
                   next
                 end
                 break

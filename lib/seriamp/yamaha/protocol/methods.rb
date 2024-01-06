@@ -154,7 +154,7 @@ module Seriamp
           else
             '7EA3'
           end
-          remote_command(cmd)
+          remote_command(cmd, expect_response_state: :mute, include_response_state: %i(mute_type))
         end
 
         def set_zone2_mute(state)
