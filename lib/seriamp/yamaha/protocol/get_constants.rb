@@ -37,16 +37,6 @@ module Seriamp
           'Data length',
         ]
 
-        __UNUSED__STATUS_FIELDS = [
-          'Baud rate (@)',
-          'Receive buffer (E)',
-          'Receive buffer (0)',
-          'Command timeout (1)',
-          'Command timeout (9)',
-          'Command timeout (0)',
-          'Handshaking (0)',
-        ]
-
         STATUS_TAIL_FIELDS = [
           'Checksum',
           'Checksum',
