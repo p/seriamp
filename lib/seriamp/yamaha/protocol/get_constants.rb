@@ -865,6 +865,11 @@ module Seriamp
           '74' => [:presence_speaker_layout, PRESENCE_SPEAKER_SETTING_GET],
         }.freeze
 
+        MUTE_TYPE_GET = {
+          '00' => 'Full',
+          '01' => '-20dB',
+        }.freeze
+
         GET_MAP = {
           '00' => [:ready, :ready_report],
           '06' => :xm_message,
@@ -888,6 +893,7 @@ module Seriamp
           # Speaker level test mode
           '80' => :test,
           '8C' => :pure_direct,
+          'A5' => :mute_type,
         }.freeze
       end
     end

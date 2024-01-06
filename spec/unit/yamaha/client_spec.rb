@@ -233,6 +233,19 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
+    describe '#set_mute' do
+      let(:rr) do
+        [
+          %W(\x0207EA2\x03 \x0200A500\x03),
+        ]
+      end
+
+      it 'works' do
+        # No return value yet
+        client.set_main_mute(true).should be nil
+      end
+    end
+
     describe '#set_main_speaker_tone_bass' do
       let(:rr) do
         [
