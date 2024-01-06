@@ -490,6 +490,30 @@ module Seriamp
           extended_command("01100#{input_id}")
         end
 
+        def set_input_label(input_name, label)
+          input_id = hash_get_with_upcase(
+            GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET, input_name)
+          if label.length > 9
+            raise ArgumentError, "Label must be no more than 9 characters long"
+          end
+          if false
+            label = label + ' ' * (8 - label.length)
+            extended_command("01110#{input_id}09#{label}")
+          else
+            # Labels of fewer than 9 characters work on at least RX-V3800,
+            # they are always padded with spaces to 9 characters by the
+            # receiver.
+            # If length doesn't match length of provided label the receiver
+            # subsequently produces responses that Seriamp barfs on.
+            # I haven't investigated whether this is due to the response
+            # being broken, receiver storing excessive or broken data or
+            # a Seriamp issue.
+            # To fix the receiver if it got into such a state, set a new
+            # input label while correctly specifying its length.
+            extended_command("01110#{input_id}0#{label.length}#{label}")
+          end
+        end
+
         def all_input_labels
           status = {}
           VOLUME_TRIM_REQS.each do |req|

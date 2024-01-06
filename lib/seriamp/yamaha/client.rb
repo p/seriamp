@@ -332,6 +332,13 @@ module Seriamp
           return nil
         end
 
+        # Special case for input labels...
+        # Apparently the receiver returns the "rename id" but no subsequent
+        # fields.
+        if command_id == '011' && command_data == '0'
+          return nil
+        end
+
         cls = Yamaha::Protocol::Extended::ResponseBase.registered_responses[command_id] ||
           Protocol::Extended::GenericResponse
         cls&.new(command_id, command_data)

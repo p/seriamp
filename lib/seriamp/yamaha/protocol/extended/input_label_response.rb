@@ -17,6 +17,8 @@ module Seriamp
             end
 
             @input_name = GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[1..2])
+            # "Character No." (length?) is always 09 in my testing.
+            # p value[3..4]
             @label = value[5..]
           end
 
