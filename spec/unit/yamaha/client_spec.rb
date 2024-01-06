@@ -90,7 +90,7 @@ describe Seriamp::Yamaha::Client do
       '20 01' => {main_power: true, zone2_power: true, zone3_power: true},
       '21 04' => {input_name: 'MD/TAPE'},
       '22 00' => {audio_source: 'Auto', decoder_mode: 'Auto'},
-      '23 00' => {mute: false},
+      '23 00' => {main_mute: false},
       '26 77' => {main_volume: -40.0},
       '28 34' => {program_name: '2ch Stereo'},
       '28 80' => {program_name: 'Straight'},
@@ -233,7 +233,7 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
-    describe '#set_mute' do
+    describe '#set_main_mute' do
       let(:rr) do
         [
           %W(\x0207EA2\x03 \x0200A500\x03 \x02002301\x03),
@@ -528,7 +528,7 @@ describe Seriamp::Yamaha::Client do
         :zone3_power=>false,
         :input_name=>"PHONO",
         :audio_source=>"Auto",
-        :mute=>false,
+        :main_mute=>false,
         :zone2_input_name=>"DVD",
         :zone2_mute=>false,
         :main_volume=>-15.0,

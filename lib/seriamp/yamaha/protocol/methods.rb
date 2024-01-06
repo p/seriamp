@@ -135,7 +135,7 @@ module Seriamp
         end
 
         def main_mute?
-          current_status.fetch(:mute)
+          current_status.fetch(:main_mute)
         end
 
         def zone2_mute?
@@ -154,7 +154,7 @@ module Seriamp
           else
             '7EA3'
           end
-          remote_command(cmd, expect_response_state: :mute, include_response_state: %i(mute_type))
+          remote_command(cmd, expect_response_state: :main_mute, include_response_state: %i(mute_type))
         end
 
         def set_zone2_mute(state)
