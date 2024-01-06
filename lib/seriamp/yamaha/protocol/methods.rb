@@ -135,7 +135,15 @@ module Seriamp
         end
 
         def main_mute?
-          status.fetch(:mute)
+          current_status.fetch(:mute)
+        end
+
+        def zone2_mute?
+          current_status.fetch(:zone2_mute)
+        end
+
+        def zone3_mute?
+          current_status.fetch(:zone3_mute)
         end
 
         def set_main_mute(state)

@@ -156,12 +156,28 @@ describe Seriamp::Yamaha::Client do
       let(:exchanges) do
         [
           status_request,
-          status_alpha_response,
+          [:r, status_response],
         ]
       end
 
-      it 'works' do
-        client.main_mute?.should be false
+      context 'when false' do
+        it 'returns correct value' do
+          client.main_mute?.should be false
+        end
+      end
+
+      context 'when muted' do
+        let(:status_response) do
+          "\x12R0225JB5@E01900020001C0ACE88003140200000000200F1020001002828262626262628282800020114140000A014055112000020040020001000000000002000000115077000121100A0A01FFFF0110000A0014A0014210A0A00FF101102D\x03"
+        end
+
+        it 'returns correct value' do
+          client.main_mute?.should be true
+
+          # check main is independent from zone 2
+          client.zone2_mute?.should be false
+          client.zone3_mute?.should be false
+        end
       end
     end
   end
