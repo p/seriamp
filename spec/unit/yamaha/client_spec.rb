@@ -246,6 +246,19 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
+    describe '#set_main_input' do
+      let(:rr) do
+        [
+          %W(\x0207A13\x03 \x0200210A\x03),
+        ]
+      end
+
+      it 'works' do
+        pending
+        client.set_main_input('DVR').should == {input_name: 'DVR'}
+      end
+    end
+
     describe '#set_main_speaker_tone_bass' do
       let(:rr) do
         [
