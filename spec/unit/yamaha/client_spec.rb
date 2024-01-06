@@ -131,7 +131,7 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
-  describe 'control methods' do
+  shared_context 'rr mock' do
     let(:extra_client_options) { {} }
     let(:client) { described_class.new(**{device: '/dev/bogus'}.update(extra_client_options)) }
     let(:device) do
@@ -144,6 +144,30 @@ describe Seriamp::Yamaha::Client do
       allow(SerialPort).to receive(:open).and_return(device)
       allow(IO).to receive(:select)
     end
+  end
+
+  describe 'query methods' do
+
+    let(:client) do
+      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
+    end
+
+    describe '#main_mute?' do
+      let(:exchanges) do
+        [
+          status_request,
+          status_alpha_response,
+        ]
+      end
+
+      it 'works' do
+        client.main_mute?.should be false
+      end
+    end
+  end
+
+  describe 'control methods' do
+    include_context 'rr mock'
 
     context 'when receiving a system response before rs232 response' do
       let(:rr) do
@@ -455,11 +479,15 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  let(:status_request) do
+    [:w, "001"]
+  end
+
   let(:status_response) do
     "\x12R0212IAE@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A0098\x03"
   end
 
-  let(:status_alpha_exchange) do
+  let(:status_alpha_response) do
     [:r, status_response]
   end
 
@@ -605,8 +633,8 @@ describe Seriamp::Yamaha::Client do
   describe '#status' do
     let(:exchanges) do
       [
-        [:w, "001"],
-        status_alpha_exchange,
+        status_request,
+        status_alpha_response,
       ]
     end
 
@@ -628,7 +656,7 @@ describe Seriamp::Yamaha::Client do
           [
             [:r, unhandled_pushed_response],
             [:w, "001"],
-            status_alpha_exchange,
+            status_alpha_response,
           ]
         end
 
@@ -661,7 +689,7 @@ describe Seriamp::Yamaha::Client do
     let(:exchanges) do
       [
         [:w, "001"],
-        status_alpha_exchange,
+        status_alpha_response,
         [:w, "2309d"],
         [:r, "\x0200269D\x03"],
       ]

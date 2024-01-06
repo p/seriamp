@@ -134,6 +134,10 @@ module Seriamp
           remote_command('7AFE').fetch(:zone3_volume)
         end
 
+        def main_mute?
+          status.fetch(:mute)
+        end
+
         def set_main_mute(state)
           cmd = if state == :attenuate || state == 'attenuate'
             '7EDF'

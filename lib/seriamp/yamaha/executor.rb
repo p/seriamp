@@ -86,6 +86,19 @@ EOT
             state = Utils.parse_on_off(which)
           end
           client.public_send(method, state)
+        when 'mute'
+          which = args.shift
+          if %w(main zone2 zone3).include?(which)
+            value = args.shift
+          else
+            value = which
+            which = 'main'
+          end
+          if value.nil?
+            return client.public_send("#{which}_mute?")
+          end
+          value = Utils.parse_on_off(value)
+          client.public_send("set_#{which}_mute", value)
         when 'volume'
           which = args.shift
           if %w(main zone2 zone3).include?(which)
