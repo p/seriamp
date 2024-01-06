@@ -94,3 +94,10 @@ to open a TTY in Python, buffering must be disabled.
 Some fields have a value of "---" returned by the receiver, presumably to
 indicate a lack of value in that position (for example, bit rate for
 analog input). Seriamp returns such values as `nil`.
+
+## Input Rename
+
+Seriamp uses the term "label" to refer to user-provided input name,
+because the receiver continues to refer to its inputs by their canonical
+names throughout the API responses and the only place where the user-supplied
+label even shows up is just in the operation to retrieve this label.

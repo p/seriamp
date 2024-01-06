@@ -13,6 +13,7 @@ require 'seriamp/yamaha/protocol/extended/graphic_eq_response'
 require 'seriamp/yamaha/protocol/extended/main_tone_response'
 require 'seriamp/yamaha/protocol/extended/volume_trim_response'
 require 'seriamp/yamaha/protocol/extended/io_assignment_response'
+require 'seriamp/yamaha/protocol/extended/input_label_response'
 require 'seriamp/yamaha/parser'
 require 'seriamp/client'
 

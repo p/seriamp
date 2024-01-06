@@ -135,7 +135,7 @@ module Seriamp
           '0E' => 'XM',
           '0F' => 'None', # Read-only (returned for I/O assigment)
           '10' => 'Multi-Channel',
-          '11' => 'BD/HD DVD', # Added in RX--V1800/RX-V3800
+          '11' => 'BD/HD DVD', # Added in RX-V1800/RX-V3800
           '20' => 'Dock',
           '21' => 'PC/MCX', # RX-V2700, RX-V3800 only
           '22' => 'Net Radio', # RX-V2700, RX-V3800 only

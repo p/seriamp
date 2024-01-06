@@ -272,6 +272,19 @@ EOT
           else
             raise "Bogus volume-trim usage"
           end
+        when 'input-label'
+          case args.length
+          when 0
+            pp client.all_input_labels
+          when 1
+            p client.input_label(args.shift)
+          when 2
+            input_name = args.shift
+            label = args.shift
+            client.set_input_label(input_name, label)
+          else
+            raise "Bogus input-label usage"
+          end
         when 'assign', 'io-assignment'
           case args.length
           when 0

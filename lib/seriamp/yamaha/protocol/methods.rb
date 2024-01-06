@@ -484,6 +484,20 @@ module Seriamp
           status
         end
 
+        def input_label(input_name)
+          input_id = hash_get_with_upcase(
+            GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET, input_name)
+          extended_command("01100#{input_id}")
+        end
+
+        def all_input_labels
+          status = {}
+          VOLUME_TRIM_REQS.each do |req|
+            status.update(input_label(req).to_state)
+          end
+          status
+        end
+
         # jack_number is 1-based, e.g. HDMI 1, component A, optical 1
         def io_assignment(jack_type, jack_number)
           jack_type_enc = GetConstants::IO_ASSIGNMENT_JACK_TYPE_SET.fetch(jack_type.to_sym)
