@@ -703,7 +703,7 @@ describe Seriamp::Yamaha::Client do
           [
             [:r, handled_pushed_response],
             [:w, "001"],
-            status_alpha_exchange,
+            status_alpha_response,
           ]
         end
 
@@ -756,7 +756,7 @@ describe Seriamp::Yamaha::Client do
           [
             [:r, unhandled_pushed_response],
             [:w, "001"],
-            status_alpha_exchange,
+            status_alpha_response,
           ]
         end
 
@@ -774,7 +774,7 @@ describe Seriamp::Yamaha::Client do
           [
             [:r, handled_pushed_response],
             [:w, "001"],
-            status_alpha_exchange,
+            status_alpha_response,
           ]
         end
 
