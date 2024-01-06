@@ -881,7 +881,7 @@ module Seriamp
           '14' => :bit_rate,
           '20' => [:power, :power_report],
           '21' => [:input_name, :input_name_2],
-          '23' => :main_mute,
+          '23' => [:main_mute, :mute],
           '28' => :program_name,
           '2E' => :speaker_a,
           '2F' => :speaker_b,

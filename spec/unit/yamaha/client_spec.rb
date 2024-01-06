@@ -242,7 +242,7 @@ describe Seriamp::Yamaha::Client do
 
       it 'works' do
         # No return value yet
-        client.set_main_mute(true).should == {mute: true}
+        client.set_main_mute(true).should == {main_mute: true}
       end
     end
 
