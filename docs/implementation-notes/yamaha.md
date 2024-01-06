@@ -20,6 +20,9 @@ RS232C. Thus, technically, the standard is in fact called "RS232C",
 but practically the "C" can be omitted because any equipment that speaks
 RS232 would be speaking RS232C.
 
+Seriamp omits the "C" for brevity and always uses "RS232" to refer to the
+protocol.
+
 ## Yamaha Timeout
 
 The manual specifies that commands should be responded to in 500 ms and to
