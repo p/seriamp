@@ -495,6 +495,56 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
+    describe '#all_input_labels' do
+      context 'rx-v3800' do
+        let(:rr) do
+          [
+            %W(\x14200701100001B\x03 \x142012011000009\x20\x20PHONO\x20\x2084\x03),
+            %W(\x14200701100011C\x03 \x142012011000109\x20\x20\x20CD\x20\x20\x20\x20E8\x03),
+            %W(\x14200701100021D\x03 \x142012011000209\x20\x20TUNER\x20\x2090\x03),
+            %W(\x14200701100031E\x03 \x142012011000309\x20\x20CD-R\x20\x20\x2029\x03),
+            %W(\x14200701100041F\x03 \x142012011000409\x20\x20\x20TC\x20\x20\x20\x20FB\x03),
+            %W(\x142007011000520\x03 \x142012011000509\x20\x20\x20DVD\x20\x20\x2023\x03),
+            %W(\x142007011000621\x03 \x142012011000609\x20DTV/CBL\x20B4\x03),
+            %W(\x142007011000924\x03 \x142012011000909\x20\x20\x20VCR\x20\x20\x2034\x03),
+            %W(\x142007011000A2C\x03 \x142012011000A09\x20\x20Coax\x20\x20\x20BC\x03),
+            %W(\x142007011000C2E\x03 \x142012011000C09\x20\x20V-AUX\x20\x2084\x03),
+            %W(\x142007011000E30\x03 \x142012011000E09\x20\x20\x20XM\x20\x20\x20\x201A\x03),
+            %W(\x14200701100101C\x03 \x142012011001009MULTI\x20CH\x20D7\x03),
+            %W(\x14200701100111D\x03 \x142012011001109BD/HD\x20DVDC1\x03),
+            %W(\x14200701100201D\x03 \x142012011002009\x20\x20DOCK\x20\x20\x2043\x03),
+            %W(\x14200701100211E\x03 \x142012011002109\x20\x20\x20\x20\x20\x20\x20\x20\x20A3\x03),
+            %W(\x14200701100221F\x03 \x142012011002209\x20\x20\x20\x20\x20\x20\x20\x20\x20A4\x03),
+            %W(\x142007011002320\x03 \x142012011002309\x20\x20\x20\x20\x20\x20\x20\x20\x20A5\x03),
+          ]
+        end
+
+        let(:expected) do
+          {:phono_label=>"  PHONO  ",
+           :cd_label=>"   CD    ",
+           :tuner_label=>"  TUNER  ",
+           :cd_r_label=>"  CD-R   ",
+           :md_tape_label=>"   TC    ",
+           :dvd_label=>"   DVD   ",
+           :dtv_label=>" DTV/CBL ",
+           :vcr1_label=>"   VCR   ",
+           :dvr_vcr2_label=>"  Coax   ",
+           :v_aux_label=>"  V-AUX  ",
+           :xm_label=>"   XM    ",
+           :multi_channel_label=>"MULTI CH ",
+           :bd_hd_dvd_label=>"BD/HD DVD",
+           :dock_label=>"  DOCK   ",
+           :pc_mcx_label=>"         ",
+           :net_radio_label=>"         ",
+           :usb_label=>"         "}
+        end
+
+        it 'works' do
+          client.all_input_labels.should == expected
+        end
+      end
+    end
+
     describe '#program_select' do
       let(:rr) do
         [
