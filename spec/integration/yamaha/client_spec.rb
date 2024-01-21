@@ -23,8 +23,8 @@ describe 'Yamaha integration' do
     end
   end
 
-  describe '#main_tone_bass_speaker' do
-    let(:result) { client.main_tone_bass_speaker }
+  describe '#main_speaker_tone_bass' do
+    let(:result) { client.main_speaker_tone_bass }
 
     it 'works' do
       result.should be_a(Hash)
