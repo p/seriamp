@@ -32,6 +32,26 @@ describe 'Yamaha integration' do
     end
   end
 
+  describe '#set_main_power' do
+    context 'when power is on' do
+      before do
+        client.main_power.should be true
+      end
+
+      it 'can be turned on' do
+        client.set_main_power(true)
+
+        client.main_power.should be true
+      end
+
+      it 'can be turned on continuously without errors' do
+        10.times do
+          client.set_main_power(true)
+        end
+      end
+    end
+  end
+
   describe '#main_speaker_tone_bass' do
     let(:result) { client.main_speaker_tone_bass }
 
