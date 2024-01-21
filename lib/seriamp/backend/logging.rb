@@ -6,28 +6,32 @@ module Seriamp
 
       def sysread(*args)
         super.tap do |result|
-          puts "Read: #{escape(result)}"
+          logger.debug("Read: #{escape(result)}")
         end
       end
 
       def read_nonblock(*args)
         super.tap do |result|
-          puts "Read: #{escape(result)}"
+          logger.debug("Read: #{escape(result)}")
         end
       end
 
       def syswrite(chunk)
-        puts "Write: #{escape(chunk)}"
+        logger.debug("Write: #{escape(chunk)}")
         super
       end
 
       def readline
         super.tap do |result|
-          puts "Readline: #{escape(result)}"
+          logger.debug("Readline: #{escape(result)}")
         end
       end
 
       private
+
+      def logger
+        @logger ||= Logger.new(STDERR)
+      end
 
       def escape(str)
         str.split('').map do |c|
