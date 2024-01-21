@@ -21,6 +21,14 @@ describe 'Yamaha integration' do
     it 'works' do
       status.fetch(:main_power).should be true
     end
+
+    context 'when power is on' do
+      it 'can be queried continuously without errors' do
+        10.times do
+          client.status
+        end
+      end
+    end
   end
 
   describe '#main_speaker_tone_bass' do
