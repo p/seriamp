@@ -53,9 +53,32 @@ module ClassMethods
       wait_for_port_available(port)
     end
   end
+
+  def require_integration_device(key)
+    unless %i(yamaha).include?(key)
+      raise ArgumentError, "Bad key: #{key}"
+    end
+
+    env_key = "SERIAMP_INTEGRATION_#{key.to_s.upcase}"
+    if (ENV[env_key] || '').empty?
+      before(:all) do
+        skip "Set #{env_key}=/dev/ttyXXX in environment to run #{key} integration tests"
+      end
+    end
+  end
+
 end
 
 module InstanceMethods
+  def integration_device(key)
+    unless %i(yamaha).include?(key)
+      raise ArgumentError, "Bad key: #{key}"
+    end
+
+    env_key = "SERIAMP_INTEGRATION_#{key.to_s.upcase}"
+    ENV.fetch(env_key)
+  end
+
   def tty_double
     double('tty device').tap do |device|
       allow(device).to receive(:baud=)

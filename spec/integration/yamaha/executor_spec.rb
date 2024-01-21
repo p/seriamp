@@ -1,18 +1,14 @@
 require 'spec_helper'
 
 describe 'Yamaha integration' do
-  if (ENV['SERIAMP_INTEGRATION_YAMAHA'] || '').empty?
-    before(:all) do
-      skip "Set SERIAMP_INTEGRATION_YAMAHA=/dev/ttyXXX in environment to run integration tests"
-    end
-  end
+  require_integration_device :yamaha
 
   let(:logging_options) do
     {logger: logger, backend: :logging_serial_port}.freeze
   end
   let(:logging_options) { {}.freeze }
 
-  let(:device) { ENV.fetch('SERIAMP_INTEGRATION_YAMAHA') }
+  let(:device) { integration_device(:yamaha) }
   let(:logger) { Logger.new(STDERR) }
   let(:client) { Seriamp::Yamaha::Client.new(**logging_options.merge(device: device)) }
   let(:executor) { Seriamp::Yamaha::Executor.new(client) }
