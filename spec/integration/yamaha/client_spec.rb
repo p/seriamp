@@ -12,17 +12,18 @@ describe 'Yamaha integration' do
   end
 
   describe 'status' do
-    before do
-      client.main_power.should be true
-    end
-
-    let(:status) { client.status }
-
-    it 'works' do
-      status.fetch(:main_power).should be true
-    end
 
     context 'when power is on' do
+      before do
+        client.main_power.should be true
+      end
+
+      let(:status) { client.status }
+
+      it 'works' do
+        status.fetch(:main_power).should be true
+      end
+
       it 'can be queried continuously without errors' do
         10.times do
           client.status
