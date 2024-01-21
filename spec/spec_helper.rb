@@ -55,7 +55,7 @@ module ClassMethods
   end
 
   def require_integration_device(key)
-    unless %i(yamaha).include?(key)
+    unless %i(integra sonamp yamaha).include?(key)
       raise ArgumentError, "Bad key: #{key}"
     end
 
@@ -71,7 +71,7 @@ end
 
 module InstanceMethods
   def integration_device(key)
-    unless %i(yamaha).include?(key)
+    unless %i(integra sonamp yamaha).include?(key)
       raise ArgumentError, "Bad key: #{key}"
     end
 

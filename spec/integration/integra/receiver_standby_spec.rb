@@ -1,13 +1,9 @@
 require 'spec_helper'
 
 describe 'Integra integration - standby commands' do
-  if (ENV['SERIAMP_INTEGRATION_INTEGRA'] || '').empty?
-    before(:all) do
-      skip "Set SERIAMP_INTEGRATION_INTEGRA=/dev/ttyXXX in environment to run integration tests"
-    end
-  end
+  require_integration_device :integra
+  let(:device) { integration_device(:integra) }
 
-  let(:device) { ENV.fetch('SERIAMP_INTEGRATION_INTEGRA') }
   let(:logger) { Logger.new(STDERR) }
   let(:client) { Seriamp::Integra::Client.new(device: device, logger: logger) }
 
@@ -16,7 +12,7 @@ describe 'Integra integration - standby commands' do
     sleep 1
     client.set_power(false)
     puts 'power off'
-    
+
     start = Seriamp::Utils.monotime
     loop do
       lambda do
@@ -25,7 +21,7 @@ describe 'Integra integration - standby commands' do
           io.read_nonblock(1000)
         end
       end.should raise_error(IO::EAGAINWaitReadable)
-      
+
       if (elapsed = Seriamp::Utils.monotime - start) >= 10
         break
       else
@@ -33,11 +29,11 @@ describe 'Integra integration - standby commands' do
       end
     end
     puts 'socket drained'
-    
+
     puts 'sleeping for 10 seconds to turn off microprocessor'
     sleep 10
   end
-  
+
   let(:io) { Seriamp::Backend::LoggingSerialPortBackend::Device.new(device) }
 
   describe 'receiver behavior' do
@@ -45,7 +41,7 @@ describe 'Integra integration - standby commands' do
       lambda do
         IO.select([io.io], nil, nil, 1)
       end.should raise_error(IO::EAGAINWaitReadable)
-      
+
       io.syswrite("!1PWRQSTN\r")
       lambda do
         IO.select([io.io], nil, nil, 3)

@@ -1,13 +1,9 @@
 require 'spec_helper'
 
 describe 'Sonamp integration' do
-  if (ENV['SERIAMP_INTEGRATION_SONAMP'] || '').empty?
-    before(:all) do
-      skip "Set SERIAMP_INTEGRATION_SONAMP=/dev/ttyXXX in environment to run integration tests"
-    end
-  end
+  require_integration_device :sonamp
+  let(:device) { integration_device(:sonamp) }
 
-  let(:device) { ENV.fetch('SERIAMP_INTEGRATION_SONAMP') }
   let(:logger) { Logger.new(STDERR) }
   let(:client) { Seriamp::Sonamp::Client.new(device: device, logger: logger, backend: :logging_serial_port) }
 

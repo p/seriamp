@@ -1,13 +1,9 @@
 require 'spec_helper'
 
 describe 'Integra integration - client' do
-  if (ENV['SERIAMP_INTEGRATION_INTEGRA'] || '').empty?
-    before(:all) do
-      skip "Set SERIAMP_INTEGRATION_INTEGRA=/dev/ttyXXX in environment to run integration tests"
-    end
-  end
+  require_integration_device :integra
+  let(:device) { integration_device(:integra) }
 
-  let(:device) { ENV.fetch('SERIAMP_INTEGRATION_INTEGRA') }
   let(:logger) { Logger.new(STDERR) }
   let(:client) { Seriamp::Integra::Client.new(device: device, logger: logger) }
 
