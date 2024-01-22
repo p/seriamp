@@ -8,6 +8,9 @@ require 'rack/test'
 require 'mock_serial_port_backend'
 require 'timeout_backend'
 
+STDOUT.sync = true
+STDERR.sync = true
+
 module Utils
   module_function def localhost_host
     @localhost_host ||= begin

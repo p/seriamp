@@ -5,7 +5,16 @@ describe 'Yamaha integration' do
   let(:device) { integration_device(:yamaha) }
 
   let(:logger) { Logger.new(STDERR) }
-  let(:client) { Seriamp::Yamaha::Client.new(device: device, logger: logger) }
+  let(:client_options) do
+    {
+      device: device,
+      persistent: persistent,
+      logger: logger,
+      #backend: :logging_serial_port,
+    }
+  end
+  let(:client) { Seriamp::Yamaha::Client.new(**client_options) }
+  let(:persistent) { false }
 
   after do
     client.close
@@ -24,10 +33,24 @@ describe 'Yamaha integration' do
         status.fetch(:main_power).should be true
       end
 
-      it 'can be queried continuously without errors' do
-        10.times do
-          client.status
+      shared_examples 'can be queried continuously without errors' do
+        it 'can be queried continuously without errors' do
+          10.times do
+            client.status
+          end
         end
+      end
+
+      context 'when persistent client is not used' do
+        let(:persistent) { false }
+
+        include_examples 'can be queried continuously without errors'
+      end
+
+      context 'when persistent client is used' do
+        let(:persistent) { true }
+
+        include_examples 'can be queried continuously without errors'
       end
     end
   end
@@ -44,10 +67,24 @@ describe 'Yamaha integration' do
         client.main_power.should be true
       end
 
-      it 'can be turned on continuously without errors' do
-        10.times do
-          client.set_main_power(true)
+      shared_examples 'can be queried continuously without errors' do
+        it 'can be queried continuously without errors' do
+          10.times do
+            client.set_main_power(true)
+          end
         end
+      end
+
+      context 'when persistent client is not used' do
+        let(:persistent) { false }
+
+        include_examples 'can be queried continuously without errors'
+      end
+
+      context 'when persistent client is used' do
+        let(:persistent) { true }
+
+        include_examples 'can be queried continuously without errors'
       end
     end
   end
