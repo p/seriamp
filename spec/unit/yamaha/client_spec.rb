@@ -253,9 +253,22 @@ describe Seriamp::Yamaha::Client do
         ]
       end
 
-      it 'works' do
-        pending
-        client.set_main_input('DVR').should == {input_name: 'DVR'}
+      context 'canonical name: DVR/VCR2' do
+        it 'works' do
+          client.set_main_input('DVR/VCR2').should == {input_name: 'DVR/VCR2'}
+        end
+      end
+
+      context 'dvr_vcr2' do
+        it 'works' do
+          client.set_main_input('dvr_vcr2').should == {input_name: 'DVR/VCR2'}
+        end
+      end
+
+      context 'DVR alias' do
+        it 'works' do
+          client.set_main_input('DVR').should == {input_name: 'DVR/VCR2'}
+        end
       end
     end
 

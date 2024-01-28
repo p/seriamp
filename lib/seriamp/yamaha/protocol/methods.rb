@@ -242,7 +242,7 @@ module Seriamp
         end
 
         def set_main_input(source)
-          canonical_source = source.downcase.gsub(/[^a-z]/, '_')
+          canonical_source = source.downcase.gsub(/[^a-z0-9]/, '_')
           source_code = fetch_hash(MAIN_INPUTS_SET, canonical_source, 'input name', source)
           remote_command("7A#{source_code}")
         end
