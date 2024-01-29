@@ -36,6 +36,10 @@ module Seriamp
         def readable?(timeout = 0)
           !!IO.select([io], nil, nil, timeout)
         end
+
+        def errored?
+          !!IO.select(nil, nil, [io], 0)
+        end
       end
     end
   end

@@ -27,4 +27,12 @@ describe Seriamp::Backend::TcpBackend::Device do
       end
     end
   end
+
+  describe '#errored?' do
+    context 'when nothing was written' do
+      it 'is false' do
+        device.errored?.should be false
+      end
+    end
+  end
 end
