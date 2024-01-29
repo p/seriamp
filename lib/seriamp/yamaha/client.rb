@@ -289,6 +289,7 @@ module Seriamp
       end
 
       def update_current_status(resp)
+        logger&.debug("Updating current status: #{resp}")
         if @current_status &&
           @current_status[:model_code] && resp[:model_code] &&
           @current_status[:model_code] != resp[:model_code]
@@ -406,10 +407,12 @@ module Seriamp
             field_name = const_name = field_name_or_spec
           end
           map = self.class.const_get("#{const_name.upcase}_GET")
-          value = map[data]
-          if value.nil?
+          # Value can be nil, e.g. lfe_indicator (when value is "---" in the
+          # documentation).
+          unless map.key?(data)
             logger&.warn("Unhandled value #{data} for #{command} (#{field_name})")
           end
+          value = map[data]
           unless Hash === value
             value = {field_name => value}
           end
