@@ -35,7 +35,14 @@ module Seriamp
 
         attr_reader :io
 
-        def_delegators :io, :close, :sysread, :syswrite, :read_nonblock, :readline
+        def_delegators :io, :close, :sysread, :read_nonblock, :readline
+
+        def syswrite(chunk)
+          # In theory the commands (i.e. writes) should be spaced out from
+          # the previous writes, and possibly reads, by a certain minimum
+          # time interval.
+          io.syswrite(chunk)
+        end
 
         def readable?(timeout = 0)
           !!IO.select([io], nil, nil, timeout)
