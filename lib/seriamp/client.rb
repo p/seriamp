@@ -249,13 +249,13 @@ module Seriamp
         end
 
         logger&.warn("Spurious response: #{resp}")
-
-        resp = extract_one_response!
         # Yamaha receivers send unprompted status updates when e.g. receiver is
         # operated by the remote control.
         # These updates should be parsed and recorded in the current state
         # of the device, in order for the current state to be accurate.
         parse_response(resp)
+
+        resp = extract_one_response!
       end
       parse_response(resp)
     end
