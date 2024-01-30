@@ -1,5 +1,3 @@
-# coding: utf-8
-
 Gem::Specification.new do |spec|
   spec.name          = "seriamp"
   spec.version       = '0.7.7'
