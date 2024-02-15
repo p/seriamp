@@ -158,8 +158,7 @@ module Seriamp
         yield @io
       ensure
         unless persistent?
-          @io.close rescue nil
-          @io = nil
+          close
         end
       end
     end
