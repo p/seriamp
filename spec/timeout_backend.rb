@@ -21,6 +21,10 @@ module Seriamp
 
         def clear_rts
         end
+
+        def errored?
+          false
+        end
       end
     end
   end
