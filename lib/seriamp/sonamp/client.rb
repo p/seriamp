@@ -185,24 +185,6 @@ module Seriamp
 
       private
 
-      def with_device(&block)
-        if @io
-          yield @io
-        else
-          open_device(&block)
-        end
-      end
-
-      def with_lock
-        if thread_safe?
-          @lock.synchronize do
-            yield
-          end
-        else
-          yield
-        end
-      end
-
       def dispatch(cmd, resp_lines_range_or_count = 1)
         resp_lines_range = if Range === resp_lines_range_or_count || Array === resp_lines_range_or_count
           resp_lines_range_or_count
