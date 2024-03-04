@@ -9,5 +9,6 @@ module Seriamp
     autoload :LoggingSerialPortBackend, 'seriamp/backend/logging_serial_port'
     autoload :TcpBackend, 'seriamp/backend/tcp'
     autoload :LoggingTcpBackend, 'seriamp/backend/logging_tcp'
+    autoload :IoBackend, 'seriamp/backend/io'
   end
 end
