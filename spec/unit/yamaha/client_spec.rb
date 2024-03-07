@@ -4,6 +4,8 @@ require 'spec_helper'
 require 'serialport'
 
 describe Seriamp::Yamaha::Client do
+  include YamahaHelpers
+
   describe '#initialize' do
     it 'works' do
       described_class.new
@@ -588,12 +590,41 @@ describe Seriamp::Yamaha::Client do
       describe '#surround_left_graphic_eq' do
         let(:rr) do
           [
-            %W(\x022411F\x03 \x0200411F\x03),
+            [frame_ext_req('030040'), frame_ext_req('03004011')],
+            [frame_ext_req('030042'), frame_ext_req('03004210')],
+            [frame_ext_req('030044'), frame_ext_req('0300440F')],
+            [frame_ext_req('030046'), frame_ext_req('03004611')],
+            [frame_ext_req('030048'), frame_ext_req('0300480F')],
+            [frame_ext_req('03004A'), frame_ext_req('03004A11')],
+            [frame_ext_req('03004C'), frame_ext_req('03004C1B')],
           ]
         end
 
         it 'works' do
-          client.surround_left_graphic_eq.should == {}
+          client.surround_left_graphic_eq.should == {
+            63 => 1,
+            160 => 0.5,
+            400 => 0,
+            1000 => 1,
+            2500 => 0,
+            6300 => 1,
+            16000 => 6,
+          }
+        end
+      end
+    end
+
+    describe 'parametric eq' do
+
+      describe '#surround_left_parametric_eq' do
+        let(:rr) do
+          [
+            [frame_ext_req('034040'), frame_ext_req('0340402A107')],
+          ]
+        end
+
+        it 'works' do
+          client.surround_left_parametric_eq.should == {}
         end
       end
     end

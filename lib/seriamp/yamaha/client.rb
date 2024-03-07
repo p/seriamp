@@ -224,11 +224,10 @@ module Seriamp
       end
 
       def extended_command(cmd)
-        payload = "20#{'%02X' % cmd.length}#{cmd}"
-        checksum = calculate_checksum(payload)
+        payload = frame_extended_request(cmd)
         with_lock do
           with_retry do
-            resp = dispatch_and_parse("#{DC4}#{payload}#{checksum}#{ETX}")
+            dispatch_and_parse(payload)
           end
         end
       end
@@ -236,14 +235,6 @@ module Seriamp
       private
 
       include Protocol::GetConstants
-
-      # ASCII table: https://www.asciitable.com/
-      DC1 = ?\x11
-      DC2 = ?\x12
-      DC4 = ?\x14
-      ETX = ?\x03
-      STX = ?\x02
-      DEL = ?\x7f
 
       STATUS_REQ = "#{DC1}001#{ETX}"
 
@@ -625,11 +616,6 @@ module Seriamp
         else
           raise UnhandledResponse, "Bad value for field #{field}: #{value} (at DT#{index})"
         end
-      end
-
-      def calculate_checksum(str)
-        sum = str.each_byte.map(&:ord).inject(0) { |sum, c| sum + c }
-        '%02X' % (sum & 0xFF)
       end
 
       def extract_text(resp)

@@ -182,6 +182,16 @@ module InstanceMethods
   end
 end
 
+module YamahaHelpers
+  include Seriamp::Yamaha::Helpers
+
+  alias :frame_ext_req :frame_extended_request
+
+  def frame_ext_resp(resp)
+    resp
+  end
+end
+
 RSpec.configure do |rspec|
   rspec.expect_with(:rspec) do |c|
     c.syntax = [:should, :expect]

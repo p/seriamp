@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+require 'seriamp/ascii_table'
+
 module Seriamp
   module Yamaha
     module Helpers
+      include Seriamp::AsciiTable
+
       def serialize_volume(value, min_value, min_serialized, step)
         '%02X' % (((value - min_value) / step).round + min_serialized)
       end
@@ -36,6 +40,17 @@ module Seriamp
         rescue KeyError
           raise exc
         end
+      end
+
+      def frame_extended_request(cmd)
+        payload = "20#{'%02X' % cmd.length}#{cmd}"
+        checksum = calculate_checksum(payload)
+        "#{DC4}#{payload}#{checksum}#{ETX}"
+      end
+
+      def calculate_checksum(str)
+        sum = str.each_byte.map(&:ord).inject(0) { |sum, c| sum + c }
+        '%02X' % (sum & 0xFF)
       end
     end
   end

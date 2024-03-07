@@ -408,7 +408,14 @@ module Seriamp
         GRAPHIC_EQ_CHANNEL_MAP.invert.each do |channel, channel_value|
           GRAPHIC_EQ_CHANNEL_BAND_MAP.fetch(channel).invert.each do |band, band_value|
             define_method("#{channel}_graphic_eq_#{band}") do
-              extended_command("0300#{channel_value}#{band_value}").gain
+              v = extended_command("0300#{channel_value}#{band_value}")
+              if channel != v.channel
+                raise UnexpectedResponse, "Expected graphic EQ response for #{channel} but received one for #{v.channel}"
+              end
+              if band != v.frequency
+                raise UnexpectedResponse, "Expected graphic EQ response for #{band} hz but received one for #{v.frequency} hz"
+              end
+              v.gain
             end
 
             define_method("set_#{channel}_graphic_eq_#{band}") do |gain|
