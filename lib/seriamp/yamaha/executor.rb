@@ -25,7 +25,8 @@ bass-out arg
 subwoofer-phase arg
 subwoofer-crossover arg
 main-(speaker|headphone)-tone-(bass|treble) gain [frequency]
-graphic-eq [channel [band [value]]]
+(graphic-eq|geq) [channel [band [value]]]
+(parametric-eq|peq) [channel [band [frequency value q]]]
 (front|center|surround|surround-back|subwoofer)-level value
 (front|center|surround|surround-back|subwoofer)-distance value
 distance [ft|m]
@@ -187,7 +188,7 @@ EOT
           else
             client.public_send("main_#{output}_tone_#{tone}")
           end
-        when 'graphic-eq'
+        when 'graphic-eq', 'geq'
           case args.length
           when 3
             # set value
@@ -207,6 +208,29 @@ EOT
           when 0
             # get all
             client.graphic_eq
+          else
+            raise "Wrong number of arguments: #{args}"
+          end
+        when 'parametric-eq', 'peq'
+          case args.length
+          when 5
+            # set value
+            channel = args.shift.gsub('-', '_').to_sym
+            band = cmd_line_integer(args.shift)
+            value = cmd_line_float(args.shift)
+            client.public_send("set_#{channel}_parametric_eq_#{band}", value)
+          when 2
+            # get channel & band
+            channel = args.shift.gsub('-', '_').to_sym
+            band = cmd_line_integer(args.shift)
+            client.public_send("#{channel}_parametric_eq_#{band}")
+          when 1
+            # get channel all
+            channel = args.shift.gsub('-', '_').to_sym
+            client.public_send("#{channel}_parametric_eq")
+          when 0
+            # get all
+            client.parametric_eq
           else
             raise "Wrong number of arguments: #{args}"
           end

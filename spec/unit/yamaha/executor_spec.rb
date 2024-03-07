@@ -51,6 +51,14 @@ describe Seriamp::Yamaha::Executor do
         # Does not raise
       end
     end
+
+    context 'graphic-eq' do
+      context 'get channel' do
+        it 'works' do
+          executor.run_command('graphic-eq', 'surround-left')
+        end
+      end
+    end
   end
 
   describe '.usage' do

@@ -582,6 +582,21 @@ describe Seriamp::Yamaha::Client do
         client.set_program_select('Last').should be == {program_select: 'Last'}
       end
     end
+
+    describe 'graphic eq' do
+
+      describe '#surround_left_graphic_eq' do
+        let(:rr) do
+          [
+            %W(\x022411F\x03 \x0200411F\x03),
+          ]
+        end
+
+        it 'works' do
+          client.surround_left_graphic_eq.should == {}
+        end
+      end
+    end
   end
 
   let(:status_request) do
