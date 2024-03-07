@@ -9,7 +9,7 @@ describe Seriamp::Yamaha::Protocol::Extended::ParametricEqResponse do
   describe '#to_state' do
     it 'returns expected result' do
       response.to_state.should == {
-        front_right_peq_4: {frequency: '2E', gain: -3.5, q: 1.587},
+        front_right_peq_4: {frequency: 3170, gain: -3.5, q: 1.587},
       }
     end
   end

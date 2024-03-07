@@ -19,7 +19,7 @@ module Seriamp
 
             @channel = GRAPHIC_EQ_CHANNEL_MAP.fetch(value[0])
             @band = value[1].ord - '0'.ord + 1
-            @frequency = value[2..3]
+            @frequency = PARAMETRIC_EQ_MAP.fetch(value[2..3])
             @gain = parse_sequence(value[4..5], '00', -20, 6, 0.5)
             @q = PARAMETRIC_EQ_Q_MAP.fetch(value[6])
           end
