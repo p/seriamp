@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Seriamp::Yamaha::Protocol::Extended::GraphicEqResponse do
   let(:response) do
+    # RX-V1800
     described_class.new('030', '2210')
   end
 
