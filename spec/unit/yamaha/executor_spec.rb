@@ -59,6 +59,13 @@ describe Seriamp::Yamaha::Executor do
           executor.run_command('graphic-eq', 'surround-left').should == {hello: 42}
         end
       end
+
+      context 'geq alias' do
+        it 'works' do
+          client.should receive(:surround_left_graphic_eq).and_return(hello: 42)
+          executor.run_command('geq', 'surround-left').should == {hello: 42}
+        end
+      end
     end
 
     context 'parametric-eq' do
@@ -66,6 +73,13 @@ describe Seriamp::Yamaha::Executor do
         it 'works' do
           client.should receive(:surround_left_parametric_eq).and_return(hello: 42)
           executor.run_command('parametric-eq', 'surround-left').should == {hello: 42}
+        end
+      end
+
+      context 'peq alias' do
+        it 'works' do
+          client.should receive(:surround_left_parametric_eq).and_return(hello: 42)
+          executor.run_command('peq', 'surround-left').should == {hello: 42}
         end
       end
     end
