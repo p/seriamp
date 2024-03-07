@@ -466,6 +466,7 @@ module Seriamp
 
         # Default parametric EQ bands for RX-V3800:
         # 62.5 157.7 396.9 1000 2520 6350 16000
+        # Default gain: 0.0, default q: 1.0.
 
         def parametric_eq
           {}.tap do |result|
