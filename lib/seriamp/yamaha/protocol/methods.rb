@@ -464,6 +464,14 @@ module Seriamp
           end
         end
 
+        def parametric_eq
+          {}.tap do |result|
+            GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
+              result[channel] = send("#{channel}_parametric_eq")
+            end
+          end
+        end
+
         def volume_trim(input_name)
           # RX-V1600 use a single byte for input ID,
           # RX-V2500 does not support volume trim over serial.
