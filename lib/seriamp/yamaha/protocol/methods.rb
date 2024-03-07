@@ -464,6 +464,9 @@ module Seriamp
           end
         end
 
+        # Default parametric EQ bands for RX-V3800:
+        # 62.5 157.7 396.9 1000 2520 6350 16000
+
         def parametric_eq
           {}.tap do |result|
             GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
