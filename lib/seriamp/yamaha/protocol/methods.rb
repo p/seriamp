@@ -432,6 +432,28 @@ module Seriamp
               end
             end
           end
+
+          1.upto(7) do |band|
+            define_method("#{channel}_parametric_eq_#{band}") do
+              v = extended_command("0340#{channel_value}#{(band - 1).to_s}")
+              if channel != v.channel
+                raise UnexpectedResponse, "Expected parametric EQ response for #{channel} but received one for #{v.channel}"
+              end
+              if band != v.band
+                raise UnexpectedResponse, "Expected parametric EQ response for #{band} hz but received one for #{v.frequency} hz"
+              end
+              v
+            end
+          end
+
+          define_method("#{channel}_parametric_eq") do
+            {}.tap do |result|
+              1.upto(7) do |band|
+                res = send("#{channel}_parametric_eq_#{band}")
+                result[band] = res.to_state.values.first
+              end
+            end
+          end
         end
 
         def graphic_eq

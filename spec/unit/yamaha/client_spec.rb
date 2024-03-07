@@ -619,12 +619,26 @@ describe Seriamp::Yamaha::Client do
       describe '#surround_left_parametric_eq' do
         let(:rr) do
           [
-            [frame_ext_req('034040'), frame_ext_req('0340402A107')],
+            [frame_ext_req('034040'), frame_ext_req('0340401020A')],
+            [frame_ext_req('034041'), frame_ext_req('0340411220A')],
+            [frame_ext_req('034042'), frame_ext_req('0340421420A')],
+            [frame_ext_req('034043'), frame_ext_req('0340431620A')],
+            [frame_ext_req('034044'), frame_ext_req('0340441820A')],
+            [frame_ext_req('034045'), frame_ext_req('0340451A20A')],
+            [frame_ext_req('034046'), frame_ext_req('0340462020A')],
           ]
         end
 
         it 'works' do
-          client.surround_left_parametric_eq.should == {}
+          client.surround_left_parametric_eq.should == {
+            1 => {frequency: 99.2, gain: -4, q: 5.04},
+            2 => {frequency: 125, gain: -4, q: 5.04},
+            3 => {frequency: 157.7, gain: -4, q: 5.04},
+            4 => {frequency: 198.4, gain: -4, q: 5.04},
+            5 => {frequency: 250, gain: -4, q: 5.04},
+            6 => {frequency: 315, gain: -4, q: 5.04},
+            7 => {frequency: 630, gain: -4, q: 5.04},
+          }
         end
       end
     end
