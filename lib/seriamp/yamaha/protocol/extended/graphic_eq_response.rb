@@ -30,6 +30,12 @@ module Seriamp
           def to_s
             "#<#{self.class.name}: #{channel} freq=#{frequency} gain=#{gain}>"
           end
+
+          def to_state
+            {
+              "#{channel}_geq_#{frequency}": gain,
+            }
+          end
         end
       end
     end
