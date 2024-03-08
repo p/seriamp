@@ -505,7 +505,7 @@ describe Seriamp::Yamaha::Client do
       describe '#set_surround_left_parametric_eq_3' do
         let(:rr) do
           [
-            [frame_ext_req('0341421C1CA'), "\x142004030089\x03"],
+            [frame_ext_req('0341421C2CA'), "\x142004030089\x03"],
           ]
         end
 
