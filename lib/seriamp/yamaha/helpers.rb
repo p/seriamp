@@ -61,20 +61,30 @@ module Seriamp
 
       def serialize_parametric_frequency(freq)
         freq_log = Math.log(freq)
-        if freq_log <= PARAMETRIC_EQ_FREQUENCY_LOGS.first
-          return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys.first
-        elsif freq_log >= PARAMETRIC_EQ_FREQUENCY_LOGS.last
-          return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys.last
+
+        pick_closest_value(freq_log, PARAMETRIC_EQ_FREQUENCY_LOGS,
+          Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP)
+      end
+
+      def serialize_parametric_q(q)
+        pick_closest_value(q,
+          Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_Q_MAP.values,
+          Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_Q_MAP)
+      end
+
+      def pick_closest_value(value, scale, mapping)
+        if value <= scale.first
+          return mapping.keys.first
+        elsif value >= scale.last
+          return mapping.keys.last
         end
 
-        1.upto(PARAMETRIC_EQ_FREQUENCY_LOGS.length-1) do |i|
-          if PARAMETRIC_EQ_FREQUENCY_LOGS[i] >= freq_log
-            if freq_log - PARAMETRIC_EQ_FREQUENCY_LOGS[i-1] <
-              PARAMETRIC_EQ_FREQUENCY_LOGS[i] - freq_log
-            then
-              return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys[i-1]
+        1.upto(scale.length-1) do |i|
+          if scale[i] >= value
+            if value - scale[i-1] < scale[i] - value
+              return mapping.keys[i-1]
             else
-              return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys[i]
+              return mapping.keys[i]
             end
           end
         end

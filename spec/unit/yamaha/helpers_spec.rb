@@ -114,4 +114,30 @@ describe Seriamp::Yamaha::Helpers do
       host.serialize_parametric_frequency(38).should == '08'
     end
   end
+
+  describe '#serialize_parametric_q' do
+    it 'exact min q' do
+      host.serialize_parametric_q(0.5).should == '0'
+    end
+
+    it 'less than min q' do
+      host.serialize_parametric_q(0.2).should == '0'
+    end
+
+    it 'exact max q' do
+      host.serialize_parametric_q(10.8).should == 'D'
+    end
+
+    it 'more than max q' do
+      host.serialize_parametric_q(1000).should == 'D'
+    end
+
+    it 'just over min q' do
+      host.serialize_parametric_q(0.55).should == '0'
+    end
+
+    it 'just under second q' do
+      host.serialize_parametric_q(0.6).should == '1'
+    end
+  end
 end

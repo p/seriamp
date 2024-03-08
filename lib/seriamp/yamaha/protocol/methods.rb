@@ -446,8 +446,10 @@ module Seriamp
             end
 
             define_method("set_#{channel}_parametric_eq_#{band}") do |frequency:, gain:, q:|
+              enc_freq = serialize_parametric_frequency(frequency)
               enc_gain = serialize_volume(gain, -20, 6, 0.5)
-              v = extended_command("0341#{channel_value}#{(band - 1).to_s}")
+              enc_q = serialize_parametric_q(q)
+              v = extended_command("0341#{channel_value}#{(band - 1).to_s}#{enc_freq}#{enc_gain}#{enc_q}")
               if channel != v.channel
                 raise UnexpectedResponse, "Expected parametric EQ response for #{channel} but received one for #{v.channel}"
               end
