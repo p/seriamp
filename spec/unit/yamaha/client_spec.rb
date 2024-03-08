@@ -120,6 +120,7 @@ describe Seriamp::Yamaha::Client do
       '75 00' => {bass_out: 'Subwoofer'},
       '75 01' => {bass_out: 'Front/Main'},
       '75 02' => {bass_out: 'Both'},
+      '7E 08' => {subwoofer_crossover: 200},
       '80 01' => {test: true},
       '8C 01' => {pure_direct: true},
       'A7 00' => {eq_select: 'Auto PEQ'},

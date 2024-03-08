@@ -761,6 +761,18 @@ module Seriamp
           '8' => 200,
         }.freeze
 
+        SUBWOOFER_CROSSOVER_REPORT_GET = {
+          '00' => 40,
+          '01' => 60,
+          '02' => 80,
+          '03' => 90,
+          '04' => 100,
+          '05' => 110,
+          '06' => 120,
+          '07' => 160,
+          '08' => 200,
+        }.freeze
+
         TV_FORMAT_GET = {
           '0' => 'PAL',
           '1' => 'NTSC',
@@ -887,6 +899,7 @@ module Seriamp
           '33' => [:main_volume_memory_save, :memory],
           '34' => [:headphone, :bool_report],
           '75' => [:bass_out, :bass_out_report],
+          '7E' => [:subwoofer_crossover, :subwoofer_crossover_report],
           # Speaker level test mode
           '80' => :test,
           '8C' => :pure_direct,
