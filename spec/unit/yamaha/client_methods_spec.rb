@@ -517,6 +517,18 @@ describe Seriamp::Yamaha::Client do
           ).should be nil
         end
       end
+
+      describe '#reset_surround_left_parametric_eq_3' do
+        let(:rr) do
+          [
+            [frame_ext_req('0341421C2A3'), "\x142004030089\x03"],
+          ]
+        end
+
+        it 'works' do
+          client.reset_surround_left_parametric_eq_3.should be nil
+        end
+      end
     end
   end
 end

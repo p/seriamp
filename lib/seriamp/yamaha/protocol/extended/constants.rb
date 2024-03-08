@@ -101,6 +101,11 @@ module Seriamp
             '3C' => 16000.0,
           }.freeze
 
+          DEFAULT_PARAMETRIC_EQ_FREQUENCIES = [
+            # RX-V3800
+            62.5, 157.7, 396.9, 1000, 2520, 6350, 16000,
+          ].freeze
+
           PARAMETRIC_EQ_Q_MAP = {
             '0' => 0.5,
             '1' => 0.63,

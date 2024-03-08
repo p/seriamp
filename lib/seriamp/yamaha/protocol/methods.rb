@@ -451,6 +451,13 @@ module Seriamp
               enc_q = serialize_parametric_q(q)
               extended_command("0341#{channel_value}#{(band - 1).to_s}#{enc_freq}#{enc_gain}#{enc_q}")
             end
+
+            define_method("reset_#{channel}_parametric_eq_#{band}") do
+              freq = DEFAULT_PARAMETRIC_EQ_FREQUENCIES[band-1]
+              p band,freq
+              public_send("set_#{channel}_parametric_eq_#{band}",
+                frequency: freq, gain: 1, q: 1)
+            end
           end
 
           define_method("#{channel}_parametric_eq") do
