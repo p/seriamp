@@ -122,6 +122,18 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
+    describe '#set_bass_out' do
+      let(:rr) do
+        [
+          %W(\x0227501\x03 \x02007500\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_bass_out(:front).should == {bass_out: 'Subwoofer'}
+      end
+    end
+
     describe '#set_main_speaker_tone_bass' do
       let(:rr) do
         [

@@ -605,6 +605,12 @@ module Seriamp
           '2' => 'Both',
         }.freeze
 
+        BASS_OUT_REPORT_GET = {
+          '00' => 'Subwoofer',
+          '01' => 'Front/Main',
+          '02' => 'Both',
+        }.freeze
+
         SUBWOOFER_PHASE_GET = {
           '0' => 'Normal',
           '1' => 'Reverse',
@@ -880,6 +886,7 @@ module Seriamp
           '32' => [:main_volume_memory_load, :memory],
           '33' => [:main_volume_memory_save, :memory],
           '34' => [:headphone, :bool_report],
+          '75' => [:bass_out, :bass_out_report],
           # Speaker level test mode
           '80' => :test,
           '8C' => :pure_direct,
