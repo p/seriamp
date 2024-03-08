@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'seriamp/ascii_table'
+require 'seriamp/yamaha/protocol/extended/constants'
 
 module Seriamp
   module Yamaha
@@ -51,6 +52,20 @@ module Seriamp
       def calculate_checksum(str)
         sum = str.each_byte.map(&:ord).inject(0) { |sum, c| sum + c }
         '%02X' % (sum & 0xFF)
+      end
+
+      PARAMETRIC_EQ_FREQUENCY_LOGS = Yamaha::Protocol::Extended::Constants::
+        PARAMETRIC_EQ_MAP.map do |k, v|
+          Math.log(v)
+        end.freeze
+
+      def serialize_parametric_frequency(freq)
+        freq_log = Math.log(freq)
+        if freq_log <= PARAMETRIC_EQ_FREQUENCY_LOGS.first
+          return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys.first
+        elsif freq_log >= PARAMETRIC_EQ_FREQUENCY_LOGS.last
+          return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys.last
+        end
       end
     end
   end

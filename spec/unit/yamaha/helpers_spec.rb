@@ -76,4 +76,22 @@ describe Seriamp::Yamaha::Helpers do
       host.encode_sequence(4, '001', 0, 5, 1).should == '005'
     end
   end
+
+  describe '#serialize_parametric_frequency' do
+    it 'serializes exact min frequency' do
+      host.serialize_parametric_frequency(31.3).should == '06'
+    end
+
+    it 'serializes less than min frequency' do
+      host.serialize_parametric_frequency(1).should == '06'
+    end
+
+    it 'serializes exact max frequency' do
+      host.serialize_parametric_frequency(16000).should == '3C'
+    end
+
+    it 'serializes more than max frequency' do
+      host.serialize_parametric_frequency(202020.0).should == '3C'
+    end
+  end
 end

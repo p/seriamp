@@ -501,6 +501,22 @@ describe Seriamp::Yamaha::Client do
           }
         end
       end
+
+      describe '#set_surround_left_parametric_eq_3' do
+        let(:rr) do
+          [
+            [frame_ext_req('0341421C1CA'), "\x142004030089\x03"],
+          ]
+        end
+
+        it 'works' do
+          client.set_surround_left_parametric_eq_3(
+            frequency: 396,
+            gain: 2,
+            q: 5,
+          ).should be nil
+        end
+      end
     end
   end
 end
