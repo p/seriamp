@@ -460,6 +460,18 @@ describe Seriamp::Yamaha::Client do
           }
         end
       end
+
+      describe '#set_surround_left_graphic_eq_400' do
+        let(:rr) do
+          [
+            [frame_ext_req('03014413'), "\x142004030089\x03"],
+          ]
+        end
+
+        it 'works' do
+          client.set_surround_left_graphic_eq_400(2).should be nil
+        end
+      end
     end
 
     describe 'parametric eq' do
