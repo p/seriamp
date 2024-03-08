@@ -454,7 +454,6 @@ module Seriamp
 
             define_method("reset_#{channel}_parametric_eq_#{band}") do
               freq = DEFAULT_PARAMETRIC_EQ_FREQUENCIES[band-1]
-              p band,freq
               public_send("set_#{channel}_parametric_eq_#{band}",
                 frequency: freq, gain: 1, q: 1)
             end
@@ -463,10 +462,17 @@ module Seriamp
           define_method("#{channel}_parametric_eq") do
             {}.tap do |result|
               1.upto(7) do |band|
-                res = send("#{channel}_parametric_eq_#{band}")
+                res = public_send("#{channel}_parametric_eq_#{band}")
                 result[band] = res.to_state.values.first
               end
             end
+          end
+
+          define_method("reset_#{channel}_parametric_eq") do
+            1.upto(7) do |band|
+              public_send("reset_#{channel}_parametric_eq_#{band}")
+            end
+            nil
           end
         end
 
