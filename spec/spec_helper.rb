@@ -51,7 +51,13 @@ module ClassMethods
       example.run
 
       Process.kill('TERM', pid)
+      kill_thread = Thread.new do
+        sleep 3
+        puts "Forcefully killing process #{pid} after 3 seconds"
+        Process.kill('KILL', pid)
+      end
       Process.waitpid(pid)
+      kill_thread.kill
 
       wait_for_port_available(port)
     end
