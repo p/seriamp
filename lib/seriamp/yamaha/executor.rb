@@ -222,11 +222,25 @@ EOT
             q = cmd_line_float(args.shift)
             client.public_send("set_#{channel}_parametric_eq_#{band}",
               frequency: freq, gain: gain, q: q)
-          when 2
-            # get channel & band
+          when 3
+            # channel & band - reset
             channel = args.shift.gsub('-', '_').to_sym
             band = cmd_line_integer(args.shift)
-            client.public_send("#{channel}_parametric_eq_#{band}")
+            reset = args.shift
+            unless reset == 'reset'
+              raise ArgumentError, '3-argument form requires "reset" as the third argument'
+            end
+            client.public_send("reset_#{channel}_parametric_eq_#{band}")
+          when 2
+            # get channel & band or reset channel
+            channel = args.shift.gsub('-', '_').to_sym
+            band = args.shift
+            if band == 'reset'
+              client.public_send("reset_#{channel}_parametric_eq")
+            else
+              band = cmd_line_integer(band)
+              client.public_send("#{channel}_parametric_eq_#{band}")
+            end
           when 1
             # get channel all
             channel = args.shift.gsub('-', '_').to_sym
