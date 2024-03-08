@@ -66,6 +66,20 @@ module Seriamp
         elsif freq_log >= PARAMETRIC_EQ_FREQUENCY_LOGS.last
           return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys.last
         end
+
+        1.upto(PARAMETRIC_EQ_FREQUENCY_LOGS.length-1) do |i|
+          if PARAMETRIC_EQ_FREQUENCY_LOGS[i] >= freq_log
+            if freq_log - PARAMETRIC_EQ_FREQUENCY_LOGS[i-1] <
+              PARAMETRIC_EQ_FREQUENCY_LOGS[i] - freq_log
+            then
+              return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys[i-1]
+            else
+              return Yamaha::Protocol::Extended::Constants::PARAMETRIC_EQ_MAP.keys[i]
+            end
+          end
+        end
+
+        raise NotImplemented, 'Should never get here'
       end
     end
   end

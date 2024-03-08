@@ -93,5 +93,25 @@ describe Seriamp::Yamaha::Helpers do
     it 'serializes more than max frequency' do
       host.serialize_parametric_frequency(202020.0).should == '3C'
     end
+
+    it 'serializes exact middle frequency' do
+      host.serialize_parametric_frequency(198.4).should == '16'
+    end
+
+    it 'serializes slightly under middle frequency' do
+      host.serialize_parametric_frequency(197).should == '16'
+    end
+
+    it 'serializes slightly over middle frequency' do
+      host.serialize_parametric_frequency(199).should == '16'
+    end
+
+    it 'serializes close to but over min frequency' do
+      host.serialize_parametric_frequency(32).should == '06'
+    end
+
+    it 'serializes close to but under second frequency' do
+      host.serialize_parametric_frequency(38).should == '08'
+    end
   end
 end
