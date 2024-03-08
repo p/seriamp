@@ -83,6 +83,13 @@ describe Seriamp::Yamaha::Executor do
         end
       end
 
+      context 'set channel' do
+        it 'works' do
+          client.should receive(:set_surround_left_parametric_eq_3).with(frequency: 250, gain: 2, q: 8).and_return(hello: 42)
+          executor.run_command('parametric-eq', 'surround-left', '3', '250', '2', '8').should == {hello: 42}
+        end
+      end
+
       context 'all channels' do
         it 'works' do
           client.should receive(:parametric_eq).and_return(hello: 42)

@@ -217,8 +217,11 @@ EOT
             # set value
             channel = args.shift.gsub('-', '_').to_sym
             band = cmd_line_integer(args.shift)
-            value = cmd_line_float(args.shift)
-            client.public_send("set_#{channel}_parametric_eq_#{band}", value)
+            freq = cmd_line_float(args.shift)
+            gain = cmd_line_float(args.shift)
+            q = cmd_line_float(args.shift)
+            client.public_send("set_#{channel}_parametric_eq_#{band}",
+              frequency: freq, gain: gain, q: q)
           when 2
             # get channel & band
             channel = args.shift.gsub('-', '_').to_sym
