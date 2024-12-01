@@ -543,7 +543,9 @@ describe Seriamp::Yamaha::Client do
       describe '#reset_surround_left_parametric_eq_3' do
         let(:rr) do
           [
-            [frame_ext_req('0341421C2A3'), "\x142004030089\x03"],
+            # TODO the response here may be wrong but it is not
+            # interpreted by seriamp.
+            [frame_ext_req('0341421C283'), "\x142004030089\x03"],
           ]
         end
 
@@ -555,13 +557,15 @@ describe Seriamp::Yamaha::Client do
       describe '#reset_surround_left_parametric_eq' do
         let(:rr) do
           [
-            [frame_ext_req('0341400C2A3'), "\x142004030089\x03"],
-            [frame_ext_req('034141142A3'), "\x142004030089\x03"],
-            [frame_ext_req('0341421C2A3'), "\x142004030089\x03"],
-            [frame_ext_req('034143242A3'), "\x142004030089\x03"],
-            [frame_ext_req('0341442C2A3'), "\x142004030089\x03"],
-            [frame_ext_req('034145342A3'), "\x142004030089\x03"],
-            [frame_ext_req('0341463C2A3'), "\x142004030089\x03"],
+            # TODO the responses here may be wrong but they are not
+            # interpreted by seriamp.
+            [frame_ext_req('0341400C283'), "\x142004030089\x03"],
+            [frame_ext_req('03414114283'), "\x142004030089\x03"],
+            [frame_ext_req('0341421C283'), "\x142004030089\x03"],
+            [frame_ext_req('03414324283'), "\x142004030089\x03"],
+            [frame_ext_req('0341442C283'), "\x142004030089\x03"],
+            [frame_ext_req('03414534283'), "\x142004030089\x03"],
+            [frame_ext_req('0341463C283'), "\x142004030089\x03"],
           ]
         end
 
