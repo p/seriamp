@@ -2,54 +2,34 @@
 
 module Seriamp
   module Backend
-    module Logging
+    module StructuredLogging
 
       def sysread(*args)
         super.tap do |result|
-          logger.debug("Read: #{escape(result)}")
           add_operation(:read, result)
         end
       end
 
       def read_nonblock(*args)
         super.tap do |result|
-          logger.debug("Read: #{escape(result)}")
           add_operation(:read, result)
         end
       end
 
       def syswrite(chunk)
-        logger.debug("Write: #{escape(chunk)}")
         add_operation(:write, chunk)
         super
       end
 
       def readline
         super.tap do |result|
-          logger.debug("Readline: #{escape(result)}")
           add_operation(:read, result)
         end
       end
 
-      def logged_operations
-        @logged_operations&.dup || []
-      end
+      attr_accessor :logged_operations
 
       private
-
-      def logger
-        @logger ||= Logger.new(STDERR)
-      end
-
-      def escape(str)
-        str.split('').map do |c|
-          if (ord = c.ord) <= 32
-            "\\x#{'%02x' % ord}"
-          else
-            c
-          end
-        end.join
-      end
 
       def add_operation(kind, data)
         @logged_operations ||= []

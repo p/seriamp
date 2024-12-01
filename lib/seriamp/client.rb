@@ -54,6 +54,10 @@ module Seriamp
         @lock = RecursiveMutex.new
       end
 
+      if options[:structured_log]
+        @logged_operations = []
+      end
+
       @next_earliest_deadline = Utils.monotime
 
       if block_given?
@@ -117,6 +121,8 @@ module Seriamp
       end
     end
 
+    attr_reader :logged_operations
+
     private
 
     def backend
@@ -125,11 +131,17 @@ module Seriamp
 
     def device_cls
       backend = self.backend.to_s
-      Backend.const_get(
+      cls = Backend.const_get(
         backend[0..0].upcase +
           backend[1..].to_s.gsub(/_(.)/) { $1.upcase } +
           'Backend'
       ).const_get(:Device)
+      if options[:structured_log]
+        cls = Class.new(cls) do
+          include Backend::StructuredLogging
+        end
+      end
+      cls
     rescue NameError => exc
       raise InvalidBackend, "Backend #{backend} is not known: #{exc.class}: #{exc}"
     end
@@ -149,6 +161,9 @@ module Seriamp
       logger&.debug("Opening #{device}")
       modem_params = self.class.const_get(:MODEM_PARAMS)
       @io = device_cls.new(device, logger: logger, modem_params: modem_params)
+      if options[:structured_log]
+        @io.logged_operations = logged_operations
+      end
 
       @read_buf = Utils.consume_data(@io, logger,
         "Serial device readable after opening - unread previous response?")

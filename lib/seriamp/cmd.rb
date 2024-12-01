@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+autoload :YAML, 'yaml'
 require 'optparse'
 require 'pp'
 require 'seriamp'
@@ -19,6 +20,10 @@ module Seriamp
 
         opts.on("-b", "--backend BACKEND", "Backend to use for communication: serial_port|logging_serial_port|tcp|logging_tcp") do |v|
           options[:backend] = v
+        end
+
+        opts.on('-S', '--structured-log', 'Produce an operation log before exiting in a machine-readable format') do
+          options[:structured_log] = true
         end
 
         opts.on("-d", "--device DEVICE", "TTY or hostname/IP to use (default autodetect /dev/ttyUSB*)") do |v|
@@ -71,7 +76,9 @@ module Seriamp
       else
         @direct_client = mod.const_get(:Client).new(device: options[:device],
           backend: options[:backend], retries: true, lock: true, persistent: true,
-          logger: @logger, timeout: options[:timeout])
+          logger: @logger, timeout: options[:timeout],
+          structured_log: options[:structured_log],
+        )
       end
 
       @args = args
@@ -115,6 +122,10 @@ module Seriamp
           else
             last_result = result
           end
+        end
+
+        if options[:structured_log]
+          puts YAML.dump(direct_client.logged_operations)
         end
 
         unless options[:print_all]

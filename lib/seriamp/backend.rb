@@ -3,6 +3,7 @@
 module Seriamp
   module Backend
     autoload :Logging, 'seriamp/backend/logging'
+    autoload :StructuredLogging, 'seriamp/backend/structured_logging'
 
     autoload :FFIBackend, 'seriamp/backend/ffi'
     autoload :SerialPortBackend, 'seriamp/backend/serial_port'
