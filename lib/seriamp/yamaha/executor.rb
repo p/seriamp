@@ -151,8 +151,12 @@ EOT
           end
           client.public_send("set_#{which}_input", input)
         when 'program'
-          value = args.shift.downcase
-          client.set_program(value)
+          value = args.shift&.downcase
+          if value
+            client.set_program(value)
+          else
+            puts client.program_name
+          end
         when 'pure-direct'
           state = Utils.parse_on_off(args.shift)
           client.set_pure_direct(state)
