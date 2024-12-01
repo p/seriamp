@@ -42,6 +42,13 @@ dev-status
 EOT
       end
 
+      def self.command_help(command)
+        case command
+        when 'peq'
+          "Channels: front-left|front-right|center|surround-left|surround-right|surround-back-left|surround-back-right|subwoofer"
+        end
+      end
+
       def initialize(client, **opts)
         @client = client
         @options = opts.dup.freeze

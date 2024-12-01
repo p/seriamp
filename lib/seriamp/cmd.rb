@@ -11,7 +11,7 @@ module Seriamp
   class Cmd
     def initialize(args = ARGV, stdin = STDIN, module_name: nil)
       options = {module: module_name}
-      OptionParser.new do |opts|
+      parser = OptionParser.new do |opts|
         opts.banner = "Usage: seriamp -m module [options] command arg..."
 
         opts.on("-m", "--module MODULE", "Device module to use: integra|sonamp|yamaha|ynca") do |v|
@@ -31,18 +31,7 @@ module Seriamp
         end
 
         opts.on('-h', '--help', 'This help text') do
-          puts opts.banner
-          if module_name = options[:module]
-            puts "       #{module_name} [options] command arg..."
-            puts
-          end
-          puts opts.summarize
-          if module_name
-            set_module_name(module_name)
-            puts
-            puts executor_cls.usage
-          end
-          exit
+          options[:help] = true
         end
 
         opts.on("-l", "--log-level LEVEL", "Log level as symbol or integer (debug/0|info/1|warn/2|error/3|fatal/4)") do |v|
@@ -60,7 +49,29 @@ module Seriamp
         opts.on('-t', '--timeout TIMEOUT', 'Timeout to use') do |v|
           options[:timeout] = Float(v)
         end
-      end.parse!(args)
+      end
+      parser.parse!(args)
+
+      if options[:help]
+        puts parser.banner
+        if module_name = options[:module]
+          puts "       #{module_name} [options] command arg..."
+          puts
+        end
+        puts parser.summarize
+        if module_name
+          set_module_name(module_name)
+          puts
+          puts executor_cls.usage
+        end
+        if args.any?
+          if command_help = executor_cls.command_help(command = args.first)
+            puts "\nAdditional help for #{command}:\n\n"
+            puts command_help
+          end
+        end
+        exit
+      end
 
       unless options[:module]
         raise "Module is required"
