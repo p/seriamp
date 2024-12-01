@@ -20,4 +20,6 @@ describe 'Yamaha replay tests' do
   client_method_test 'status', 'rx-v3800-status'
 
   client_method_test 'all_status', 'rx-v3800-all-status'
+
+  client_method_test 'parametric_eq', 'rx-v3800-peq'
 end

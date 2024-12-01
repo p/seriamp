@@ -434,7 +434,13 @@ module Seriamp
             end
           end
 
-          1.upto(7) do |band|
+          band_count = if channel == :subwoofer
+            2
+          else
+            7
+          end
+
+          1.upto(band_count) do |band|
             define_method("#{channel}_parametric_eq_#{band}") do
               v = extended_command("0340#{channel_value}#{(band - 1).to_s}")
               if channel != v.channel
@@ -462,7 +468,7 @@ module Seriamp
 
           define_method("#{channel}_parametric_eq") do
             {}.tap do |result|
-              1.upto(7) do |band|
+              1.upto(band_count) do |band|
                 res = public_send("#{channel}_parametric_eq_#{band}")
                 result[band] = res.to_state.values.first
               end
@@ -470,7 +476,7 @@ module Seriamp
           end
 
           define_method("reset_#{channel}_parametric_eq") do
-            1.upto(7) do |band|
+            1.upto(band_count) do |band|
               public_send("reset_#{channel}_parametric_eq_#{band}")
             end
             nil
