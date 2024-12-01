@@ -7,32 +7,24 @@ module Seriamp
       def sysread(*args)
         super.tap do |result|
           logger.debug("Read: #{escape(result)}")
-          add_operation(:read, result)
         end
       end
 
       def read_nonblock(*args)
         super.tap do |result|
           logger.debug("Read: #{escape(result)}")
-          add_operation(:read, result)
         end
       end
 
       def syswrite(chunk)
         logger.debug("Write: #{escape(chunk)}")
-        add_operation(:write, chunk)
         super
       end
 
       def readline
         super.tap do |result|
           logger.debug("Readline: #{escape(result)}")
-          add_operation(:read, result)
         end
-      end
-
-      def logged_operations
-        @logged_operations&.dup || []
       end
 
       private
@@ -49,11 +41,6 @@ module Seriamp
             c
           end
         end.join
-      end
-
-      def add_operation(kind, data)
-        @logged_operations ||= []
-        @logged_operations << [kind, data]
       end
     end
   end

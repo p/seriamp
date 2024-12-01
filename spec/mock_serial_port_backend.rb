@@ -33,7 +33,7 @@ module Seriamp
             @eof = true
             return nil
           end
-          if exchange.first == :w
+          if exchange.first == :w || exchange.first == :write
             raise "Exchange #{exchange_index} is a write, read attempted"
           end
           exchange.last.tap do
@@ -47,7 +47,7 @@ module Seriamp
             raise UnexpectedWrite, "End of exchanges - write attempted: #{contents}"
           end
 
-          if exchange.first == :r
+          if exchange.first == :r || exchange.first == :read
             raise UnexpectedWrite, "Exchange #{exchange_index} is a read, write attempted"
           end
 

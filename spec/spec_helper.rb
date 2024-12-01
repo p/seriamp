@@ -76,9 +76,30 @@ module ClassMethods
     end
   end
 
+  attr_accessor :_fixture_path
+
+  def fixture_path(path)
+    before do
+      @fixture_path = path
+    end
+  end
+
 end
 
 module InstanceMethods
+
+  def yaml_fixture(path)
+    comps = [File.dirname(__FILE__), 'fixtures', @fixture_path, path + '.yaml']
+    path = File.join(*comps.compact)
+    YAML.load(File.read(path))
+  end
+
+  def eval_fixture(path)
+    comps = [File.dirname(__FILE__), 'fixtures', @fixture_path, path + '.eval']
+    path = File.join(*comps.compact)
+    eval(File.read(path))
+  end
+
   def integration_device(key)
     unless %i(integra sonamp yamaha).include?(key)
       raise ArgumentError, "Bad key: #{key}"
