@@ -425,4 +425,23 @@ describe Seriamp::Yamaha::Client do
       end
     end
   end
+
+  describe '#all_status' do
+    let(:client) do
+      described_class.new(backend: :mock_serial_port)
+    end
+
+    it 'works' do
+      client.should receive(:status).and_return(status_1: 42)
+      client.should receive(:all_io_assignments).and_return(status_2: 42)
+      client.should receive(:volume_trim).and_return(status_3: 42)
+      client.should receive(:tone).and_return(status_4: 42)
+      client.all_status.should == {
+        status_1: 42,
+        status_2: 42,
+        status_3: 42,
+        status_4: 42,
+      }
+    end
+  end
 end

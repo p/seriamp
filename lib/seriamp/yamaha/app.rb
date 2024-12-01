@@ -20,6 +20,13 @@ module Seriamp
         render_json(result)
       end
 
+      get '/all' do
+        if params[:fresh]
+          client.all_status
+        end
+        render_json(client.current_status)
+      end
+
       post '/' do
         executor = Executor.new(client)
         request.body.read.split("\n").each do |line|
