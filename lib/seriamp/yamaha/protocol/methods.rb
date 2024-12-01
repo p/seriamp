@@ -237,7 +237,8 @@ module Seriamp
         end
 
         def set_program(value)
-          program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z]/, '_'))
+          program_code = PROGRAM_SET.fetch(value.downcase.gsub(/[^a-z0-9]/, '_'))
+          # TODO check pure direct
           remote_command("7E#{program_code}")
         end
 

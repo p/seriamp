@@ -101,3 +101,9 @@ Seriamp uses the term "label" to refer to user-provided input name,
 because the receiver continues to refer to its inputs by their canonical
 names throughout the API responses and the only place where the user-supplied
 label even shows up is just in the operation to retrieve this label.
+
+## Commands in Pure Direct Mode
+
+Some commands, for example selecting a DSP program, are not applicable in
+Pure Direct mode. When Pure Direct mode is enabled, these commands are
+accepted by the receiver but are ignored and do not produce a response.

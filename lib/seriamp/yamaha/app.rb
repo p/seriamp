@@ -112,9 +112,24 @@ module Seriamp
         end
       end
 
+      get '/pure_direct' do
+        return_value 'pure_direct', client.pure_direct?
+      end
+
       put "/pure_direct" do
         state = Utils.parse_on_off(request.body.read)
         client.set_pure_direct(state)
+        empty_response
+      end
+
+      get '/program' do
+        # TODO program does not round trip, the setter is set_program
+        # and the getter is program_name which returns different contents.
+        return_value 'program_name', client.program_name
+      end
+
+      put '/program' do
+        client.set_program(request.body.read)
         empty_response
       end
 
@@ -207,14 +222,18 @@ module Seriamp
         end
       end
 
-      def return_zone_volume(zone, value)
+      def return_value(param, value)
         if return_current_status? || return_full_status?
           standard_response
         elsif return_json?
-          render_json("#{zone}_volume" => value)
+          render_json(param => value)
         else
           plain_response value
         end
+      end
+
+      def return_zone_volume(zone, value)
+        return_value("#{zone}_volume", value)
       end
     end
   end

@@ -4,14 +4,14 @@ require 'spec_helper'
 
 describe 'yamaha commands' do
   let(:client_cls) { Seriamp::Yamaha::Client }
+  let(:args) { [] }
 
   describe '#initialize' do
     it 'works' do
-      Seriamp::Cmd.new(module_name: 'yamaha')
+      Seriamp::Cmd.new(args, module_name: 'yamaha')
     end
   end
 
-  let(:args) { [] }
   let(:stdin_c) { '' }
   let(:stdin) { StringIO.new(stdin_c) }
   let(:extra_cmd_options) { {} }
@@ -77,6 +77,52 @@ describe 'yamaha commands' do
             client.should_receive(:set_pure_direct).with(true)
             client_cls.should receive(:new).and_return(client)
             cmd.run
+          end
+        end
+      end
+
+      describe 'program with integer in argument' do
+        context 'via args' do
+          context 'with dash in argument' do
+            let(:args) { %w,program 2ch-stereo, }
+
+            it 'preserves dash' do
+              client.should_receive(:set_program).with('2ch-stereo')
+              client_cls.should receive(:new).and_return(client)
+              cmd.run
+            end
+          end
+
+          context 'with underscore in argument' do
+            let(:args) { %w,program 2ch_stereo, }
+
+            it 'preserves underscore' do
+              client.should_receive(:set_program).with('2ch_stereo')
+              client_cls.should receive(:new).and_return(client)
+              cmd.run
+            end
+          end
+        end
+
+        context 'via stdin' do
+          context 'with dash in argument' do
+            let(:stdin_c) { 'program 2ch-stereo' }
+
+            it 'preserves dash' do
+              client.should_receive(:set_program).with('2ch-stereo')
+              client_cls.should receive(:new).and_return(client)
+              cmd.run
+            end
+          end
+
+          context 'with underscore in argument' do
+            let(:stdin_c) { 'program 2ch_stereo' }
+
+            it 'preserves underscore' do
+              client.should_receive(:set_program).with('2ch_stereo')
+              client_cls.should receive(:new).and_return(client)
+              cmd.run
+            end
           end
         end
       end

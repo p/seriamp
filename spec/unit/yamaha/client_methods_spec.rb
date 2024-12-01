@@ -120,6 +120,16 @@ describe Seriamp::Yamaha::Client do
           client.set_main_input('DVR').should == {input_name: 'DVR/VCR2'}
         end
       end
+
+      context 'program' do
+        context 'integer in argument' do
+          let(:rr) { [%W,\x0207EC0\x03 \x02002834\x03,] }
+
+          it 'works' do
+            client.set_program('2ch_stereo')
+          end
+        end
+      end
     end
 
     describe '#set_bass_out' do

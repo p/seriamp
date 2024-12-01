@@ -117,6 +117,15 @@ describe Seriamp::Yamaha::Executor do
         end
       end
     end
+
+    context 'program' do
+      context 'underscore: 2ch_stereo' do
+        it 'works' do
+          client.should_receive(:set_program).with('2ch_stereo')
+          executor.run_command('program', '2ch_stereo')
+        end
+      end
+    end
   end
 
   describe '.usage' do

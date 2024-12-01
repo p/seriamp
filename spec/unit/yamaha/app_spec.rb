@@ -120,6 +120,42 @@ describe Seriamp::Yamaha::App do
     end
   end
 
+  describe 'get /pure_direct' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:pure_direct?).and_return('true')
+
+      get '/pure_direct'
+
+      last_response.status.should == 200
+      last_response.body.should == 'true'
+    end
+  end
+
+  describe 'get /program' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:program_name).and_return('2ch Stereo')
+
+      get '/program'
+
+      last_response.status.should == 200
+      last_response.body.should == '2ch Stereo'
+    end
+  end
+
+  describe 'put /program' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:set_program).with('2ch_stereo')
+
+      put '/program', '2ch_stereo'
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
+
   describe 'post /' do
     it 'works' do
       client.should receive(:set_main_power).with(true)
