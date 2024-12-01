@@ -8,10 +8,7 @@ describe Seriamp::Yamaha::Protocol::Extended::MainToneResponse do
   describe '#to_state' do
     it 'returns expected result' do
       response.to_state.should == {
-        output: :speaker,
-        tone: :bass,
-        frequency: 350,
-        gain: 0,
+        main_tone_speaker_bass: {frequency: 350, gain: 0},
       }
     end
   end

@@ -41,10 +41,7 @@ module Seriamp
 
           def to_state
             {
-              output: output,
-              tone: tone,
-              frequency: frequency,
-              gain: gain,
+              "main_tone_#{output}_#{tone}": {frequency: frequency, gain: gain},
             }
           end
 
