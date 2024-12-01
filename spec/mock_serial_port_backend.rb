@@ -51,12 +51,35 @@ module Seriamp
             raise UnexpectedWrite, "Exchange #{exchange_index} is a read, write attempted"
           end
 
-          if contents != exchange.last
-            raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents}"
+          if contents == exchange.last
+            @exchange_index += 1
+            return nil
           end
 
-          @exchange_index += 1
-          nil
+=begin
+          # Write contents does not match exactly but check the next
+          # operation - perhaps the write is split in the fixture
+          merged_contents = exchange.last
+          delta = 1
+          loop do
+            next_exchange = exchanges[exchange_index + delta]
+            if next_exchange and next_exchange.first == :w || next_exchange.first == :write
+              merged_contents += next_exchange.last
+              if merged_contents.length > contents.length
+                raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchange_index})"
+              end
+
+              if merged_contents == contents
+                @exchange_index += delta
+                return nil
+              end
+            end
+
+            delta += 1
+          end
+=end
+
+          raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchange_index})"
         end
 
         def readable?(timeout = 0)

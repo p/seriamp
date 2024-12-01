@@ -90,7 +90,7 @@ module Seriamp
         status.merge(
           all_io_assignments,
           tone,
-          volume_trim,
+          all_volume_trims,
         )
       end
 
