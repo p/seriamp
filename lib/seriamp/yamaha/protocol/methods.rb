@@ -511,8 +511,14 @@ module Seriamp
         def parametric_eq
           {}.tap do |result|
             GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
-              result[channel] = send("#{channel}_parametric_eq")
+              result[channel] = public_send("#{channel}_parametric_eq")
             end
+          end
+        end
+
+        def reset_parametric_eq
+          GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
+            public_send("reset_#{channel}_parametric_eq")
           end
         end
 

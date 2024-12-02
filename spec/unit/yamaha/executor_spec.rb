@@ -96,10 +96,18 @@ describe Seriamp::Yamaha::Executor do
           executor.run_command('parametric-eq', 'surround-left', 'reset').should == {hello: 42}
         end
       end
+
       context 'reset channel' do
         it 'works' do
           client.should receive(:reset_surround_left_parametric_eq_3).and_return(hello: 42)
           executor.run_command('parametric-eq', 'surround-left', '3', 'reset').should == {hello: 42}
+        end
+      end
+
+      context 'reset all channels' do
+        it 'works' do
+          client.should receive(:reset_parametric_eq)
+          executor.run_command('parametric-eq', 'reset').should be nil
         end
       end
 

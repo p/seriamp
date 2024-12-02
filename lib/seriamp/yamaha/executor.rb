@@ -253,8 +253,8 @@ EOT
               client.public_send("#{channel}_parametric_eq_#{band}")
             end
           when 1
-            # get channel all
-            channel = args.shift.gsub('-', '_').to_sym
+            # get channel all or reset
+            channel = args.shift.gsub('-', '_')
             client.public_send("#{channel}_parametric_eq")
           when 0
             # get all
