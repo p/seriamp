@@ -436,11 +436,15 @@ describe Seriamp::Yamaha::Client do
       client.should receive(:all_io_assignments).and_return(status_2: 42)
       client.should receive(:all_volume_trims).and_return(status_3: 42)
       client.should receive(:tone).and_return(status_4: 42)
+      client.should receive(:parametric_eq?).and_return(true)
+      client.should receive(:parametric_eq).and_return(ignored: 42)
+      client.should receive(:current_status).and_return(status_5: 42)
       client.all_status.should == {
         status_1: 42,
         status_2: 42,
         status_3: 42,
         status_4: 42,
+        status_5: 42,
       }
     end
   end

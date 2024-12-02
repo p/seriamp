@@ -91,7 +91,14 @@ module Seriamp
           all_io_assignments,
           tone,
           all_volume_trims,
-        )
+        ).tap do |status|
+          if parametric_eq?
+            parametric_eq
+          else
+            graphic_eq
+          end
+          status.update(current_status)
+        end
       end
 
       def current_status
