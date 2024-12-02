@@ -520,6 +520,7 @@ module Seriamp
           GRAPHIC_EQ_CHANNEL_MAP.each_value do |channel|
             public_send("reset_#{channel}_parametric_eq")
           end
+          nil
         end
 
         # RX-V2600, RX-V2700 and RX-V3800.
