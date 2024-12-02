@@ -24,5 +24,5 @@ describe 'Yamaha replay tests' do
 
   client_method_test %w,parametric_eq,, 'rx-v3800-peq'
 
-  client_method_test %w,reset_surround_left_parametric_eq,, 'rx-v3800-peq-reset'
+  client_method_test %w,reset_surround_left_parametric_eq,, 'rx-v3800-surround-left-peq-reset'
 end
