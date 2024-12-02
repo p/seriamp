@@ -491,6 +491,19 @@ module Seriamp
           end
         end
 
+        # Returns whether graphic equalizer is supported by the receiver.
+        # Receivers supporting parametric eq do not support graphic eq.
+        def graphic_eq?
+          # Most of the receivers supported by the "yamaha" protocol should
+          # implement the graphic equalizer, with the exception of those that
+          # implement the parametric equalizer (RX-V2500 is a special case
+          # that exposes no software-controllable equalizer at all).
+          # I did not check what is usable in high level older receivers
+          # like RX-V3300 or RX-Z1/RX-Z9 since I don't own any of those and
+          # do not expect to ever own one of them.
+          !parametric_eq? && model_code != 'R0178'
+        end
+
         # Default parametric EQ bands for RX-V3800:
         # 62.5 157.7 396.9 1000 2520 6350 16000
         # Default gain: 0.0, default q: 1.0.
@@ -501,6 +514,22 @@ module Seriamp
               result[channel] = send("#{channel}_parametric_eq")
             end
           end
+        end
+
+        # RX-V2600, RX-V2700 and RX-V3800.
+        # I assume RX-V4600 also supports parametric eq but have not tested this.
+        # RX-V2500 implements parametric EQ but it is only configurable via
+        # the UI, it is not exposed over the RS232 interface.
+        # RX-V3900 does not implement the "yamaha" protocol.
+        PARAMETRIC_EQ_MODEL_CODES = %w,
+          R0193 R0212 R0225 R0190
+        ,
+
+        # Returns whether parametric equalizer is supported by the receiver.
+        # RX-V2500 implements parametric eq but does not expose a way to
+        # control it programmatically; this method returns false for RX-V2500.
+        def parametric_eq?
+          PARAMETRIC_EQ_MODEL_CODES.include?(model_code)
         end
 
         def volume_trim(input_name)

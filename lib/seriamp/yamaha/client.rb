@@ -526,7 +526,7 @@ module Seriamp
         'R0227' => 'HTR-6190',
         'R0240' => 'RX-V1900',
         'R0241' => 'HTR-6290',
-        # RX-V3900
+        # RX-V3900 does not implement the "yamaha" protocol
         'R0258' => 'RX-V2065',
         'R0259' => 'HTR-6290',
         # RX-V1067

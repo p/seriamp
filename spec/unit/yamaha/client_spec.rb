@@ -444,4 +444,50 @@ describe Seriamp::Yamaha::Client do
       }
     end
   end
+
+  describe '#graphic_eq?' do
+    let(:client) do
+      described_class.new(backend: :mock_serial_port)
+    end
+
+    [
+      ['RX-V1500', 'R0177', true],
+      ['RX-V1700', 'R0210', true],
+      ['RX-V1800', 'R0226', true],
+      ['RX-V2700', 'R0212', false],
+      ['RX-V3800', 'R0225', false],
+    ].each do |name, _model_code, _expected|
+      context name do
+        model_code, expected = _model_code, _expected
+
+        it "is #{expected}" do
+          client.should receive(:model_code).at_least(:once).and_return(model_code)
+          client.graphic_eq?.should be expected
+        end
+      end
+    end
+  end
+
+  describe '#parametric_eq?' do
+    let(:client) do
+      described_class.new(backend: :mock_serial_port)
+    end
+
+    [
+      ['RX-V1500', 'R0177', false],
+      ['RX-V1700', 'R0210', false],
+      ['RX-V1800', 'R0226', false],
+      ['RX-V2700', 'R0212', true],
+      ['RX-V3800', 'R0225', true],
+    ].each do |name, _model_code, _expected|
+      context name do
+        model_code, expected = _model_code, _expected
+
+        it "is #{expected}" do
+          client.should receive(:model_code).at_least(:once).and_return(model_code)
+          client.parametric_eq?.should be expected
+        end
+      end
+    end
+  end
 end
