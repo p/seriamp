@@ -107,3 +107,20 @@ label even shows up is just in the operation to retrieve this label.
 Some commands, for example selecting a DSP program, are not applicable in
 Pure Direct mode. When Pure Direct mode is enabled, these commands are
 accepted by the receiver but are ignored and do not produce a response.
+
+## RX-V1500 Graphic Equalizer
+
+The RX-V1500 extended protocol specification states that "channel EQ"
+(which is the graphics equalizer) has 13 bands.
+In reality, RX-V1500 only recognizes 7 bands (63, 160, 400, 1000,
+2500, 6300, 16000 Hz - every other frequency listed in the protocol
+specification is not recognized).
+
+As such, RX-V1500 does not have a more powerful equalizer than the later
+RX-V1xxx models.
+
+RX-V2500 has a parametric equalizer that is not accessible at all via
+the RS232 protocol, thus I don't know what hardware those other bands
+would actually be implemented by. Perhaps this functionality was
+implemented in RX-V2400 or some earlier 2000 or higher level model
+before parametric equalizer was added?
