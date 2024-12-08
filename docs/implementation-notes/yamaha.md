@@ -124,3 +124,8 @@ the RS232 protocol, thus I don't know what hardware those other bands
 would actually be implemented by. Perhaps this functionality was
 implemented in RX-V2400 or some earlier 2000 or higher level model
 before parametric equalizer was added?
+
+## Naming Deviations
+
+- "format" in the status output (e.g. PCM) is called "audio format" in seriamp
+because bare "format" often means output format of text, etc.
