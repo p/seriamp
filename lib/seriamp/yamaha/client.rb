@@ -117,7 +117,7 @@ module Seriamp
         zone3_power input input_name audio_source program_select
         main_volume zone2_volume zone3_volume
         program program_name sleep night night_name
-        format sample_rate
+        audio_format sample_rate
       ).each do |meth|
         define_method(meth) do
           status.fetch(meth)

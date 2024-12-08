@@ -309,7 +309,7 @@ module Seriamp
           '80' => 'Straight',
         }.freeze
 
-        FORMAT_GET = {
+        AUDIO_FORMAT_GET = {
           '00' => 'Analog',
           '01' => 'PCM',
           '02' => 'DSD',
@@ -882,7 +882,7 @@ module Seriamp
           '00' => [:ready, :ready_report],
           '06' => :xm_message,
           '08' => :net_usb_message,
-          '10' => :format,
+          '10' => :audio_format,
           '11' => [:sample_rate, :sample_rate_2],
           '12' => [:channel_indicator, :channel_indicator_report],
           '13' => [:lfe_indicator, :lfe_indicator_report],
