@@ -30,8 +30,8 @@ main-(speaker|headphone)-tone-(bass|treble) gain [frequency]
 (front|center|surround|surround-back|subwoofer)-level value
 (front|center|surround|surround-back|subwoofer)-distance value
 distance [ft|m]
-distance (front|center|surround|surround-back|subwoofer) [ft|m]
-distance (front|center|surround|surround-back|subwoofer) value [ft|m]
+distance (#{available_channels.join('|')}) [ft|m]
+distance (#{available_channels.join('|')}) value [ft|m]
 volume-trim input value
 osd-message message
 advanced-setup bool
@@ -43,13 +43,16 @@ EOT
       end
 
       def self.command_help(command)
-        available_channels = "Channels: front-left|front-right|center|surround-left|surround-right|surround-back-left|surround-back-right|subwoofer"
         case command
         when 'peq'
-          available_channels
+          "Channels: #{available_channels.join('|')}"
         when 'volume-trim'
           "Inputs: #{command_volume_trim_input_names.join('|')}"
         end
+      end
+
+      def self.available_channels
+        %w,front-left front-right center surround-left surround-right surround-back-left surround-back-right subwoofer,
       end
 
       def self.command_volume_trim_input_names
@@ -271,11 +274,31 @@ EOT
           else
             raise "Wrong number of arguments: #{args}"
           end
+        when 'level'
+          args_orig = args
+          case args.length
+          when 2
+            channel = args.first.downcase.gsub('-', '_')
+            # TODO validate channels
+            client.public_send("set_#{channel}_level", cmd_line_float(args[1]))
+          when 1
+            channel = args.first.downcase.gsub('-', '_')
+            # TODO validate channels
+            client.public_send("#{channel}_level")
+          when 0
+            Client::CHANNEL_KEYS.each do |channel|
+              value = client.public_send("#{channel}_level")
+              channel_name = channel.to_s.gsub(/(_(.))/) { |m| ' ' + $2.upcase }.sub(/^(.)/) { |m| m.upcase }
+              puts "#{channel_name}: #{value}"
+            end
+          else
+            raise "Wrong number of arguments: #{args_orig}"
+          end
         when /\A(.*)-level\z/
           # TODO validate the method name before passing user input to
           # public_send.
           channel = $1.downcase.gsub('-', '_')
-          client.public_send("set_#{channel}_level", Float(args.shift))
+          client.public_send("set_#{channel}_level", cmd_line_float(args.shift))
         when 'distance'
           args_orig = args
           args = args.map { |arg| arg.downcase.gsub('-', '_') }

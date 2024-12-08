@@ -184,6 +184,10 @@ module Seriamp
             encoded = encode_sequence(level, '14', -10, 10, 0.5)
             system_command(prefix + encoded)
           end
+
+          define_method(key = "#{channel}_level") do
+            current_status.fetch(key.to_sym)
+          end
         end
 
         {
