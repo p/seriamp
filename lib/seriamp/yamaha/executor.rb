@@ -32,7 +32,7 @@ main-(speaker|headphone)-tone-(bass|treble) gain [frequency]
 distance [ft|m]
 distance (front|center|surround|surround-back|subwoofer) [ft|m]
 distance (front|center|surround|surround-back|subwoofer) value [ft|m]
-volume-trim channel value
+volume-trim input value
 osd-message message
 advanced-setup bool
 speaker-impedance 4|8
@@ -43,10 +43,19 @@ EOT
       end
 
       def self.command_help(command)
+        available_channels = "Channels: front-left|front-right|center|surround-left|surround-right|surround-back-left|surround-back-right|subwoofer"
         case command
         when 'peq'
-          "Channels: front-left|front-right|center|surround-left|surround-right|surround-back-left|surround-back-right|subwoofer"
+          available_channels
+        when 'volume-trim'
+          "Inputs: #{command_volume_trim_input_names.join('|')}"
         end
+      end
+
+      def self.command_volume_trim_input_names
+        Yamaha::Protocol::GetConstants::VOLUME_TRIM_INPUT_NAME_2_SET.keys.map do |key|
+          key.downcase.gsub(' ', '-')
+        end.reject! { |key| key == 'none' }.sort
       end
 
       def initialize(client, **opts)
