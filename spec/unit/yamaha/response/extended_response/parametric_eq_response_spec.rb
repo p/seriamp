@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Seriamp::Yamaha::Protocol::Extended::ParametricEqResponse do
+describe Seriamp::Yamaha::Response::ExtendedResponse::ParametricEqResponse do
   let(:response) do
     # RX-V3800
     described_class.new('034', '332E215')

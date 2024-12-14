@@ -2,8 +2,8 @@
 
 module Seriamp
   module Yamaha
-    module Protocol
-      module Extended
+    module Response
+      module ExtendedResponse
         class VolumeTrimResponse < ResponseBase
           include Yamaha::Helpers
 
@@ -16,7 +16,7 @@ module Seriamp
               raise ArgumentError, "Invalid value length: expected 4: #{value}"
             end
 
-            @input_name = GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[0..1])
+            @input_name = Yamaha::Protocol::GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[0..1])
             # RX-V1800/RX-V3800 documentation states that for HDMI
             # inputs, the jack number is encoded 1-based (unlike 0-based
             # encoding used for all other inputs and outputs).

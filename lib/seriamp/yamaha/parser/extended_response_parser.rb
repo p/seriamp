@@ -60,7 +60,7 @@ module Seriamp
           return nil
         end
 
-        cls = Yamaha::Protocol::Extended::ResponseBase.registered_responses[command_id] ||
+        cls = Yamaha::Response::ExtendedResponse::ResponseBase.registered_responses[command_id] ||
           Protocol::Extended::GenericResponse
         cls&.new(command_id, command_data)
       end

@@ -2,8 +2,8 @@
 
 module Seriamp
   module Yamaha
-    module Protocol
-      module Extended
+    module Response
+      module ExtendedResponse
         class GenericResponse < ResponseBase
 
         end

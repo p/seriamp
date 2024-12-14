@@ -2,8 +2,8 @@
 
 module Seriamp
   module Yamaha
-    module Protocol
-      module Extended
+    module Response
+      module ExtendedResponse
         class IoAssignmentResponse < ResponseBase
           include Yamaha::Helpers
 
@@ -16,14 +16,14 @@ module Seriamp
               raise ArgumentError, "Invalid value length: expected 4: #{value}"
             end
 
-            @jack_type = GetConstants::IO_ASSIGNMENT_JACK_TYPE_GET.fetch(value[0])
+            @jack_type = Yamaha::Protocol::GetConstants::IO_ASSIGNMENT_JACK_TYPE_GET.fetch(value[0])
             @jack_number = Integer(value[1]) + 1
             # Could also use INPUT_NAME_2_GET here, but the names in
             # INPUT_NAME_2_GET are not for receivers that permit I/O assignment
             # setting/retrieval via this function.
             # Note that not all inputs mentioned in the input trim input list
             # can be assigned.
-            @input_name = GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[2..3])
+            @input_name = Yamaha::Protocol::GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[2..3])
           end
 
           attr_reader :jack_type

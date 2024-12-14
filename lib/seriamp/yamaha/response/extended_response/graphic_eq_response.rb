@@ -2,11 +2,11 @@
 
 module Seriamp
   module Yamaha
-    module Protocol
-      module Extended
+    module Response
+      module ExtendedResponse
         class GraphicEqResponse < ResponseBase
           include Yamaha::Helpers
-          include Constants
+          include Yamaha::Protocol::Extended::Constants
 
           register '030'
 

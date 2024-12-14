@@ -2,8 +2,8 @@
 
 module Seriamp
   module Yamaha
-    module Protocol
-      module Extended
+    module Response
+      module ExtendedResponse
         class InputLabelResponse < ResponseBase
           include Yamaha::Helpers
 
@@ -16,7 +16,7 @@ module Seriamp
               raise ArgumentError, "Invalid value length: expected 14: #{value} (#{value.length})"
             end
 
-            @input_name = GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[1..2])
+            @input_name = Yamaha::Protocol::GetConstants::VOLUME_TRIM_INPUT_NAME_2_GET.fetch(value[1..2])
             # "Character No." (length?) is always 09 in my testing.
             # p value[3..4]
             @label = value[5..]

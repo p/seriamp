@@ -1,15 +1,14 @@
 require 'spec_helper'
 
-describe Seriamp::Yamaha::Protocol::Extended::GraphicEqResponse do
+describe Seriamp::Yamaha::Response::ExtendedResponse::MainToneResponse do
   let(:response) do
-    # RX-V1800
-    described_class.new('030', '2210')
+    described_class.new('033', '0010C')
   end
 
   describe '#to_state' do
     it 'returns expected result' do
       response.to_state.should == {
-        front_left_geq_160: 0.5,
+        main_tone_speaker_bass: {frequency: 350, gain: 0},
       }
     end
   end

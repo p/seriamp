@@ -222,7 +222,7 @@ describe Seriamp::Yamaha::Client do
           ]
         end
 
-        let(:expected_cls) { Seriamp::Yamaha::Protocol::Extended::VolumeTrimResponse }
+        let(:expected_cls) { Seriamp::Yamaha::Response::ExtendedResponse::VolumeTrimResponse }
 
         let(:expected) do
           {
@@ -277,7 +277,7 @@ describe Seriamp::Yamaha::Client do
           ]
         end
 
-        let(:expected_cls) { Seriamp::Yamaha::Protocol::Extended::IoAssignmentResponse }
+        let(:expected_cls) { Seriamp::Yamaha::Response::ExtendedResponse::IoAssignmentResponse }
 
         let(:expected) do
           {
