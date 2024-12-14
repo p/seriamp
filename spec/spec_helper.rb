@@ -2,6 +2,7 @@
 
 ENV['RACK_ENV'] = 'test'
 
+require 'debug'
 require 'byebug'
 require 'seriamp/all'
 require 'rack/test'
