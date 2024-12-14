@@ -246,7 +246,7 @@ module Seriamp
       def parse_response(resp)
         case first_byte = resp[0]
         when STX
-          parse_framed_stx_response(resp).tap do |resp|
+          Yamaha::Response::CommandResponse.parse(resp[1...-1]).tap do |resp|
             # Sometimes the response isn't parsed (yet) by seriamp,
             # which causes state to be missing here...
             begin
@@ -350,16 +350,6 @@ module Seriamp
         cls = Yamaha::Protocol::Extended::ResponseBase.registered_responses[command_id] ||
           Protocol::Extended::GenericResponse
         cls&.new(command_id, command_data)
-      end
-
-      def parse_framed_stx_response(resp)
-        unless resp[0] == STX
-          raise UnexpectedResponse, "Invalid response: expected to start with STX: #{resp} #{resp[0].ord}"
-        end
-        unless resp[-1] == ETX
-          raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
-        end
-        Yamaha::Response::CommandResponse.parse(resp[1...-1])
       end
 
       # TODO what happens to surround back channels when there's only one?
@@ -517,7 +507,7 @@ module Seriamp
         when DC2
           logger&.warn("Status response, #{buf.length} bytes")
         when STX
-          logger&.warn("Command response: #{buf} #{parse_framed_stx_response(buf)}")
+          logger&.warn("Command response: #{buf} #{Yamaha::Response::CommandResponse.parse(buf[1..-1])}")
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
