@@ -19,7 +19,7 @@ describe Seriamp::Yamaha::Response do
       let(:response_str) { "\x0200263B\x03" }
       
       it 'returns an instance of correct response class' do
-        parsed.should be_a(Seriamp::Yamaha::Response::RemoteCommandResponse)
+        parsed.should be_a(Seriamp::Yamaha::Response::CommandResponse)
       end
     end
     

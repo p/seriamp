@@ -14,7 +14,7 @@ module Seriamp
         
         case first_byte = resp[0]
         when STX
-          RemoteCommandResponse.parse(resp[1..-1])
+          CommandResponse.parse(resp[1..-1])
         when DC2
           StatusResponse.parse(resp[1..-1])
         when DC4
@@ -28,5 +28,5 @@ module Seriamp
 end
 
 require 'seriamp/yamaha/response/status_response'
-require 'seriamp/yamaha/response/remote_command_response'
+require 'seriamp/yamaha/response/command_response'
 require 'seriamp/yamaha/response/extended_response'

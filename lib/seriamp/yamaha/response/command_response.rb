@@ -2,7 +2,7 @@
 
 module Seriamp
   module Yamaha
-    class Response::RemoteCommandResponse < Response
+    class Response::CommandResponse < Response
       def self.parse(str)
         new
       end
