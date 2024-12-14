@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
+require 'seriamp/yamaha/response/status_response'
 require 'spec_helper'
 
-describe Seriamp::Yamaha::Client do
-  let(:client) { described_class.new }
-
-  describe '#parse_status_response' do
-    let(:parsed) { client.send(:parse_status_response, status_response) }
+describe Seriamp::Yamaha::Response::StatusResponse do
+  describe '.parse' do
+    let(:parsed) { described_class.parse(status_response) }
 
     context 'RX-V1500' do
 
@@ -15,7 +14,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       let(:status_response) do
-        "R0177F8A#{status_middle}04"
+        "R0177F8A#{status_middle}04"
       end
 
       let(:expected) do
@@ -118,7 +117,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        parsed.should == expected
+        parsed.state.should == expected
       end
     end
 
@@ -129,7 +128,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       let(:status_response) do
-        "R0177F8A#{status_middle}48"
+        "R0177F8A#{status_middle}48"
       end
 
       let(:expected) do
@@ -233,7 +232,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        parsed.should == expected
+        parsed.state.should == expected
       end
     end
 
@@ -244,7 +243,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       let(:status_response) do
-        "R0210IAE#{status_middle}FB"
+        "R0210IAE#{status_middle}FB"
       end
 
       let(:expected) do
@@ -372,7 +371,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        parsed.should == expected
+        parsed.state.should == expected
       end
     end
 
@@ -383,7 +382,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       let(:status_response) do
-        "R0212IAE#{status_middle}A8"
+        "R0212IAE#{status_middle}A8"
       end
 
       let(:expected) do
@@ -525,7 +524,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        parsed.should == expected
+        parsed.state.should == expected
       end
 
       context 'in standby' do
@@ -534,7 +533,7 @@ describe Seriamp::Yamaha::Client do
         end
 
         let(:status_response) do
-          "R0212I09#{status_middle}A8"
+          "R0212I09#{status_middle}A8"
         end
 
         let(:expected) do
@@ -551,7 +550,7 @@ describe Seriamp::Yamaha::Client do
         end
 
         it 'works' do
-          parsed.should == expected
+          parsed.state.should == expected
         end
       end
     end
@@ -563,7 +562,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       let(:status_response) do
-        "R0226JB5#{status_middle}1E"
+        "R0226JB5#{status_middle}1E"
       end
 
       let(:expected) do
@@ -701,7 +700,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        parsed.should == expected
+        parsed.state.should == expected
       end
     end
   end

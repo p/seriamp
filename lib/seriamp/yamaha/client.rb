@@ -7,6 +7,7 @@ require 'seriamp/yamaha/protocol/methods'
 require 'seriamp/yamaha/protocol/get_constants'
 require 'seriamp/yamaha/protocol/status'
 require 'seriamp/yamaha/protocol/extended'
+require 'seriamp/yamaha/constants'
 require 'seriamp/yamaha/parser'
 require 'seriamp/yamaha/response'
 require 'seriamp/client'
@@ -16,6 +17,7 @@ module Seriamp
 
     class Client < Seriamp::Client
       include Parser
+      include Constants
 
       # Yamahas do not care what flow control is set to.
       MODEM_PARAMS = {
@@ -60,7 +62,7 @@ module Seriamp
           with_retry do
             with_device do
               resp = nil
-              status = dispatch_and_parse(STATUS_REQ)
+              status = dispatch_and_parse(STATUS_REQ).state
               # Device could have been closed by now.
               # TODO keep the device open the entire time if thread safety
               # (locking) is enabled.
@@ -257,8 +259,8 @@ module Seriamp
             update_current_status(state)
           end
         when DC2
-          parse_status_response(resp).tap do |resp|
-            update_current_status(resp)
+          Yamaha::Response::StatusResponse.parse(resp[1...-1]).tap do |resp|
+            update_current_status(resp.state)
           end
         when DC4
           parse_extended_response(resp[1...-1]).tap do |resp|
@@ -365,122 +367,6 @@ module Seriamp
         presence_left
         presence_right
       ).freeze
-
-      MODEL_NAMES = {
-        # RX-V1000
-        # RX-V3000
-        # RX-V2200
-        'R0112' => 'RX-V3200',
-        'R0114' => 'RX-Z1',
-        'R0132' => 'RX-V2300',
-        'R0133' => 'RX-V3300',
-        # Documentation for both RX-V2400 and RX-Z9 claims they identify as R0161
-        'R0161' => 'RX-V2400/RX-Z9',
-        # RX-V1500 and HTR-5890 both identify themselves as R0177
-        'R0177' => 'RX-V1500/HTR-5890',
-        'R0178' => 'RX-V2500',
-        'R0190' => 'RX-V4600',
-        'R0191' => 'RX-V1600',
-        'R0193' => 'RX-V2600',
-        # HTR-5990
-        'R0210' => 'RX-V1700',
-        'R0212' => 'RX-V2700',
-        'R0225' => 'RX-V3800',
-        'R0226' => 'RX-V1800',
-        'R0227' => 'HTR-6190',
-        'R0240' => 'RX-V1900',
-        'R0241' => 'HTR-6290',
-        # RX-V3900 does not implement the "yamaha" protocol
-        'R0258' => 'RX-V2065',
-        'R0259' => 'HTR-6290',
-        # RX-V1067
-        # RX-V2067
-        # RX-V3067
-      }.freeze
-
-      MODEL_IDS = MODEL_NAMES.invert.freeze
-
-      def parse_status_response(resp)
-        if resp.length < 10
-          raise HandshakeFailure, "Broken status response: expected at least 10 bytes, got #{resp.length} bytes; concurrent operation on device?"
-        end
-        payload = resp[1...-1]
-        model_code = payload[0..4]
-        version = payload[5]
-        length = payload[6..7].to_i(16)
-        data = payload[8...-2]
-        if data.length != length
-          raise HandshakeFailure, "Broken status response: expected #{length} bytes for data, got #{data.length} bytes; concurrent operation on device? #{data}"
-        end
-        unless data.start_with?('@E01900')
-          raise HandshakeFailure, "Broken status response: expected data to start with @E01900, actual #{data[0..6]}"
-        end
-        received_checksum = payload[-2..]
-        calculated_checksum = calculate_checksum(payload[...-2])
-        if received_checksum != calculated_checksum
-          raise HandshakeFailure, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
-        end
-
-        parse_status_response_inner(data, model_code).update(
-          model_code: model_code,
-          model_name: MODEL_NAMES.fetch(model_code),
-          firmware_version: version,
-          raw_string: data,
-        )
-      end
-
-      def parse_status_response_inner(data, model_code)
-        table = Protocol::Status::STATUS_FIELDS.fetch(model_code)
-        index = 0
-        result = {}
-        table.each do |entry|
-          if index >= data.length
-            # Truncated response - normally obtained when receiver is
-            # in standby
-            break
-          end
-          entry_index = 0
-          case size_or_field = entry[entry_index]
-          when Integer
-            size = size_or_field
-            entry_index += 1
-          else
-            size = 1
-          end
-          value = data[index...index+size]
-          field = entry[entry_index]
-          if field.nil?
-            index += size
-            next
-          end
-          fn = entry[entry_index+1] || field
-          constant = "#{fn.to_s.upcase}_GET"
-          parsed = begin
-            table = Protocol::GetConstants.const_get(constant)
-          rescue NameError
-            send("parse_#{fn}", value, field)
-          else
-            parse_table(value, field, table, index)
-          end
-          case parsed
-          when Hash
-            result.update(parsed)
-          else
-            result.update(field => parsed)
-          end
-          index += size
-        end
-        result
-      end
-
-      def parse_table(value, field, table, index)
-        # Some values are nil, e.g. sleep
-        if table.key?(value)
-          table[value]
-        else
-          raise UnhandledResponse, "Bad value for field #{field}: #{value} (at DT#{index})"
-        end
-      end
 
       def extract_text(resp)
         # TODO: assert resp[0] == DC1, resp[-1] == ETX
