@@ -14,11 +14,11 @@ module Seriamp
 
         case first_byte = resp[0]
         when DC2
-          StatusResponse.parse(resp[1..-1], logger: logger)
+          StatusResponse.parse(resp[1...-1], logger: logger)
         when STX
-          CommandResponse.parse(resp[1..-1], logger: logger)
+          CommandResponse.parse(resp[1...-1], logger: logger)
         when DC4
-          ExtendedResponse.parse(resp[1..-1], logger: logger)
+          ExtendedResponse.parse(resp[1...-1], logger: logger)
         else
           raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end

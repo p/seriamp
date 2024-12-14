@@ -507,7 +507,7 @@ module Seriamp
         when DC2
           logger&.warn("Status response, #{buf.length} bytes")
         when STX
-          logger&.warn("Command response: #{buf} #{Yamaha::Response::CommandResponse.parse(buf[1..-1])}")
+          logger&.warn("Command response: #{buf} #{Yamaha::Response::CommandResponse.parse(buf[1...-1])}")
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
