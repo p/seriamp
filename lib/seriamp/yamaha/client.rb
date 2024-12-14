@@ -263,8 +263,9 @@ module Seriamp
         when DC4
           parse_extended_response(resp[1...-1]).tap do |resp|
             if resp
-              # Extended commands have empty responses, i.e. the receiver
-              # does not report the state back.
+              # Extended commands that alter state (i.e. the "set X" commands)
+              # have empty responses, i.e. the receiver does not report
+              # the state back.
               # We need to store the state ourselves then based on the
               # issued command or perform a query.
               update_current_status(resp.to_state)
