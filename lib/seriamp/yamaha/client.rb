@@ -8,6 +8,7 @@ require 'seriamp/yamaha/protocol/get_constants'
 require 'seriamp/yamaha/protocol/status'
 require 'seriamp/yamaha/protocol/extended'
 require 'seriamp/yamaha/parser'
+require 'seriamp/yamaha/response'
 require 'seriamp/client'
 
 module Seriamp
@@ -184,24 +185,19 @@ module Seriamp
                   logger&.debug("Received status response in response to command - continuing to read looking for a command response")
                   next
                 end
-                begin
-                  control_type = resp.fetch(:control_type)
-                rescue KeyError
-                  raise NotImplementedError, "Response was missing control type: #{resp}"
-                end
-                if control_type != :rs232
+                if resp.control_type != :rs232
                   # Receiver can be sending system responses, ignore them.
                   #raise UnhandledResponse, "Response was not to our command: #{resp}"
                   update_current_status(resp)
                   next
                 end
-                if expect_response_state && !resp.fetch(:state).keys.include?(expect_response_state)
+                if expect_response_state && !resp.state.keys.include?(expect_response_state)
                   logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
                   next
                 end
                 break
               end
-              resp.fetch(:state)
+              resp.state
             end
           end
         end
@@ -211,13 +207,13 @@ module Seriamp
         with_lock do
           with_retry do
             resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
-            if resp.fetch(:control_type) != :rs232
+            if resp.control_type != :rs232
               raise "Wrong control type: #{resp[:control_type]}"
             end
-            if guard = resp[:guard]
+            if guard = resp.guard
               raise NotApplicable, "Command guarded by '#{guard}'"
             end
-            resp[:state]
+            resp.state
           end
         end
       end
@@ -254,7 +250,7 @@ module Seriamp
             # Sometimes the response isn't parsed (yet) by seriamp,
             # which causes state to be missing here...
             begin
-              state = resp.fetch(:state)
+              state = resp.state
             rescue KeyError
               raise NotImplementedError, "Response was missing state: #{resp}"
             end
@@ -287,10 +283,16 @@ module Seriamp
         then
           @current_status = nil
         end
-        if @current_status
-          @current_status.update(resp)
+        new_status = case resp
+        when Hash
+          resp
         else
-          @current_status = resp.dup
+          resp.state
+        end
+        if @current_status
+          @current_status.update(new_status)
+        else
+          @current_status = new_status.dup
         end
       end
 
@@ -356,7 +358,7 @@ module Seriamp
         unless resp[-1] == ETX
           raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
         end
-        parse_stx_response(resp[1...-1])
+        Yamaha::Response::CommandResponse.parse(resp[1...-1])
       end
 
       # TODO what happens to surround back channels when there's only one?
@@ -372,134 +374,6 @@ module Seriamp
         presence_left
         presence_right
       ).freeze
-
-      def parse_stx_response(resp)
-        control_type = parse_flag(resp[0], {
-          '0' => :rs232,
-          '1' => :remote,
-          '2' => :key,
-          '3' => :system,
-          '4' => :encoder,
-        }, 'Invalid control type value')
-        guard = parse_flag(resp[1], {
-          '0' => nil,
-          '1' => :system,
-          '2' => :setting,
-        }, 'Invalid guard value')
-        command = resp[2..3]
-        data = resp[4..5]
-        logger&.debug("Command response: #{command} #{data}")
-        state = if field_name_or_spec = GET_MAP[command]
-          case field_name_or_spec
-          when Array
-            field_name = field_name_or_spec.first
-            const_name = field_name_or_spec.last
-          else
-            field_name = const_name = field_name_or_spec
-          end
-          map = self.class.const_get("#{const_name.upcase}_GET")
-          # Value can be nil, e.g. lfe_indicator (when value is "---" in the
-          # documentation).
-          unless map.key?(data)
-            logger&.warn("Unhandled value #{data} for #{command} (#{field_name})")
-          end
-          value = map[data]
-          unless Hash === value
-            value = {field_name => value}
-          end
-          value
-        else
-          case command
-          when '15'
-            if data.length != 2
-              raise NotImplementedError
-            end
-            value = case Integer(data, 16)
-            when 0xFF
-              nil
-            when 0x00..0x1F
-              parse_sequence(data, '00', -31, 0, 1)
-            else
-              raise NotImplementedError
-            end
-            {dialog: value}
-          when '16'
-            parse_status_flags(data, 'STX response')
-          when '22'
-            {
-              decoder_mode: DECODER_MODE_GET.fetch(data[0]),
-              audio_source: AUDIO_SOURCE_GET.fetch(data[1]),
-            }
-          when '26'
-            {main_volume: parse_half_db_volume(data, :main_volume)}
-          when '27'
-            {zone2_volume: parse_half_db_volume(data, :zone2_volume)}
-          when 'A2'
-            {zone3_volume: parse_half_db_volume(data, :zone3_volume)}
-          when '40'
-            {front_right_level: parse_speaker_level(data, 'report response')}
-          when '41'
-            {front_left_level: parse_speaker_level(data, 'report response')}
-          when '42'
-            {center_level: parse_speaker_level(data, 'report response')}
-          when '43'
-            {surround_right_level: parse_speaker_level(data, 'report response')}
-          when '44'
-            {surround_left_level: parse_speaker_level(data, 'report response')}
-          when '45'
-            {presence_right_level: parse_speaker_level(data, 'report response')}
-          when '46'
-            {presence_left_level: parse_speaker_level(data, 'report response')}
-          when '47'
-            {surround_back_right_level: parse_speaker_level(data, 'report response')}
-          when '48'
-            {surround_back_left_level: parse_speaker_level(data, 'report response')}
-          when '49'
-            {subwoofer_level: parse_speaker_level(data, 'report response')}
-          when '4A'
-            {subwoofer_2_level: parse_speaker_level(data, 'report response')}
-          when '4B'
-            {zone2_bass: parse_sequence(data, '00', -10, 10, 1)}
-          when '4C'
-            {zone2_treble: parse_sequence(data, '00', -10, 10, 1)}
-          when '4D'
-            {zone3_bass: parse_sequence(data, '00', -10, 10, 1)}
-          when '4E'
-            {zone3_treble: parse_sequence(data, '00', -10, 10, 1)}
-          when '56'
-            if data == 'FF'
-              {hdmi_auto_audio_delay: nil}
-            else
-              {hdmi_auto_audio_delay: parse_sequence(data, '00', 0, 240, 1)}
-            end
-          when '60'
-            if data.length != 2
-              raise "Unexpected payload for 60: #{data}"
-            end
-            if data[0] != ?0
-              raise "Unexpected payload for 60: #{data}"
-            end
-            {program_select: AUTO_LAST_GET.fetch(data[1])}
-          when *SPEAKER_LAYOUT_MAP.keys
-            if data[0] != '0'
-              raise NotImplementedError
-            end
-            key, hash = SPEAKER_LAYOUT_MAP.fetch(command)
-            {key => hash.fetch(data[1])}
-          when 'A7'
-            {eq_select: EQ_SELECT_GET.fetch(Integer(data).to_s)}
-          when 'A8'
-            {tone_auto_bypass: data == '00'}
-          else
-            #logger&.warn("Unhandled response: #{command} (#{data})")
-            raise UnhandledResponse, "Unhandled STX response: command: #{command}; data: #{data}"
-          end
-        end
-        {control_type: control_type}.tap do |res|
-          res[:guard] = guard if guard
-          res[:state] = state if state
-        end
-      end
 
       MODEL_NAMES = {
         # RX-V1000

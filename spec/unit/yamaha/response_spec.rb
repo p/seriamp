@@ -20,6 +20,9 @@ describe Seriamp::Yamaha::Response do
       
       it 'returns an instance of correct response class' do
         parsed.should be_a(Seriamp::Yamaha::Response::CommandResponse)
+        parsed.control_type.should be :rs232
+        parsed.guard.should be nil
+        parsed.state.should == {main_volume: -70}
       end
     end
     
