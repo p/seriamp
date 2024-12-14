@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'seriamp/yamaha/response/status_response'
+require 'seriamp/yamaha/parser/status_response_parser'
 require 'spec_helper'
 
-describe Seriamp::Yamaha::Response::StatusResponse do
+describe Seriamp::Yamaha::Parser::StatusResponseParser do
   describe '.parse' do
     let(:parsed) { described_class.parse(status_response) }
 

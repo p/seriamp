@@ -248,7 +248,7 @@ module Seriamp
       def parse_response(resp)
         case first_byte = resp[0]
         when STX
-          Yamaha::Response::CommandResponse.parse(resp[1...-1]).tap do |resp|
+          Yamaha::Parser::CommandResponseParser.parse(resp[1...-1]).tap do |resp|
             # Sometimes the response isn't parsed (yet) by seriamp,
             # which causes state to be missing here...
             begin
@@ -259,11 +259,11 @@ module Seriamp
             update_current_status(state)
           end
         when DC2
-          Yamaha::Response::StatusResponse.parse(resp[1...-1]).tap do |resp|
+          Yamaha::Parser::StatusResponseParser.parse(resp[1...-1]).tap do |resp|
             update_current_status(resp.state)
           end
         when DC4
-          Yamaha::Response::ExtendedResponse.parse(resp[1...-1]).tap do |resp|
+          Yamaha::Parser::ExtendedResponseParser.parse(resp[1...-1]).tap do |resp|
             if resp
               # Extended commands that alter state (i.e. the "set X" commands)
               # have empty responses, i.e. the receiver does not report
@@ -338,7 +338,7 @@ module Seriamp
         when DC2
           logger&.warn("Status response, #{buf.length} bytes")
         when STX
-          logger&.warn("Command response: #{buf} #{Yamaha::Response::CommandResponse.parse(buf[1...-1])}")
+          logger&.warn("Command response: #{buf} #{Yamaha::Parser::CommandResponseParser.parse(buf[1...-1])}")
         else
           logger&.warn("Unknown unread response: #{buf}")
         end
