@@ -133,6 +133,14 @@ would actually be implemented by. Perhaps this functionality was
 implemented in RX-V2400 or some earlier 2000 or higher level model
 before parametric equalizer was added?
 
+## RX-V1500 and Older Sleep Status
+
+Protocol documentation states that for RX-V1500 and older receivers, the
+status returns sleep values as 0, 2, 3, 4, 5 instead of 0, 1, 2, 3, 4 as in
+newer receivers. This seems to be a documentation bug (or perhaps some older
+receivers did in fact skip 1, but RX-V1500 does not). At least on RX-V1500
+the status response appears to be identical to the one on RX-V1700.
+
 ## Naming Deviations
 
 - "format" in the status output (e.g. PCM) is called "audio format" in seriamp
