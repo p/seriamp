@@ -8,6 +8,14 @@ module Seriamp
       include Seriamp::AsciiTable
 
       def self.parse(resp, logger: nil)
+        if resp[-1] == "\0"
+          if resp.length == 1
+            return Yamaha::Response::NullResponse.new
+          else
+            raise UnexpectedResponse, "Invalid response: null response with data prior to NUL: #{resp}"
+          end
+        end
+
         unless resp[-1] == ETX
           raise UnexpectedResponse, "Invalid response: expected to end with ETX: #{resp}"
         end

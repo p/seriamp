@@ -261,7 +261,7 @@ module Seriamp
         read_buf[0..best_index+best_delimiter_length-1]
       else
         if delimiters.length == 1
-          raise NoResponse, "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
+          raise NoResponse, "Delimiter #{delimiters.first} not found in read buffer: #{read_buf}"
         else
           raise NoResponse, "No delimiters found in read buffer: #{read_buf}"
         end

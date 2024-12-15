@@ -33,5 +33,13 @@ describe Seriamp::Yamaha::Parser do
         parsed.should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseBase)
       end
     end
+
+    context 'null response' do
+      let(:response_str) { "\x00" }
+
+      it 'returns an instance of correct response class' do
+        parsed.should be_a(Seriamp::Yamaha::Response::NullResponse)
+      end
+    end
   end
 end

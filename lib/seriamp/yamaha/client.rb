@@ -241,7 +241,11 @@ module Seriamp
       end
 
       def extract_one_response
-        extract_delimited_response(self.class.const_get(:ETX))
+        # ETX and \0 are used differently - while ETX indicates the end
+        # of a response, and the previous bytes go with the response,
+        # \0 is the complete response and previous bytes should go with
+        # the previous response (hopefully there is one...).
+        extract_delimited_response(self.class.const_get(:ETX), "\0")
       end
 
       def parse_response(resp)

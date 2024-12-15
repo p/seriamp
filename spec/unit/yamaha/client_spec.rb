@@ -15,6 +15,24 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  describe '#extract_one_response' do
+    let(:client) { described_class.new }
+
+    let(:response) do
+      client.send(:extract_one_response)
+    end
+
+    context 'null response' do
+      before do
+        client.instance_variable_set('@read_buf', "\0")
+      end
+
+      it 'should work' do
+        response.should eq "\0"
+      end
+    end
+  end
+
   describe '#parse_response' do
     let(:client) { described_class.new }
     let(:parsed) { client.send(:parse_response, response) }
