@@ -238,18 +238,33 @@ module Seriamp
       end
     end
 
-    def extract_delimited_response(delimiter)
-      if delimiter.empty?
+    def extract_delimited_response(*delimiters)
+      if delimiters.empty?
+        raise ArgumentError, 'Must specify at least one delimiter'
+      end
+      if delimiters.any?(&:empty?)
         raise ArgumentError, 'Delimiter cannot be empty'
       end
       if read_buf.empty?
         raise NoResponse, 'Attempting to extract a delimited response from an empty buffer'
       end
-      index = read_buf.index(delimiter)
-      if index
-        read_buf[0..index+delimiter.length-1]
+      best_index = nil
+      best_delimiter_length = nil
+      delimiters.each do |delimiter|
+        index = read_buf.index(delimiter)
+        if index and best_index.nil? || index < best_index
+          best_index = index
+          best_delimiter_length = delimiter.length
+        end
+      end
+      if best_index
+        read_buf[0..best_index+best_delimiter_length-1]
       else
-        raise NoResponse, "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
+        if delimiters.length == 1
+          raise NoResponse, "Delimiter #{delimiter} not found in read buffer: #{read_buf}"
+        else
+          raise NoResponse, "No delimiters found in read buffer: #{read_buf}"
+        end
       end
     end
 
