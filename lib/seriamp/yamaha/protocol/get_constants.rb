@@ -181,6 +181,7 @@ module Seriamp
           '2' => 'High',
         }.freeze
 
+        # All receivers in report commands and RX-V1600 and newer in status output
         SLEEP_GET = {
           '0' => 120,
           '1' => 90,
@@ -189,6 +190,7 @@ module Seriamp
           '4' => nil,
         }.freeze
 
+        # RX-V1500 and earlier in status output
         SLEEP_1500_GET = {
           '0' => 120,
           '2' => 90,
@@ -878,6 +880,7 @@ module Seriamp
           '01' => '-20dB',
         }.freeze
 
+        # RX-V1700
         EXTENDED_SURROUND_GET = {
           '00' => 'Off',
           '01' => 'EX/ES',
@@ -912,6 +915,9 @@ module Seriamp
           '7E' => [:subwoofer_crossover, :subwoofer_crossover_report],
           # Speaker level test mode
           '80' => :test,
+          # RX-V1500, RX-V1700 uses 8C
+          '81' => :pure_direct,
+          # RX-V1700, RX-V1500 uses 81
           '8C' => :pure_direct,
           'A5' => :mute_type,
         }.freeze

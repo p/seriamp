@@ -64,6 +64,7 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       '75 02' => {bass_out: 'Both'},
       '7E 08' => {subwoofer_crossover: 200},
       '80 01' => {test: true},
+      '81 00' => {pure_direct: false},
       '8C 01' => {pure_direct: true},
       'A7 00' => {eq_select: 'Auto PEQ'},
       'A7 01' => {eq_select: 'GEQ'},
