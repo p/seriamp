@@ -43,6 +43,14 @@ communication, the transmission wakes up the CPU but is not processed.
 The next transmission, received after a small delay, will be processed by
 the now running CPU.
 
+## Commands in Standby
+
+Some or all commands, when receiver is in standby, respond with a NULL byte
+("\0") as the response. Meaning, the command does in fact receive a response,
+meaning this response (at least in theory) could be handled and command
+retried (or status checked) immediately without waiting for the timeout to
+expire.
+
 ## Yamaha Volume in Standby
 
 Yamaha receivers I have (RX-V1500, RX-V2500, RX-V1800)
