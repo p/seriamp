@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+autoload :YAML, 'yaml'
 require 'optparse'
 
 module Seriamp
@@ -29,6 +30,14 @@ module Seriamp
 
         opts.on("-d", "--device DEVICE", "TTY to use (default autodetect /dev/ttyUSB*)") do |v|
           options[:device] = v
+        end
+
+        opts.on("-l", "--log-level LEVEL", "Log level as symbol or integer (debug/0|info/1|warn/2|error/3|fatal/4)") do |v|
+          options[:log_level] = v
+        end
+
+        opts.on('-S', '--structured-log', 'Produce an operation log before exiting in a machine-readable format') do
+          options[:structured_log] = true
         end
 
         opts.on('-t', '--timeout TIMEOUT', 'Timeout to use') do |v|
@@ -73,6 +82,10 @@ module Seriamp
 
     def run
       Rack::Server.start(@rack_options.merge(app: @app_mod))
+
+      if options[:structured_log]
+        puts YAML.dump(@client.logged_operations)
+      end
     end
   end
 end
