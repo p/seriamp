@@ -50,19 +50,19 @@ module Seriamp
         end
 
         if command_data.empty?
-          return nil
+          return Yamaha::Response::ExtendedResponse::ResponseWithoutData.new(command_id)
         end
 
         # Special case for input labels...
         # Apparently the receiver returns the "rename id" but no subsequent
         # fields.
         if command_id == '011' && command_data == '0'
-          return nil
+          return Yamaha::Response::ExtendedResponse::ResponseWithoutData.new(command_id)
         end
 
         cls = Yamaha::Response::ExtendedResponse::ResponseBase.registered_responses[command_id] ||
-          Protocol::Extended::GenericResponse
-        cls&.new(command_id, command_data)
+          Yamaha::Response::ExtendedResponse::GenericResponse
+        cls.new(command_id, command_data)
       end
     end
   end

@@ -10,6 +10,8 @@ module Seriamp
         end
 
         attr_reader :state
+
+        alias to_state state
       end
     end
   end

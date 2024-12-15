@@ -155,7 +155,7 @@ describe Seriamp::Yamaha::Client do
 
       it 'works' do
         # No return value yet
-        client.set_main_speaker_tone_bass(frequency: 125, gain: 2).should be nil
+        client.set_main_speaker_tone_bass(frequency: 125, gain: 2).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
       end
 
       context 'treble frequency' do
@@ -178,7 +178,7 @@ describe Seriamp::Yamaha::Client do
 
       it 'works' do
         # No return value yet
-        client.set_main_speaker_tone_treble(frequency: 8000, gain: 2).should be nil
+        client.set_main_speaker_tone_treble(frequency: 8000, gain: 2).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
       end
 
       context 'bass frequency' do
@@ -253,7 +253,7 @@ describe Seriamp::Yamaha::Client do
 
         it 'works' do
           # No response at this time.
-          client.set_volume_trim('md/tape', -1.5).should be nil
+          client.set_volume_trim('md/tape', -1.5).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
         end
 
         context 'when value is out of range' do
@@ -320,21 +320,21 @@ describe Seriamp::Yamaha::Client do
         context 'canonical case for destination' do
           it 'works' do
             # No response at this time.
-            client.set_io_assignment(:hdmi_in, 3, 'BD/HD DVD').should be nil
+            client.set_io_assignment(:hdmi_in, 3, 'BD/HD DVD').should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
           end
         end
 
         context 'lower case for destination' do
           it 'works' do
             # No response at this time.
-            client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be nil
+            client.set_io_assignment(:hdmi_in, 3, 'bd/hd dvd').should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
           end
         end
 
         context 'string for source' do
           it 'works' do
             # No response at this time.
-            client.set_io_assignment('hdmi_in', 3, 'bd/hd dvd').should be nil
+            client.set_io_assignment('hdmi_in', 3, 'bd/hd dvd').should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
           end
         end
       end
@@ -493,7 +493,7 @@ describe Seriamp::Yamaha::Client do
         end
 
         it 'works' do
-          client.set_surround_left_graphic_eq_400(2).should be nil
+          client.set_surround_left_graphic_eq_400(2).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
         end
       end
     end
@@ -538,7 +538,7 @@ describe Seriamp::Yamaha::Client do
             frequency: 396,
             gain: 2,
             q: 5,
-          ).should be nil
+          ).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
         end
       end
 
@@ -552,7 +552,7 @@ describe Seriamp::Yamaha::Client do
         end
 
         it 'works' do
-          client.reset_surround_left_parametric_eq_3.should be nil
+          client.reset_surround_left_parametric_eq_3.should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
         end
       end
 

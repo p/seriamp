@@ -10,6 +10,7 @@ module Seriamp
 end
 
 require 'seriamp/yamaha/response/extended_response/response_base'
+require 'seriamp/yamaha/response/extended_response/response_without_data'
 require 'seriamp/yamaha/response/extended_response/generic_response'
 require 'seriamp/yamaha/response/extended_response/distance_response'
 require 'seriamp/yamaha/response/extended_response/graphic_eq_response'

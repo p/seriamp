@@ -14,6 +14,8 @@ module Seriamp
         attr_reader :control_type
         attr_reader :guard
         attr_reader :state
+
+        alias to_state state
       end
     end
   end

@@ -248,36 +248,31 @@ module Seriamp
         extract_delimited_response(self.class.const_get(:ETX), "\0")
       end
 
-      def parse_response(resp)
-        case first_byte = resp[0]
-        when STX
-          Yamaha::Parser::CommandResponseParser.parse(resp[1...-1]).tap do |resp|
+      def parse_response(resp_str)
+        Yamaha::Parser.parse(resp_str, logger: logger).tap do |resp|
+          case resp
+          when Yamaha::Response::NullResponse
+            # This could be because the receiver is off (in standby)
+            # or it's waking up, and we have no way to determine which it is.
+            current_status = {}
+          else
             # Sometimes the response isn't parsed (yet) by seriamp,
             # which causes state to be missing here...
-            begin
-              state = resp.state
-            rescue KeyError
+            if resp.respond_to?(:state) && resp.state.nil?
               raise NotImplementedError, "Response was missing state: #{resp}"
             end
-            update_current_status(state)
+
+            # Extended commands that alter state (i.e. the "set X" commands)
+            # have empty responses, i.e. the receiver does not report
+            # the state back.
+            # We need to store the state ourselves then based on the
+            # issued command or perform a query.
+            # (Extended commands with no state return an empty hash from
+            # +to_state+).
+            binding.b unless resp
+
+            update_current_status(resp.to_state)
           end
-        when DC2
-          Yamaha::Parser::StatusResponseParser.parse(resp[1...-1]).tap do |resp|
-            update_current_status(resp.state)
-          end
-        when DC4
-          Yamaha::Parser::ExtendedResponseParser.parse(resp[1...-1]).tap do |resp|
-            if resp
-              # Extended commands that alter state (i.e. the "set X" commands)
-              # have empty responses, i.e. the receiver does not report
-              # the state back.
-              # We need to store the state ourselves then based on the
-              # issued command or perform a query.
-              update_current_status(resp.to_state)
-            end
-          end
-        else
-          raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end
       end
 
