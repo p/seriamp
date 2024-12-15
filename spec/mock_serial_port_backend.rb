@@ -7,11 +7,24 @@ module Seriamp
       class EndOfExchanges < StandardError; end
       class UnexpectedWrite < StandardError; end
 
+      class Exchanges < Array
+        attr_accessor :current_index
+
+        def current
+          self[current_index]
+        end
+      end
+
       class Device
         def initialize(exchanges, **opts)
           @exchanges = exchanges
-          @exchange_index = 0
-          @exchange_pos = 0
+          if exchanges.current_index.nil?
+            exchanges.current_index = 0
+          else
+            # Skip to the next exchange when reinstantiating the Client
+            # (presumably after a timeout or an error).
+            exchanges.current_index += 1
+          end
 
           if block_given?
             yield self
@@ -19,7 +32,6 @@ module Seriamp
         end
 
         attr_reader :exchanges
-        attr_reader :exchange_index
 
         def eof?
           !!@eof
@@ -28,31 +40,41 @@ module Seriamp
         def read_nonblock(max = nil)
           raise EndOfExchanges if eof?
 
-          exchange = exchanges[exchange_index]
+          exchange = exchanges.current
           if exchange.nil?
             @eof = true
             return nil
           end
           if exchange.first == :w || exchange.first == :write
-            raise "Exchange #{exchange_index} is a write, read attempted"
+            raise "Exchange #{exchanges.current_index + 1} is a write, read attempted"
+          end
+          if exchange.first == :read_timeout
+            raise IO::EWOULDBLOCKWaitReadable
+          end
+          if exchange.first != :r && exchange.first != :read
+            raise "Exchange #{exchanges.current_index + 1} should be read, is #{exchange.first}"
           end
           exchange.last.tap do
-            @exchange_index += 1
+            @exchanges.current_index += 1
           end
         end
 
         def syswrite(contents)
-          exchange = exchanges[exchange_index]
+          exchange = exchanges.current
           if exchange.nil?
             raise UnexpectedWrite, "End of exchanges - write attempted: #{contents}"
           end
 
           if exchange.first == :r || exchange.first == :read
-            raise UnexpectedWrite, "Exchange #{exchange_index} is a read, write attempted"
+            raise UnexpectedWrite, "Exchange #{exchanges.current_index + 1} is a read, write attempted"
+          end
+
+          if exchange.first != :w && exchange.first != :write
+            raise "Exchange #{exchanges.current_index + 1} should be write, is #{exchange.first}"
           end
 
           if contents == exchange.last
-            @exchange_index += 1
+            exchanges.current_index += 1
             return nil
           end
 
@@ -62,15 +84,15 @@ module Seriamp
           merged_contents = exchange.last
           delta = 1
           loop do
-            next_exchange = exchanges[exchange_index + delta]
+            next_exchange = exchanges[exchanges.current_index + delta]
             if next_exchange and next_exchange.first == :w || next_exchange.first == :write
               merged_contents += next_exchange.last
               if merged_contents.length > contents.length
-                raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchange_index})"
+                raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchanges.current_index})"
               end
 
               if merged_contents == contents
-                @exchange_index += delta
+                @exchanges.current_index += delta
                 return nil
               end
             end
@@ -79,11 +101,11 @@ module Seriamp
           end
 =end
 
-          raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchange_index})"
+          raise UnexpectedWrite, "Unexpected write content: expected: #{exchange.last}, actual: #{contents} (index #{exchanges.current_index})"
         end
 
         def readable?(timeout = 0)
-          exchange = exchanges[exchange_index]
+          exchange = exchanges.current
           exchange&.first == :r
         end
 

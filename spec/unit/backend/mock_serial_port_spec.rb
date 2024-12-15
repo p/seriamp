@@ -11,7 +11,7 @@ describe Seriamp::Backend::MockSerialPortBackend::Device do
     ]
   end
 
-  let(:device) { described_class.new(exchanges) }
+  let(:device) { described_class.new(Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges)) }
 
   describe '#initialize' do
     it 'works' do

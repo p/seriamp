@@ -1,0 +1,1 @@
+{:ready=>"OK", :main_power=>false, :zone2_power=>false, :zone3_power=>false, :model_code=>"R0210", :model_name=>"RX-V1700", :firmware_version=>"I", :raw_string=>"@E0190000"}

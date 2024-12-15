@@ -199,7 +199,8 @@ describe Seriamp::Yamaha::Client do
     end
 
     let(:client) do
-      described_class.new(backend: :mock_serial_port, device: exchanges)
+      described_class.new(backend: :mock_serial_port,
+        device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges))
     end
 
     it 'works' do
@@ -256,7 +257,9 @@ describe Seriamp::Yamaha::Client do
     end
 
     let(:client) do
-      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
+      described_class.new(backend: :mock_serial_port,
+        device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges),
+        persistent: true)
     end
 
     let(:initial_status) do

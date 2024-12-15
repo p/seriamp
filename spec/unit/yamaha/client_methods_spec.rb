@@ -11,7 +11,9 @@ describe Seriamp::Yamaha::Client do
     include_context 'status request and response'
 
     let(:client) do
-      described_class.new(backend: :mock_serial_port, device: exchanges, persistent: true)
+      described_class.new(backend: :mock_serial_port,
+        device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges),
+        persistent: true)
     end
 
     describe '#main_mute?' do
