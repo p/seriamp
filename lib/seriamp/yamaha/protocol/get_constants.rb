@@ -878,6 +878,16 @@ module Seriamp
           '01' => '-20dB',
         }.freeze
 
+        EXTENDED_SURROUND_GET = {
+          '00' => 'Off',
+          '01' => 'EX/ES',
+          '02' => 'Discrete On',
+          '03' => 'Auto',
+          '04' => 'EX',
+          '05' => 'PLIIx Movie',
+          '06' => 'PLIIx Music',
+        }.freeze
+
         GET_MAP = {
           '00' => [:ready, :ready_report],
           '06' => :xm_message,

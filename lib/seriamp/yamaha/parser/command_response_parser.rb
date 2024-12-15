@@ -75,6 +75,10 @@ module Seriamp
             {main_volume: parse_half_db_volume(data, :main_volume)}
           when '27'
             {zone2_volume: parse_half_db_volume(data, :zone2_volume)}
+          when '2D'
+            {
+              extended_surround: EXTENDED_SURROUND_GET.fetch(data),
+            }
           when 'A2'
             {zone3_volume: parse_half_db_volume(data, :zone3_volume)}
           when '40'

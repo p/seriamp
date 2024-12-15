@@ -41,7 +41,7 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       '26 77' => {main_volume: -40.0},
       '28 34' => {program_name: '2ch Stereo'},
       '28 80' => {program_name: 'Straight'},
-      #'2D 03' => {extended_surround: 'Auto'},
+      '2D 03' => {extended_surround: 'Auto'},
       '2E 00' => {speaker_a: false},
       '2E 01' => {speaker_a: true},
       '2F 00' => {speaker_b: false},
