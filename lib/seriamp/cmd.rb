@@ -135,16 +135,16 @@ module Seriamp
           end
         end
 
-        if options[:structured_log]
-          puts YAML.dump(direct_client.logged_operations)
-          if options[:log_level] == 'debug'
-            puts 'Current status:'
-            pp direct_client.current_status
-          end
-        end
-
         unless options[:print_all]
           puts last_result
+        end
+      end
+    ensure
+      if options[:structured_log] && direct_client
+        puts YAML.dump(direct_client.logged_operations)
+        if options[:log_level] == 'debug'
+          puts 'Current status:'
+          pp direct_client.current_status
         end
       end
     end

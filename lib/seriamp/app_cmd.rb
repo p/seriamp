@@ -62,7 +62,10 @@ module Seriamp
 
       @client = mod.const_get(:Client).new(device: options[:device],
         backend: options[:backend],
-        logger: @logger, timeout: options[:timeout], thread_safe: true)
+        logger: @logger,
+        log_level: options[:log_level],
+        structured_log: options[:structured_log],
+        timeout: options[:timeout], thread_safe: true)
 
       @app_mod.set(:client, @client)
 
@@ -82,7 +85,7 @@ module Seriamp
 
     def run
       Rack::Server.start(@rack_options.merge(app: @app_mod))
-
+    ensure
       if options[:structured_log]
         puts YAML.dump(@client.logged_operations)
       end
