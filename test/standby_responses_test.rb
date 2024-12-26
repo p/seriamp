@@ -1,4 +1,5 @@
 require 'serialport'
+require 'timeout'
 require 'logger'
 require 'benchmark'
 
@@ -29,13 +30,18 @@ class Tester
     logger.info "Writing status request"
     c.write(STATUS_REQ)
 
-    logger.info "Reading"
-    chunk = nil
-    time = Benchmark.realtime do
-      chunk = c.read(1024)
-    end
+    Timeout.timeout(30) do
+      logger.info "Reading"
+      chunk = nil
 
-    puts "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
+      time = Benchmark.realtime do
+        chunk = c.read(1024)
+      end
+
+      logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
+    rescue Timeout::Error
+      logger.info "Timed out after 30 seconds"
+    end
   end
 
   def logger
