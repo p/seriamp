@@ -5,6 +5,13 @@ require 'benchmark'
 
 device = ARGV.first
 
+MODEM_PARAMS = {
+  baud: 9600,
+  data_bits: 8,
+  stop_bits: 1,
+  parity: 0, # SerialPort::NONE
+}.freeze
+
 STATUS_REQ = "\x11001\x03"
 
 class Tester
@@ -15,7 +22,7 @@ class Tester
   attr_reader :device
 
   def c
-    @c ||= SerialPort.new(device)
+    @c ||= SerialPort.new(device, modem_params: MODEM_PARAMS)
   end
 
   def reopen_device
