@@ -3,7 +3,7 @@ require 'timeout'
 require 'logger'
 require 'benchmark'
 
-device = ARGV.shift
+device = ARGV.first
 
 STATUS_REQ = "\x11001\x03"
 
@@ -41,21 +41,7 @@ class Tester
     logger.info "Writing status request"
     c.write(STATUS_REQ)
 
-    timeout = 30
-    begin
-      Timeout.timeout(timeout) do
-        logger.info "Reading"
-        chunk = nil
-
-        time = Benchmark.realtime do
-          chunk = c.read(1024)
-        end
-
-        logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
-      end
-    rescue Timeout::Error
-      logger.info "Timed out after #{timeout} seconds"
-    end
+    read_and_report(timeout: 30)
 
     verify_device_not_readable
   end
@@ -77,40 +63,12 @@ class Tester
     logger.info "Writing status request"
     c.write(STATUS_REQ)
 
-    timeout = 1
-    begin
-      Timeout.timeout(timeout) do
-        logger.info "Reading"
-        chunk = nil
-
-        time = Benchmark.realtime do
-          chunk = c.read(1024)
-        end
-
-        logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
-      end
-    rescue Timeout::Error
-      logger.info "Timed out after #{timeout} seconds"
-    end
+    read_and_report(timeout: 1)
 
     logger.info "Writing status request"
     c.write(STATUS_REQ)
 
-    timeout = 20
-    begin
-      Timeout.timeout(timeout) do
-        logger.info "Reading"
-        chunk = nil
-
-        time = Benchmark.realtime do
-          chunk = c.read(1024)
-        end
-
-        logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
-      end
-    rescue Timeout::Error
-      logger.info "Timed out after #{timeout} seconds"
-    end
+    read_and_report(timeout: 5)
 
     verify_device_not_readable
     sleep 1
@@ -122,6 +80,25 @@ class Tester
     # have unread data in the device buffer (the null response).
     # But the data is not showing up as part of the test that should have
     # generated the response even if the device is reopened as above.
+
+    if false
+      cmd = "ruby #{$0} #{ARGV.join(' ')}"
+      logger.info "Execute: #{cmd}"
+      exec(cmd)
+    end
+  end
+
+  def test_standby_status_3
+    logger.info "Using #{device}; verify device is off\n"
+
+    verify_device_not_readable
+
+    3.times do
+      logger.info "Writing status request"
+      c.write(STATUS_REQ)
+
+      read_and_report(timeout: 1)
+    end
   end
 
   def logger
@@ -145,8 +122,25 @@ class Tester
       exit 1
     end
   end
+
+  def read_and_report(timeout:)
+    begin
+      Timeout.timeout(timeout) do
+        logger.info "Reading with timeout #{timeout}"
+        chunk = nil
+
+        time = Benchmark.realtime do
+          chunk = c.read(1024)
+        end
+
+        logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunk.inspect}"
+      end
+    rescue Timeout::Error
+      logger.info "Timed out after #{timeout} seconds"
+    end
+  end
 end
 
 tester = Tester.new(device)
-tester.test_standby_status_2
+tester.test_standby_status_3
 tester.logger.info 'Done'
