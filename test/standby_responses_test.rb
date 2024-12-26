@@ -19,6 +19,11 @@ class Tester
   end
 
   def reopen_device
+    if @c && device_readable?
+      logger.error "Device is readable when trying to reopen it"
+      read_and_report
+    end
+
     logger.debug "Reopening #{device}"
     @c.close
     @c = nil
@@ -94,10 +99,11 @@ class Tester
     verify_device_not_readable
 
     3.times do
+      reopen_device
       logger.info "Writing status request"
       c.write(STATUS_REQ)
 
-      read_and_report(timeout: 1)
+      read_and_report(timeout: 2)
     end
   end
 
@@ -110,8 +116,21 @@ class Tester
   end
 
   def report_device_buffer
-    chunk = c.read_nonblock(1024)
-    logger.info "Read #{chunk.size} bytes: #{chunk.inspect}"
+    loop do
+      chunk = c.read_nonblock(1024)
+      if chunk
+        logger.info "Read #{chunk.size} bytes: #{chunk.inspect}"
+        next
+      else
+        sleep 0.25
+        break unless device_readable?
+      end
+    end
+  rescue IO::EAGAINWaitReadable
+    sleep 0.25
+    if device_readable?
+      retry
+    end
   end
 
   def verify_device_not_readable
@@ -134,6 +153,13 @@ class Tester
         end
 
         logger.info "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunk.inspect}"
+
+        loop do
+          if device_readable?
+            read_and_report(timeout: 1)
+            sleep 0.250
+          end
+        end
       end
     rescue Timeout::Error
       logger.info "Timed out after #{timeout} seconds"
