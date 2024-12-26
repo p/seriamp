@@ -4,29 +4,45 @@ require 'benchmark'
 
 device = ARGV.shift
 
-logger = Logger.new(STDERR)
-
-logger.info "Using #{device}; verify device is off"
-#sleep 1
-
-c = SerialPort.new(device)
-if IO.select([c], [], [c], 0)
-  logger.info "Device readable - not good"
-  c.read_nonblock(1024)
-  exit 1
-end
-
 STATUS_REQ = "\x11001\x03"
 
-logger.info "Writing status request"
-c.write(STATUS_REQ)
+class Tester
+  def initialize(device)
+    @device = device
+  end
 
-logger.info "Reading"
-chunk = nil
-time = Benchmark.realtime do
-  chunk = c.read(1024)
+  attr_reader :device
+
+  def c
+    @c ||= SerialPort.new(device)
+  end
+
+  def test_standby_status
+    logger.info "Using #{device}; verify device is off\n"
+
+    if IO.select([c], [], [c], 0)
+      logger.info "Device readable - not good"
+      c.read_nonblock(1024)
+      exit 1
+    end
+
+    logger.info "Writing status request"
+    c.write(STATUS_REQ)
+
+    logger.info "Reading"
+    chunk = nil
+    time = Benchmark.realtime do
+      chunk = c.read(1024)
+    end
+
+    puts "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
+  end
+
+  def logger
+    @logger ||= Logger.new(STDERR)
+  end
 end
 
-puts "Elapsed #{time} seconds, read #{chunk.length} bytes: #{chunK}"
-
-logger.info 'Done'
+tester = Tester.new(device)
+tester.test_standby_status
+tester.logger.info 'Done'
