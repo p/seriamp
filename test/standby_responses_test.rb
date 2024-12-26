@@ -18,6 +18,12 @@ class Tester
     @c ||= SerialPort.new(device)
   end
 
+  def reopen_device
+    logger.debug "Reopening #{device}"
+    @c.close
+    @c = nil
+  end
+
   # This test verifies that the first request to the receiver that is in
   # standby produces no response. (The request should wake up the
   # microcontroller, and the next request sent within an unspecified time
@@ -107,6 +113,15 @@ class Tester
     end
 
     verify_device_not_readable
+    sleep 1
+    reopen_device
+    sleep 1
+    verify_device_not_readable
+
+    # Somehow when this test is run repeatedly, subsequent executions
+    # have unread data in the device buffer (the null response).
+    # But the data is not showing up as part of the test that should have
+    # generated the response even if the device is reopened as above.
   end
 
   def logger
@@ -123,6 +138,7 @@ class Tester
   end
 
   def verify_device_not_readable
+    logger.debug "Checking #{device} is not readable"
     if device_readable?
       logger.error "Device readable - not good"
       report_device_buffer
