@@ -169,14 +169,24 @@ describe Seriamp::Yamaha::App do
   end
 
   describe 'put /subwoofer_crossover' do
-    it 'works' do
-      #client.should receive(:with_device).and_yield
-      client.should receive(:set_subwoofer_crossover).with(80)
+    context 'known integer argument' do
+      it 'works' do
+        client.should receive(:set_subwoofer_crossover).with(80)
 
-      put '/subwoofer_crossover', '80'
+        put '/subwoofer_crossover', '80'
 
-      last_response.status.should == 204
-      last_response.body.should == ''
+        last_response.status.should == 204
+        last_response.body.should == ''
+      end
+    end
+
+    context 'floating-point argument' do
+      it 'returns 422' do
+        put '/subwoofer_crossover', '80.0'
+
+        last_response.status.should == 422
+        last_response.body.should =~ /invalid value for Integer/
+      end
     end
   end
 

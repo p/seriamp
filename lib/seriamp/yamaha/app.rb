@@ -183,7 +183,12 @@ module Seriamp
       end
 
       put "/subwoofer_crossover" do
-        client.set_subwoofer_crossover(Integer(request.body.read))
+        begin
+          value = Integer(request.body.read)
+        rescue ArgumentError => exc
+          return render_422(exc)
+        end
+        client.set_subwoofer_crossover(value)
         empty_response
       end
 
