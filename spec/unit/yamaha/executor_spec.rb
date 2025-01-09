@@ -134,6 +134,35 @@ describe Seriamp::Yamaha::Executor do
         end
       end
     end
+
+    context 'bass_out' do
+      %w(front subwoofer both).each do |value_|
+        value = value_
+        context "keyword: #{value}" do
+          it 'works' do
+            client.should_receive(:set_bass_out).with(value)
+            executor.run_command('bass_out', value)
+          end
+        end
+      end
+    end
+
+    context 'subwoofer_crossover' do
+      context 'exact known value' do
+        it 'works' do
+          client.should_receive(:set_subwoofer_crossover).with(80)
+          executor.run_command('subwoofer_crossover', '80')
+        end
+      end
+
+      context 'non-integer value' do
+        it 'raises ArgumentError' do
+          lambda do
+            executor.run_command('subwoofer_crossover', 'aa')
+          end.should raise_error(ArgumentError, /invalid value for Integer/)
+        end
+      end
+    end
   end
 
   describe '.usage' do
