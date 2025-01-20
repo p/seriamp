@@ -44,6 +44,8 @@ EOT
 
       def self.command_help(command)
         case command
+        when 'input'
+          "Input names: #{Protocol::SetConstants::MAIN_INPUTS_SET.keys.sort.join('|')}"
         when 'peq'
           "Channels: #{available_channels.join('|')}"
         when 'volume-trim'
