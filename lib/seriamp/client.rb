@@ -289,6 +289,11 @@ module Seriamp
       parse_response(resp)
     end
 
+    # This method reads responses until one with desired parameters is obtained.
+    # This permits skipping receiver-pushed responses but will not help if
+    # two clients issue commands concurrently. Still, one command should execute
+    # successfully (while the other will time out) and only one of the two
+    # commands would need to be retried.
     def get_specific_response(cls: nil)
       loop do
         if read_buf.empty?
