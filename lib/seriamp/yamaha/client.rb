@@ -61,7 +61,8 @@ module Seriamp
           with_retry do
             with_device do
               resp = nil
-              status = dispatch_and_parse(STATUS_REQ).state
+              dispatch(STATUS_REQ, read_response: false)
+              status = get_specific_response(cls: Response::StatusResponse).state
               # Device could have been closed by now.
               # TODO keep the device open the entire time if thread safety
               # (locking) is enabled.
@@ -172,7 +173,7 @@ module Seriamp
                 with_device do
                   self.read_response
                 end
-                resp = get_command_response
+                resp = get_specific_response(cls: Response::CommandResponse)
                 # +resp+ here could be a status response that the receiver just
                 # sends out when it wasn't requested (either trying to be
                 # helpful for "power on" command specifically, or maybe

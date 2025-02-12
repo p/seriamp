@@ -180,7 +180,7 @@ module Seriamp
 
     def dispatch_and_parse(cmd)
       dispatch(cmd)
-      get_command_response
+      get_any_response
     end
 
     def dispatch(cmd, read_response: true)
@@ -268,7 +268,7 @@ module Seriamp
       end
     end
 
-    def get_command_response
+    def get_any_response
       # TODO identify which are command responses and which are
       # status updates, handle accordingly.
       resp = extract_one_response!
@@ -287,6 +287,25 @@ module Seriamp
         resp = extract_one_response!
       end
       parse_response(resp)
+    end
+
+    def get_specific_response(cls: nil)
+      loop do
+        if read_buf.empty?
+          read_response
+        end
+        resp = extract_one_response!
+        resp = parse_response(resp)
+        if cls
+          unless resp.class == cls
+            logger&.warn("Skipping response: #{resp} while looking for #{cls}")
+            next
+          end
+          return resp
+        else
+          return resp
+        end
+      end
     end
 
     def parse_response(resp)

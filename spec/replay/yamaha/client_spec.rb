@@ -38,6 +38,9 @@ describe 'Yamaha replay tests' do
 
   client_method_test %w,status,, 'rx-v3800-status'
 
+  # Extra response prior to proper status response
+  client_method_test %w,status,, 'rx-v3800-status-pre'
+
   client_method_test %w,all_status,, 'rx-v3800-all-status'
 
   client_method_test %w,parametric_eq,, 'rx-v3800-peq'
