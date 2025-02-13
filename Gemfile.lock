@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    seriamp (0.8.1)
+    seriamp (0.8.2)
       serialport (~> 1.3)
 
 GEM
