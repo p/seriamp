@@ -29,7 +29,7 @@ module Seriamp
 
       post '/' do
         executor = Executor.new(client)
-        request.body.read.split("\n").each do |line|
+        raw_request_body.split("\n").each do |line|
           args = line.strip.split(/\s+/)
           executor.run_command(args.first, *args[1..])
         end
@@ -46,7 +46,7 @@ module Seriamp
         end
 
         put "/#{zone}/power" do
-          state = Utils.parse_on_off(request.body.read)
+          state = Utils.parse_on_off(raw_request_body)
           client.with_device do
             client.public_send("set_#{zone}_power", state)
             rs = request.env['HTTP_RETURN_STATUS']
@@ -63,7 +63,7 @@ module Seriamp
         end
 
         put "/#{zone}/volume" do
-          value = Float(request.body.read)
+          value = Float(raw_request_body)
           client.public_send("set_#{zone}_volume", value)
           empty_response
         end
@@ -113,7 +113,7 @@ module Seriamp
         end
 
         put "/#{zone}/input" do
-          value = request.body.read
+          value = raw_request_body
           client.public_send("set_#{zone}_input", value)
           empty_response
         end
@@ -124,7 +124,7 @@ module Seriamp
       end
 
       put "/pure_direct" do
-        state = Utils.parse_on_off(request.body.read)
+        state = Utils.parse_on_off(raw_request_body)
         client.set_pure_direct(state)
         empty_response
       end
@@ -136,55 +136,55 @@ module Seriamp
       end
 
       put '/program' do
-        client.set_program(request.body.read)
+        client.set_program(raw_request_body)
         empty_response
       end
 
       %i(bass treble).each do |tone|
         put "/main/speaker/tone/bass" do
-          state = Float(request.body.read)
+          state = Float(raw_request_body)
           client.public_send("set_main_speaker_tone_#{tone}", state)
           empty_response
         end
       end
 
       put "/main/center/speaker/layout" do
-        client.set_center_speaker_layout(request.body.read)
+        client.set_center_speaker_layout(raw_request_body)
         empty_response
       end
 
       put "/main/center/speaker/level" do
-        client.set_center_level(Float(request.body.read))
+        client.set_center_level(Float(raw_request_body))
         empty_response
       end
 
       %i(front surround surround_back presence).each do |channel_group|
         put "/main/#{channel_group}/speaker/layout" do
-          client.public_send("set_#{channel_group}_speaker_layout", request.body.read)
+          client.public_send("set_#{channel_group}_speaker_layout", raw_request_body)
           empty_response
         end
 
         %i(left right).each do |side|
           put "/main/#{channel_group}/#{side}/speaker/level" do
-            client.public_send("set_#{channel_group}_#{side}_level", Float(request.body.read))
+            client.public_send("set_#{channel_group}_#{side}_level", Float(raw_request_body))
             empty_response
           end
         end
       end
 
       put "/bass_out" do
-        client.set_bass_out(request.body.read)
+        client.set_bass_out(raw_request_body)
         empty_response
       end
 
       put "/subwoofer_phase" do
-        client.set_subwoofer_phase(request.body.read)
+        client.set_subwoofer_phase(raw_request_body)
         empty_response
       end
 
       put "/subwoofer_crossover" do
         begin
-          value = Integer(request.body.read)
+          value = Integer(raw_request_body)
         rescue ArgumentError => exc
           return render_422(exc)
         end
@@ -193,7 +193,7 @@ module Seriamp
       end
 
       put "/input/:input_name/volume_trim" do |input_name|
-        client.set_volume_trim(input_name.gsub('_', '/'), Float(request.body.read))
+        client.set_volume_trim(input_name.gsub('_', '/'), Float(raw_request_body))
         empty_response
       end
 

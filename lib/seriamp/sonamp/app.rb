@@ -70,7 +70,7 @@ module Seriamp
       end
 
       put '/zone/:zone/power' do |zone|
-        state = Utils.parse_on_off(request.body.read)
+        state = Utils.parse_on_off(raw_request_body)
         client.set_power(Integer(zone), state)
         standard_response
       end
@@ -80,12 +80,12 @@ module Seriamp
       end
 
       put '/zone/:zone/volume' do |zone|
-        volume = Integer(request.body.read)
+        volume = Integer(raw_request_body)
         client.set_zone_volume(Integer(zone), volume)
       end
 
       put '/zone/:zone/mute' do |zone|
-        state = Utils.parse_on_off(request.body.read)
+        state = Utils.parse_on_off(raw_request_body)
         client.set_zone_mute(Integer(zone), state)
       end
 
@@ -94,18 +94,18 @@ module Seriamp
       end
 
       put '/channel/:channel/volume' do |channel|
-        volume = Integer(request.body.read)
+        volume = Integer(raw_request_body)
         client.set_channel_volume(Integer(channel), volume)
       end
 
       put '/channel/:channel/mute' do |channel|
-        state = Utils.parse_on_off(request.body.read)
+        state = Utils.parse_on_off(raw_request_body)
         client.set_channel_mute(Integer(channel), state)
       end
 
       post '/' do
         executor = Executor.new(client)
-        request.body.read.split("\n").each do |line|
+        raw_request_body.split("\n").each do |line|
           args = line.strip.split(/\s+/)
           executor.run_command(args.first, *args[1..])
         end

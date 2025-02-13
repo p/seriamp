@@ -54,6 +54,7 @@ module Seriamp
 
       require "seriamp/#{mod_name}"
       require "seriamp/#{mod_name}/app"
+      require 'rackup/server'
 
       mod = Seriamp.const_get(mod_name.sub(/(.)/) { $1.upcase })
       @app_mod = mod.const_get(:App)
@@ -69,7 +70,7 @@ module Seriamp
 
       @app_mod.set(:client, @client)
 
-      @rack_options = Rack::Server::Options.new.parse!(args)
+      @rack_options = Rackup::Server::Options.new.parse!(args)
 
       if @rack_options[:environment] == 'production'
         @app_mod.set(:show_exceptions, false)
@@ -84,7 +85,7 @@ module Seriamp
     attr_reader :options
 
     def run
-      Rack::Server.start(@rack_options.merge(app: @app_mod))
+      Rackup::Server.start(@rack_options.merge(app: @app_mod))
     ensure
       if options[:structured_log]
         puts YAML.dump(@client.logged_operations)

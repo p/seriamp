@@ -16,6 +16,11 @@ module Seriamp
 
     private
 
+    def raw_request_body
+      request.body.rewind
+      request.body.read
+    end
+
     def return_current_status?
       request.env['HTTP_ACCEPT'] == 'application/x-seriamp-current-status'
     end

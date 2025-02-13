@@ -17,7 +17,7 @@ module Seriamp
 
       post '/' do
         executor = Executor.new(client)
-        request.body.read.split("\n").each do |line|
+        raw_request_body.split("\n").each do |line|
           args = line.strip.split(/\s+/)
           executor.run_command(args.first, *args[1..])
         end
@@ -34,7 +34,7 @@ module Seriamp
         end
 
         put "/#{zone}/power" do
-          state = Utils.parse_on_off(request.body.read)
+          state = Utils.parse_on_off(raw_request_body)
           client.with_device do
             client.public_send("set_#{zone}_power", state)
             rs = request.env['HTTP_RETURN_STATUS']
@@ -51,7 +51,7 @@ module Seriamp
         end
 
         put "/#{zone}/volume" do
-          value = Float(request.body.read)
+          value = Float(raw_request_body)
           client.public_send("set_#{zone}_volume", value)
           empty_response
         end
@@ -85,7 +85,7 @@ module Seriamp
         end
 
         put "/#{zone}/input" do
-          value = request.body.read
+          value = raw_request_body
           client.public_send("set_#{zone}_input", value)
           empty_response
         end
