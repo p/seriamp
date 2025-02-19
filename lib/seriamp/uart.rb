@@ -5,6 +5,7 @@
 require 'termios'
 require 'fcntl'
 
+module Seriamp
 module UART
   VERSION = '1.0.0'
 
@@ -131,4 +132,19 @@ module UART
     t
   end
   module_function :reading
+
+  module_function def set_rts(f, value)
+    t = Termios.tcgetattr f
+
+    if value
+      t.cflag |= Termios::CRTSCTS
+    else
+      t.cflag &= ~Termios::CRTSCTS
+    end
+
+    Termios.tcsetattr f, Termios::TCSANOW, t
+    Termios.tcflush f, Termios::TCIOFLUSH
+  end
+
+end
 end

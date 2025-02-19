@@ -51,7 +51,7 @@ module Seriamp
         # Called after writing is finished to reduce the noise induced in
         # the amplifier by the serial port cabling.
         def clear_rts
-          #io.rts = 0
+          UART.set_rts(io, false)
         end
       end
     end
