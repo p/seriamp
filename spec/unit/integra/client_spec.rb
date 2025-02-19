@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'serialport'
+require 'seriamp/uart'
 
 describe Seriamp::Integra::Client do
   describe '#initialize' do
@@ -27,8 +27,7 @@ describe Seriamp::Integra::Client do
 
   describe '#set_main_volume' do
     before do
-      SerialPort.should receive(:open).and_return(device)
-      allow(IO).to receive(:select)
+      mock_serial_device_once(device)
     end
 
     context 'integer value' do

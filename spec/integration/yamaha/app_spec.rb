@@ -14,7 +14,7 @@ describe 'Yamaha app integration' do
       it 'returns sensible response' do
         request.status.should == 500
         request.headers['content-type'].should == 'text/plain'
-        request.body.should == 'Error: Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory - /dev/nonexistent'
+        request.body.should =~ %r,Error: Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory.*- /dev/nonexistent,
       end
     end
 
@@ -24,7 +24,7 @@ describe 'Yamaha app integration' do
         request.status.should == 500
         request.headers['content-type'].should == 'application/json'
         JSON.parse(request.body).should == {
-          'error' => 'Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory - /dev/nonexistent',
+          'error' => 'Seriamp::NoDevice: Device path missing: /dev/nonexistent: Errno::ENOENT: No such file or directory @ rb_sysopen - /dev/nonexistent',
         }
       end
     end

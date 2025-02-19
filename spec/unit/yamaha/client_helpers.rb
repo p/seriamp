@@ -1,4 +1,4 @@
-require 'serialport'
+require 'seriamp/uart'
 
 module YamahaClientHelpers
   shared_context 'status request and response' do
@@ -21,8 +21,7 @@ module YamahaClientHelpers
     before do
       setup_requests_responses(device, rr)
       # If argument checks fail, device won't be opened.
-      allow(SerialPort).to receive(:open).and_return(device)
-      allow(IO).to receive(:select)
+      mock_serial_device(device)
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'serialport'
+require 'seriamp/uart'
 
 describe Seriamp::Ynca::Client do
   describe '#initialize' do
@@ -19,8 +19,7 @@ describe Seriamp::Ynca::Client do
 
     before do
       setup_ynca_requests_responses(device, rr)
-      SerialPort.should receive(:open).and_return(device)
-      allow(IO).to receive(:select)
+      mock_serial_device_once(device)
     end
 
     describe '#model_name' do

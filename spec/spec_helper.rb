@@ -122,6 +122,18 @@ module InstanceMethods
     end
   end
 
+  def mock_serial_device(device)
+    allow(Seriamp::UART).to receive(:open).and_return(device)
+    allow(IO).to receive(:select)
+    allow(Seriamp::UART).to receive(:set_rts)
+  end
+
+  def mock_serial_device_once(device)
+    Seriamp::UART.should receive(:open).and_return(device)
+    allow(IO).to receive(:select)
+    allow(Seriamp::UART).to receive(:set_rts)
+  end
+
   def setup_requests_responses(device, rr)
     rr.each do |req, *resps|
       expect(device).to receive(:syswrite).with(req)

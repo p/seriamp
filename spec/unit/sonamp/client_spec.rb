@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'serialport'
+require 'seriamp/uart'
 
 describe Seriamp::Sonamp::Client do
   describe '#initialize' do
@@ -18,8 +18,7 @@ describe Seriamp::Sonamp::Client do
 
   shared_context 'communication' do
     before do
-      SerialPort.should receive(:open).and_return(device)
-      allow(IO).to receive(:select)
+      mock_serial_device_once(device)
       setup_sonamp_requests_responses(device, rr)
     end
   end

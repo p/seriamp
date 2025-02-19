@@ -126,7 +126,7 @@ module Seriamp
     private
 
     def backend
-      options[:backend] || :serial_port
+      options[:backend] || :uart
     end
 
     def device_cls
