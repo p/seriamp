@@ -11,5 +11,6 @@ module Seriamp
     autoload :TcpBackend, 'seriamp/backend/tcp'
     autoload :LoggingTcpBackend, 'seriamp/backend/logging_tcp'
     autoload :IoBackend, 'seriamp/backend/io'
+    autoload :UartBackend, 'seriamp/backend/uart'
   end
 end

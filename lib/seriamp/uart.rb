@@ -1,3 +1,7 @@
+# This is a fork of https://github.com/tenderlove/uart.
+# It was easier to alter the source here than to convert modem parameters
+# to the string expected by uart.
+
 require 'termios'
 require 'fcntl'
 
@@ -25,7 +29,7 @@ module UART
   #   UART.open '/dev/tty.usbserial-00000000' do |serial|
   #     serial.write 'whatever'
   #   end
-  def open filename, speed = 9600, mode = '8N1'
+  def open(filename, baud: 9600, data_bits: 8, stop_bits: 1, parity: false)
     f = File.open filename, File::RDWR|Fcntl::O_NOCTTY|Fcntl::O_NDELAY
     f.binmode
     f.sync = true
@@ -38,16 +42,25 @@ module UART
     t.oflag = 0
     t.lflag = 0
 
-    if mode =~ /^(\d)(\w)(\d)$/
-      t = data_bits    t, $1.to_i
-      t = stop_bits    t, $3.to_i
-      t = parity       t, { 'N' => :none, 'E' => :even, 'O' => :odd }[$2]
-      t = speed        t, speed
-      t = read_timeout t, 5
-      t = reading      t
-    else
-      raise ArgumentError, "Invalid format for mode"
+    if data_bits
+      t = data_bits    t, data_bits
     end
+    if stop_bits
+      t = stop_bits    t, stop_bits
+    end
+    unless parity.nil?
+      t = parity       t, {
+        'N' => :none, false => :none, 0 => :none,
+        'E' => :even, even: :even,
+        'O' => :odd, odd: :odd,
+      }.fetch(parity)
+    end
+    if baud
+      t = speed        t, baud
+    end
+
+    t = read_timeout t, 5
+    t = reading      t
 
     Termios.tcsetattr f, Termios::TCSANOW, t
     Termios.tcflush f, Termios::TCIOFLUSH

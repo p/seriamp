@@ -13,7 +13,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
   
-  spec.add_runtime_dependency 'serialport', '~> 1.3'
+  #spec.add_runtime_dependency 'serialport', '~> 1.3'
+  spec.add_runtime_dependency 'ruby-termios', '~> 1.0'
   
   spec.add_development_dependency 'rspec-core', '~> 3.12'
   spec.add_development_dependency 'rspec-expectations', '~> 3.12'
