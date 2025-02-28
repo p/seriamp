@@ -279,17 +279,17 @@ module Seriamp
 
       def update_current_status(resp)
         logger&.debug("Updating current status: #{resp}")
-        if @current_status &&
-          @current_status[:model_code] && resp[:model_code] &&
-          @current_status[:model_code] != resp[:model_code]
-        then
-          @current_status = nil
-        end
         new_status = case resp
         when Hash
           resp
         else
           resp.state
+        end
+        if @current_status &&
+          @current_status[:model_code] && new_status[:model_code] &&
+          @current_status[:model_code] != new_status[:model_code]
+        then
+          @current_status = nil
         end
         if @current_status
           @current_status.update(new_status)

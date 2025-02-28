@@ -49,6 +49,9 @@ describe 'Yamaha replay tests' do
 
   client_method_test %w,reset_parametric_eq,, 'rx-v3800-peq-reset'
 
+  # Extra response prior to proper command response when there is existing state
+  client_method_test ['set_pure_direct', true], 'rx-v3800-command-pre-with-state'
+
   context 'without retries' do
     let(:client_options) do
       {retries: false}

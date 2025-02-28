@@ -1,0 +1,54 @@
+---
+- - :write
+  - "\x0207E80\x03"
+# Status response (not requested)
+- - :read
+  - "\x12R022"
+- - :read
+  - 5JB5@E0190002
+- - :read
+  - 0400C075E817
+- - :read
+  - '031402000001082'
+- - :read
+  - 00F10
+- - :read
+  - '2'
+- - :read
+  - '00010028282626'
+- - :read
+  - '26262628282800'
+- - :read
+  - '0201'
+- - :read
+  - '1414'
+- - :read
+  - 0000A014055112
+- - :read
+  - '000020040010001'
+- - :read
+  - '0000'
+- - :read
+  - '00000002000'
+- - :read
+  - '00010507700014'
+- - :read
+  - '110'
+- - :read
+  - 0A0A01FFFF011
+- - :read
+  - 0000A
+- - :read
+  - '00'
+- - :read
+  - 14A0014210A0A0
+- - :read
+  - 0FF10110
+- - :read
+  - "21\x03"
+# Extra receiver-pushed report
+- - :read
+  - "\x0230411F\x03"
+# Response to our command
+- - :read
+  - "\x02008C01\x03"
