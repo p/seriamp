@@ -49,6 +49,24 @@ module Seriamp
           '2' => 'Standby',
         }
 
+        # report
+        WARNING_GET = {
+          '00' => 'Over Current',
+          '01' => 'DC Detect',
+          '02' => 'Power Trouble',
+          '03' => 'Over Heat',
+        }.freeze
+
+        # report
+        IPOD_MESSAGE_GET = {
+          '00' => 'Loading',
+          '01' => 'Connect Error',
+          '02' => 'Unknown iPod',
+          '03' => 'iPod Connected',
+          '04' => 'Disconnected',
+          '05' => 'Unable to play',
+        }
+
         READY_REPORT_GET = prefix_keys_with_zero(READY_GET)
 
         # RX-V1 and RX-V3200 need a different table.
@@ -190,6 +208,8 @@ module Seriamp
           '4' => nil,
         }.freeze
 
+        SLEEP_REPORT_GET = prefix_keys_with_zero(SLEEP_GET)
+
         # RX-V1500 and earlier in status output
         SLEEP_1500_GET = {
           '0' => 120,
@@ -222,6 +242,8 @@ module Seriamp
           '4' => 'E',
         }.freeze
 
+        TUNER_PAGE_REPORT_GET = prefix_keys_with_zero(TUNER_PAGE_GET)
+
         TUNER_NUMBER_GET = {
           '0' => 1,
           '1' => 2,
@@ -232,6 +254,8 @@ module Seriamp
           '6' => 7,
           '7' => 8,
         }.freeze
+
+        TUNER_NUMBER_REPORT_GET = prefix_keys_with_zero(TUNER_NUMBER_GET)
 
         TUNER_BAND_GET = {
           '0' => 'FM',
@@ -548,6 +572,8 @@ module Seriamp
           '1' => 'Short',
           '2' => 'Off',
         }.freeze
+
+        OSD_MESSAGE_REPORT_GET = prefix_keys_with_zero(OSD_MESSAGE_GET)
 
         ZONE_OSD_GET = {
           '0' => 'Off',
@@ -893,7 +919,9 @@ module Seriamp
 
         GET_MAP = {
           '00' => [:ready, :ready_report],
+          '01' => :warning,
           '06' => :xm_message,
+          '07' => :ipod_message,
           '08' => :net_usb_message,
           '10' => :audio_format,
           '11' => [:sample_rate, :sample_rate_2],
@@ -903,8 +931,15 @@ module Seriamp
           '20' => [:power, :power_report],
           '21' => [:input_name, :input_name_2],
           '23' => [:main_mute, :mute],
+          # Some of the inputs cannot be returned by zone2
+          # (e.g. the multi-channel one) but that's fine for parsing the response.
+          '24' => [:zone2_input_name, :input_name_2],
           '25' => [:zone2_mute, :mute],
           '28' => :program_name,
+          '29' => [:tuner_page, :tuner_page_report],
+          '2A' => [:tuner_number, :tuner_number_report],
+          '2B' => [:osd_message, :osd_message_report],
+          '2C' => [:sleep, :sleep_report],
           '2E' => :speaker_a,
           '2F' => :speaker_b,
           '30' => [:system_memory_load, :memory],
