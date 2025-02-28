@@ -73,5 +73,7 @@ describe 'Yamaha replay tests' do
 
     # status when off
     client_method_test %w,status,, 'rx-v1700-off-status'
+
+    client_method_test ['set_pure_direct', true], 'command-retry'
   end
 end

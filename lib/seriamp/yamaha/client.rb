@@ -162,9 +162,9 @@ module Seriamp
         if expect_response_state || include_response_state and !read_response
           raise ArgumentError, "Cannot accept response requirements when asked not to read the response"
         end
+        cmd = "#{STX}0#{cmd}#{ETX}"
         with_lock do
           with_retry do
-            cmd = "#{STX}0#{cmd}#{ETX}"
             dispatch(cmd, read_response: false)
             if read_response
               resp = nil

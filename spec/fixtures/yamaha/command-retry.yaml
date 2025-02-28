@@ -1,0 +1,8 @@
+---
+- - :write
+  - "\x0207E80\x03"
+- - :read_timeout
+- - :write
+  - "\x0207E80\x03"
+- - :read
+  - "\x02008C01\x03"
