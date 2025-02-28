@@ -177,7 +177,7 @@ module Seriamp
                 if resp.control_type != :rs232
                   # Receiver can be sending system responses, ignore them.
                   #raise UnhandledResponse, "Response was not to our command: #{resp}"
-                  update_current_status(resp)
+                  #update_current_status(resp)
                   next
                 end
                 if expect_response_state && !resp.state.keys.include?(expect_response_state)

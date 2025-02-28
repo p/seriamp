@@ -19,14 +19,22 @@ describe 'Yamaha replay tests' do
     with_fixture(fixture_name) do
       method_name = args.shift
       describe method_name do
-        it 'works as expected' do
+        it 'returns expected value' do
           client.public_send(method_name, *args).should == eval_fixture(fixture_name)
+        end
+
+        if status_fixture?(fixture_name)
+          it 'produces expected state' do
+            client.public_send(method_name, *args)
+            client.current_status.should == status_fixture(fixture_name)
+          end
         end
       end
     end
   end
 
   def self.with_fixture(fixture_name, &block)
+  #require'byebug';byebug
     context "with #{fixture_name}" do
       let(:exchanges) do
         yaml_fixture(fixture_name)

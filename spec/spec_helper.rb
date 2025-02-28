@@ -79,24 +79,50 @@ module ClassMethods
 
   attr_accessor :_fixture_path
 
-  def fixture_path(path)
-    before do
-      @fixture_path = path
+  def fixture_path(*args)
+    case args.length
+    when 0
+      cls = self
+      loop do
+        value = cls.instance_variable_get('@fixture_path')
+        return value if value
+        cls = cls.superclass
+        break if cls == Object
+      end
+    when 1
+      @fixture_path = args.first
+    else
+      raise ArgumentError, "0 or 1 arguments permitted, given #{args.length}"
     end
+  end
+
+  def status_fixture?(path)
+    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.status']
+    path = File.join(*comps.compact)
+    File.exist?(path)
   end
 
 end
 
 module InstanceMethods
+  def fixture_path
+    self.class.fixture_path
+  end
 
   def yaml_fixture(path)
-    comps = [File.dirname(__FILE__), 'fixtures', @fixture_path, path + '.yaml']
+    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.yaml']
     path = File.join(*comps.compact)
     YAML.load(File.read(path))
   end
 
   def eval_fixture(path)
-    comps = [File.dirname(__FILE__), 'fixtures', @fixture_path, path + '.eval']
+    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.eval']
+    path = File.join(*comps.compact)
+    eval(File.read(path))
+  end
+
+  def status_fixture(path)
+    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.status']
     path = File.join(*comps.compact)
     eval(File.read(path))
   end
