@@ -903,6 +903,7 @@ module Seriamp
           '20' => [:power, :power_report],
           '21' => [:input_name, :input_name_2],
           '23' => [:main_mute, :mute],
+          '25' => [:zone2_mute, :mute],
           '28' => :program_name,
           '2E' => :speaker_a,
           '2F' => :speaker_b,
@@ -919,6 +920,7 @@ module Seriamp
           '81' => :pure_direct,
           # RX-V1700, RX-V1500 uses 81
           '8C' => :pure_direct,
+          'A1' => [:zone3_mute, :mute],
           'A5' => :mute_type,
         }.freeze
       end
