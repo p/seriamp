@@ -82,12 +82,11 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       'A7 02' => {eq_select: 'Off'},
       'A8 00' => {tone_auto_bypass: true},
       'A8 01' => {tone_auto_bypass: false},
-    }.each do |_response_content, _expected_state|
-      response_content, expected_state = _response_content, _expected_state
+    }.each do |response_content, expected_state|
 
-      context _response_content do
-        let(:response_content) { _response_content }
-        let(:expected_state) { _expected_state }
+      context response_content do
+        let(:response_content) { response_content }
+        let(:expected_state) { expected_state }
 
         include_examples 'returns correct result'
       end
