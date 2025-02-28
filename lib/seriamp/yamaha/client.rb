@@ -174,19 +174,6 @@ module Seriamp
                   self.read_response
                 end
                 resp = get_specific_response(cls: Response::CommandResponse)
-                # +resp+ here could be a status response that the receiver just
-                # sends out when it wasn't requested (either trying to be
-                # helpful for "power on" command specifically, or maybe
-                # periodically in general).
-                # The status response doesn't have a control type, and
-                # it's presently returned as a hash.
-                # TODO have the response type be explicit here somehow.
-                if Hash === resp && resp.key?(:ready)
-                  # Status response
-                  update_current_status(resp)
-                  logger&.debug("Received status response in response to command - continuing to read looking for a command response")
-                  next
-                end
                 if resp.control_type != :rs232
                   # Receiver can be sending system responses, ignore them.
                   #raise UnhandledResponse, "Response was not to our command: #{resp}"
