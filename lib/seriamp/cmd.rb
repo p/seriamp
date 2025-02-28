@@ -18,7 +18,7 @@ module Seriamp
           options[:module] = v
         end
 
-        opts.on("-b", "--backend BACKEND", "Backend to use for communication: serial_port|logging_serial_port|tcp|logging_tcp") do |v|
+        opts.on("-b", "--backend BACKEND", "Backend to use for communication: uart|logging_uart|serial_port|logging_serial_port|tcp|logging_tcp") do |v|
           options[:backend] = v
         end
 
