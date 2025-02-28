@@ -270,7 +270,7 @@ module Seriamp
             # issued command or perform a query.
             # (Extended commands with no state return an empty hash from
             # +to_state+).
-            binding.b unless resp
+            #binding.b unless resp
 
             update_current_status(resp.to_state)
           end
