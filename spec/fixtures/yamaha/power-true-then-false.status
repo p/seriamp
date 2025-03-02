@@ -1,0 +1,8 @@
+{:ready=>"OK",
+ :main_power=>false,
+ :zone2_power=>false,
+ :zone3_power=>false,
+ :model_code=>"R0225",
+ :model_name=>"RX-V3800",
+ :firmware_version=>"J",
+ :raw_string=>"@E0190000"}

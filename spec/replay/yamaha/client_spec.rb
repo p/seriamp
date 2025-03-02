@@ -17,6 +17,7 @@ describe 'Yamaha replay tests' do
 
   def self.client_method_test(args, fixture_name)
     with_fixture(fixture_name) do
+      args = args.dup
       method_name = args.shift
       describe method_name do
         it 'returns expected value' do
@@ -87,4 +88,36 @@ describe 'Yamaha replay tests' do
 
     client_method_test ['set_pure_direct', true], 'command-retry'
   end
+
+  def self.multi_test(commands, fixture_name)
+    with_fixture(fixture_name) do
+      describe fixture_name do
+        let(:fixture) do
+          eval_fixture(fixture_name)
+        end
+
+        it 'returns expected value' do
+          commands.each_with_index do |args, index|
+            args = args.dup
+            method_name = args.shift
+            client.public_send(method_name, *args).should == fixture[index]
+          end
+        end
+
+        if status_fixture?(fixture_name)
+          it 'produces expected state' do
+            commands.each_with_index do |args, index|
+              args = args.dup
+              method_name = args.shift
+              client.public_send(method_name, *args)
+            end
+
+            client.current_status.should == status_fixture(fixture_name)
+          end
+        end
+      end
+    end
+  end
+
+  multi_test [%w,status,, %w,status,,], 'power-true-then-false'
 end

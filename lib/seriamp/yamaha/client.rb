@@ -272,6 +272,12 @@ module Seriamp
         else
           resp.state
         end
+        if !new_status[:power]
+          # Reset all state when receiver is turned off,
+          # because some state (e.g. pure direct) is not preserved when
+          # the receiver is turned back on.
+          @current_status = nil
+        end
         if @current_status &&
           @current_status[:model_code] && new_status[:model_code] &&
           @current_status[:model_code] != new_status[:model_code]
