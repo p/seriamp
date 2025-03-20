@@ -145,3 +145,9 @@ the status response appears to be identical to the one on RX-V1700.
 
 - "format" in the status output (e.g. PCM) is called "audio format" in seriamp
 because bare "format" often means output format of text, etc.
+
+## Zone Power
+
+On RX-V3800 at least, turning on power to zone 3 also turns on power to zone 2,
+and then turning zone 3 off does nothing since zone 2 being on appears to
+also power up zone 3.
