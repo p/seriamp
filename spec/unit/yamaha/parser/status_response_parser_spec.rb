@@ -113,6 +113,7 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
           :component_osd=>false,
           :presence_surround_back_select=>"Surround Back",
           :raw_string=>status_middle,
+          standby: false,
         }
       end
 
@@ -227,7 +228,8 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
           :model_code=>"R0177",
           :model_name=>"RX-V1500/HTR-5890",
           :firmware_version=>"F",
-          :raw_string=>"@E019000240005198771713242701112200000010210110028282823253B282828280000001414000000141051100000200401200002828282523283B28282851770000211"
+          :raw_string=>"@E019000240005198771713242701112200000010210110028282823253B282828280000001414000000141051100000200401200002828282523283B28282851770000211",
+          standby: false,
         }
       end
 
@@ -367,6 +369,7 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
           :model_name=>"RX-V1700",
           :firmware_version=>"I",
           :raw_string=>status_middle,
+          standby: false,
         }
       end
 
@@ -520,6 +523,7 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
           :pre_emphasis=>false,
           :dpl_encoded=>false,
           :raw_string=>status_middle,
+          standby: false,
         }
       end
 
@@ -546,6 +550,7 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
             :zone2_power=>false,
             :zone3_power=>false,
             :raw_string=>status_middle,
+            standby: true,
           }
         end
 
@@ -696,6 +701,7 @@ describe Seriamp::Yamaha::Parser::StatusResponseParser do
           extended_surround_setting: 'Auto',
           hdmi_lip_sync: true,
           :raw_string=>status_middle,
+          standby: false,
         }
       end
 

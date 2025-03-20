@@ -272,8 +272,7 @@ module Seriamp
         else
           resp.state
         end
-        # Absense of power flag means we received partial state.
-        if new_status[:main_power] == false
+        if new_status[:standby]
           # Reset all state when receiver is turned off,
           # because some state (e.g. pure direct) is not preserved when
           # the receiver is turned back on.

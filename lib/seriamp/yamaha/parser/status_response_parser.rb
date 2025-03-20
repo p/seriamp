@@ -50,7 +50,10 @@ module Seriamp
       def self.parse_status_response_inner(data, model_code)
         table = Protocol::Status::STATUS_FIELDS.fetch(model_code)
         index = 0
-        result = {}
+        result = {
+          # When receiver is in standby, we get the short response.
+          standby: data.length == 9,
+        }
         table.each do |entry|
           if index >= data.length
             # Truncated response - normally obtained when receiver is

@@ -1,6 +1,7 @@
 [
 # first response
 {:ready=>"OK",
+  standby: false,
  :main_power=>true,
  :zone2_power=>false,
  :zone3_power=>false,
@@ -134,6 +135,7 @@
   
   # second response
   {:ready=>"OK",
+  standby: true,
  :main_power=>false,
  :zone2_power=>false,
  :zone3_power=>false,

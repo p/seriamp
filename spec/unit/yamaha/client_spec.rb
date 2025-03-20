@@ -203,6 +203,7 @@ describe Seriamp::Yamaha::Client do
         :model_code=>"R0212",
         :model_name=>"RX-V2700",
         :firmware_version=>"I",
+        standby: false,
         :raw_string=>
         "@E0190002000050A9778003140500000000200F1020001002828262626262628282800020114140000A114055110000020240120000000000103002000000115077000121100A0A01FFFF0110000A0014A0014210A0A00"
       }.freeze
