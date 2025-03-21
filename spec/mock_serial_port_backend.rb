@@ -9,6 +9,7 @@ module Seriamp
 
       class Exchanges < Array
         attr_accessor :current_index
+        attr_accessor :index_attempted
 
         def current
           self[current_index]
@@ -23,7 +24,13 @@ module Seriamp
           else
             # Skip to the next exchange when reinstantiating the Client
             # (presumably after a timeout or an error).
-            exchanges.current_index += 1
+            if exchanges.index_attempted
+              if exchanges.index_attempted == exchanges.current_index + 1
+                exchanges.current_index += 1
+              else
+                raise "Unexpected situation"
+              end
+            end
           end
 
           if block_given?
@@ -45,6 +52,7 @@ module Seriamp
             @eof = true
             return nil
           end
+          exchanges.index_attempted = exchanges.current_index
           if exchange.first == :w || exchange.first == :write
             raise "Exchange #{exchanges.current_index + 1} is a write, read attempted"
           end
@@ -55,7 +63,7 @@ module Seriamp
             raise "Exchange #{exchanges.current_index + 1} should be read, is #{exchange.first}"
           end
           exchange.last.tap do
-            @exchanges.current_index += 1
+            exchanges.current_index += 1
           end
         end
 
