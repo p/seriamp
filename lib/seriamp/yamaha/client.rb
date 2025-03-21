@@ -196,13 +196,13 @@ module Seriamp
         with_lock do
           with_retry do
             resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
-            if resp.control_type != :rs232
-              raise "Wrong control type: #{resp[:control_type]}"
+            if (control_type = resp.control_type) != :rs232
+              raise "Wrong control type: #{control_type}"
             end
             if guard = resp.guard
               raise NotApplicable, "Command guarded by '#{guard}'"
             end
-            resp.state
+            resp.to_state
           end
         end
       end

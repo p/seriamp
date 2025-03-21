@@ -386,6 +386,65 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  describe '#system_command' do
+    let(:client) do
+      described_class.new(backend: :mock_serial_port,
+        device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges))
+    end
+
+    context 'basic command' do
+      let(:exchanges) do
+        [
+          [:w, "\x0226C01\x03"],
+          [:r, "\x02006C01\x03"],
+        ]
+      end
+
+      it 'returns the response class instance' do
+        client.system_command('6C01').should == {zone_osd: 'Zone2'}
+      end
+
+      context 'receiver-pushed' do
+        let(:exchanges) do
+          [
+            [:w, "\x0226C01\x03"],
+            [:r, "\x02306C01\x03"],
+          ]
+        end
+
+        it 'returns the response class instance' do
+          client.system_command('6C01').should == {zone_osd: 'Zone2'}
+        end
+      end
+
+      context 'guarded' do
+        let(:exchanges) do
+          [
+            [:w, "\x0226C01\x03"],
+            [:r, "\x02026C01\x03"],
+          ]
+        end
+
+        it 'returns the response class instance' do
+          client.system_command('6C01').should == {zone_osd: 'Zone2'}
+        end
+      end
+    end
+
+    context 'command returning text (e.g. get current volume)' do
+      let(:exchanges) do
+        [
+          [:w, "\x0222001\x03"],
+          [:r, "\x1101 -17.0dB\x03"],
+        ]
+      end
+
+      it 'returns the response class instance' do
+        client.system_command('2001').should == {main_volume_text: '-17.0dB'}
+      end
+    end
+  end
+
   describe '#graphic_eq?' do
     let(:client) do
       described_class.new(backend: :mock_serial_port)
