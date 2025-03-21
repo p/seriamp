@@ -158,6 +158,30 @@ module Seriamp
         nil
       end
 
+      def get_command_response
+        # Response should have been to our RS-232 command, verify.
+        loop do
+          with_device do
+            self.read_response
+          end
+          resp = get_specific_response(cls: Response::CommandResponse)
+          if resp.control_type != :rs232
+            # Receiver can be sending system responses, ignore them.
+            #raise UnhandledResponse, "Response was not to our command: #{resp}"
+            #update_current_status(resp)
+            next
+          end
+          if block_given?
+            resp = yield(resp)
+            if resp
+              return resp.to_state
+            end
+          else
+            return resp.to_state
+          end
+        end
+      end
+
       def remote_command(cmd, read_response: true, expect_response_state: nil, include_response_state: nil)
         if expect_response_state || include_response_state and !read_response
           raise ArgumentError, "Cannot accept response requirements when asked not to read the response"
@@ -167,26 +191,14 @@ module Seriamp
           with_retry do
             dispatch(cmd, read_response: false)
             if read_response
-              resp = nil
-              # Response should have been to our RS-232 command, verify.
-              loop do
-                with_device do
-                  self.read_response
-                end
-                resp = get_specific_response(cls: Response::CommandResponse)
-                if resp.control_type != :rs232
-                  # Receiver can be sending system responses, ignore them.
-                  #raise UnhandledResponse, "Response was not to our command: #{resp}"
-                  #update_current_status(resp)
-                  next
-                end
+              get_command_response do |resp|
                 if expect_response_state && !resp.state.keys.include?(expect_response_state)
                   logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
-                  next
+                  nil
+                else
+                  resp
                 end
-                break
               end
-              resp.state
             end
           end
         end
@@ -195,14 +207,9 @@ module Seriamp
       def system_command(cmd)
         with_lock do
           with_retry do
-            resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
-            if (control_type = resp.control_type) != :rs232
-              raise UnhandledResponse, "Wrong control type: #{control_type}"
-            end
-            if guard = resp.guard
-              raise NotApplicable, "Command guarded by '#{guard}'"
-            end
-            resp.to_state
+            cmd = "#{STX}2#{cmd}#{ETX}"
+            resp = dispatch(cmd, read_response: false)
+            get_command_response
           end
         end
       end
@@ -211,6 +218,7 @@ module Seriamp
         payload = frame_extended_request(cmd)
         with_lock do
           with_retry do
+            # TODO change to use the reading mechanism used for command responses
             dispatch_and_parse(payload)
           end
         end
