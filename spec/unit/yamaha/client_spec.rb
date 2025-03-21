@@ -425,8 +425,10 @@ describe Seriamp::Yamaha::Client do
           ]
         end
 
-        it 'returns the response class instance' do
-          client.system_command('6C01').should == {zone_osd: 'Zone2'}
+        it 'raises NotApplicable' do
+          lambda do
+            client.system_command('6C01')
+          end.should raise_error(Seriamp::NotApplicable, /Command guarded by 'setting'/)
         end
       end
     end

@@ -12,10 +12,10 @@ module Seriamp
 
       def self.parse(resp, logger: nil)
         if resp.length != 10
-          raise "Unexpected text response: should be length 10: #{resp}"
+          raise UnexpectedResponse, "Unexpected text response: should be length 10: #{resp}"
         end
         if resp[0] != ?0
-          raise "Unexpected first byte: #{resp[0]}; should be '0'"
+          raise UnexpectedResponse, "Unexpected first byte: #{resp[0]}; should be '0'"
         end
         field_name = parse_flag(resp[1], {
           '0' => :tuner_frequency_text,
