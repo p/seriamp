@@ -17,10 +17,16 @@ module Seriamp
           {field_name => text}
         end
 
+        # System commands can return CommandResponse or TextResponse;
+        # implement CommandResponse methods to make response handling
+        # more straightforward for downstream code.
         def control_type
           :rs232
         end
 
+        # System commands can return CommandResponse or TextResponse;
+        # implement CommandResponse methods to make response handling
+        # more straightforward for downstream code.
         def guard
           nil
         end
