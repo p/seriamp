@@ -119,10 +119,10 @@ module Seriamp
             end
           when '60'
             if data.length != 2
-              raise "Unexpected payload for 60: #{data}"
+              raise UnexpectedResponse, "Unexpected payload for 60: #{data}"
             end
             if data[0] != ?0
-              raise "Unexpected payload for 60: #{data}"
+              raise UnexpectedResponse, "Unexpected payload for 60: #{data}"
             end
             {program_select: AUTO_LAST_GET.fetch(data[1])}
           when *SPEAKER_LAYOUT_MAP.keys

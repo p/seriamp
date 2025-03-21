@@ -197,7 +197,7 @@ module Seriamp
           with_retry do
             resp = dispatch_and_parse("#{STX}2#{cmd}#{ETX}")
             if (control_type = resp.control_type) != :rs232
-              raise "Wrong control type: #{control_type}"
+              raise UnhandledResponse, "Wrong control type: #{control_type}"
             end
             if guard = resp.guard
               raise NotApplicable, "Command guarded by '#{guard}'"
