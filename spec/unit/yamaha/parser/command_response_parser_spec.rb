@@ -76,6 +76,7 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       '56 00' => {hdmi_auto_audio_delay: 0},
       '56 F0' => {hdmi_auto_audio_delay: 240},
       '56 FF' => {hdmi_auto_audio_delay: nil},
+      '6C 01' => {zone_osd: 'Zone2'},
       '75 00' => {bass_out: 'Subwoofer'},
       '75 01' => {bass_out: 'Front/Main'},
       '75 02' => {bass_out: 'Both'},
