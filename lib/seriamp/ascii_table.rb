@@ -1,6 +1,7 @@
 module Seriamp
   module AsciiTable
     # ASCII table: https://www.asciitable.com/
+    NUL = ?\x00
     DC1 = ?\x11
     DC2 = ?\x12
     DC4 = ?\x14

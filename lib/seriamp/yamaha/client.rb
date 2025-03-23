@@ -222,22 +222,20 @@ module Seriamp
 
       STATUS_REQ = "#{DC1}001#{ETX}"
 
-      ZERO_ORD = '0'.ord
-
       # Returns if the buffer contains at least one complete response.
       # Note that the buffer may contain additional bytes after the complete
       # response (e.g. the beginning of the next response, when the first
       # or the second response are receiver-pushed).
       def response_complete?
-        !!(read_buf =~ /#{self.class.const_get(:ETX)}|\0/)
+        !!(read_buf =~ /#{self.class.const_get(:ETX)}|#{self.class.const_get(:NUL)}/)
       end
 
       def extract_one_response
-        # ETX and \0 are used differently - while ETX indicates the end
+        # ETX and NUL are used differently - while ETX indicates the end
         # of a response, and the previous bytes go with the response,
-        # \0 is the complete response and previous bytes should go with
+        # NUL is the complete response and previous bytes should go with
         # the previous response (hopefully there is one...).
-        extract_delimited_response(self.class.const_get(:ETX), "\0")
+        extract_delimited_response(self.class.const_get(:ETX), self.class.const_get(:NUL))
       end
 
       def parse_response(resp_str)

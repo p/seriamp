@@ -8,7 +8,7 @@ module Seriamp
       include Seriamp::AsciiTable
 
       def self.parse(resp, logger: nil)
-        if resp[-1] == "\0"
+        if resp[-1] == NUL
           if resp.length == 1
             return Yamaha::Response::NullResponse.new
           else
