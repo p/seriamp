@@ -63,6 +63,8 @@ module Seriamp
             # Do not increment current_index here, otherwise the timeout
             # will be retried by the client logic (since a timeout is not
             # an error, it will always be retried).
+            # Do sleep a bit since the mock device always pretends to be readable.
+            sleep 0.1
             raise IO::EWOULDBLOCKWaitReadable
           end
           if exchange.first != :r && exchange.first != :read
