@@ -44,40 +44,32 @@ module Seriamp
       end
 
       def status_string
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              dispatch(STATUS_REQ)
-              # There could potentialy be multiple responses here if
-              # receiver is sending status updates to host?
-              extract_one_response!
-            end
-          end
+        with_device_and_wrappers do
+          dispatch(STATUS_REQ)
+          # There could potentialy be multiple responses here if
+          # receiver is sending status updates to host?
+          extract_one_response!
         end
       end
 
       def status
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              resp = nil
-              dispatch(STATUS_REQ, read_response: false)
-              status = get_specific_response(cls: Response::StatusResponse).state
-              # Device could have been closed by now.
-              # TODO keep the device open the entire time if thread safety
-              # (locking) is enabled.
-              if @io
-                buf = Utils.consume_data(@io, logger,
-                  "Serial device readable after completely reading status response - concurrent access?")
-                report_unread_response(buf)
-              end
-
-              @model_code, @version, @status_string =
-                status.fetch(:model_code), status.fetch(:firmware_version),
-                status.fetch(:raw_string)
-              @status = status
-            end
+        with_device_and_wrappers do
+          resp = nil
+          dispatch(STATUS_REQ, read_response: false)
+          status = get_specific_response(cls: Response::StatusResponse).state
+          # Device could have been closed by now.
+          # TODO keep the device open the entire time if thread safety
+          # (locking) is enabled.
+          if @io
+            buf = Utils.consume_data(@io, logger,
+              "Serial device readable after completely reading status response - concurrent access?")
+            report_unread_response(buf)
           end
+
+          @model_code, @version, @status_string =
+            status.fetch(:model_code), status.fetch(:firmware_version),
+            status.fetch(:raw_string)
+          @status = status
         end
       end
 
@@ -142,17 +134,13 @@ module Seriamp
           raise ArgumentError, "Message must be no more than 16 characters, #{msg.length} given"
         end
 
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
-              @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
-              @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
-              @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
-              @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
-              @io.clear_rts
-            end
-          end
+        with_device_and_wrappers do
+          @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
+          @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
+          @io.clear_rts
         end
 
         nil
@@ -187,19 +175,15 @@ module Seriamp
           raise ArgumentError, "Cannot accept response requirements when asked not to read the response"
         end
         cmd = "#{STX}0#{cmd}#{ETX}"
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              dispatch(cmd, read_response: false)
-              if read_response
-                get_command_response do |resp|
-                  if expect_response_state && !resp.state.keys.include?(expect_response_state)
-                    logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
-                    nil
-                  else
-                    resp
-                  end
-                end
+        with_device_and_wrappers do
+          dispatch(cmd, read_response: false)
+          if read_response
+            get_command_response do |resp|
+              if expect_response_state && !resp.state.keys.include?(expect_response_state)
+                logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
+                nil
+              else
+                resp
               end
             end
           end
@@ -207,26 +191,18 @@ module Seriamp
       end
 
       def system_command(cmd)
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              cmd = "#{STX}2#{cmd}#{ETX}"
-              resp = dispatch(cmd, read_response: false)
-              get_command_response(cls: [Response::CommandResponse, Response::TextResponse])
-            end
-          end
+        with_device_and_wrappers do
+          cmd = "#{STX}2#{cmd}#{ETX}"
+          resp = dispatch(cmd, read_response: false)
+          get_command_response(cls: [Response::CommandResponse, Response::TextResponse])
         end
       end
 
       def extended_command(cmd)
         payload = frame_extended_request(cmd)
-        with_lock do
-          with_retry do |is_retry|
-            with_device(is_retry: is_retry) do
-              # TODO change to use the reading mechanism used for command responses
-              dispatch_and_parse(payload)
-            end
-          end
+        with_device_and_wrappers do
+          # TODO change to use the reading mechanism used for command responses
+          dispatch_and_parse(payload)
         end
       end
 
@@ -276,6 +252,14 @@ module Seriamp
             #binding.b unless resp
 
             update_current_status(resp.to_state)
+          end
+        end
+      end
+
+      def with_device_and_wrappers(&block)
+        with_lock do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry, &block)
           end
         end
       end
