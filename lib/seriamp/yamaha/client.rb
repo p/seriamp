@@ -186,14 +186,16 @@ module Seriamp
         cmd = "#{STX}0#{cmd}#{ETX}"
         with_lock do
           with_retry do
-            dispatch(cmd, read_response: false)
-            if read_response
-              get_command_response do |resp|
-                if expect_response_state && !resp.state.keys.include?(expect_response_state)
-                  logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
-                  nil
-                else
-                  resp
+            with_device do
+              dispatch(cmd, read_response: false)
+              if read_response
+                get_command_response do |resp|
+                  if expect_response_state && !resp.state.keys.include?(expect_response_state)
+                    logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
+                    nil
+                  else
+                    resp
+                  end
                 end
               end
             end
@@ -204,9 +206,11 @@ module Seriamp
       def system_command(cmd)
         with_lock do
           with_retry do
-            cmd = "#{STX}2#{cmd}#{ETX}"
-            resp = dispatch(cmd, read_response: false)
-            get_command_response
+            with_device do
+              cmd = "#{STX}2#{cmd}#{ETX}"
+              resp = dispatch(cmd, read_response: false)
+              get_command_response
+            end
           end
         end
       end
@@ -215,8 +219,10 @@ module Seriamp
         payload = frame_extended_request(cmd)
         with_lock do
           with_retry do
-            # TODO change to use the reading mechanism used for command responses
-            dispatch_and_parse(payload)
+            with_device do
+              # TODO change to use the reading mechanism used for command responses
+              dispatch_and_parse(payload)
+            end
           end
         end
       end
