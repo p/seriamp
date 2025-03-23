@@ -415,6 +415,8 @@ describe Seriamp::Yamaha::Client do
         end
 
         it 'returns the next response that is not receiver-pushed' do
+          client.should receive(:update_current_status).with({zone_osd: 'Off'})
+          client.should receive(:update_current_status).with({zone_osd: 'Zone2'})
           client.system_command('6C01').should == {zone_osd: 'Zone2'}
         end
       end
