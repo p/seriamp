@@ -295,6 +295,15 @@ module Seriamp
     # successfully (while the other will time out) and only one of the two
     # commands would need to be retried.
     def get_specific_response(cls: nil)
+      classes = case cls
+      when Array
+        cls
+      when nil
+        nil
+      else
+        [cls]
+      end
+
       loop do
         unless response_complete?
           read_response
@@ -302,8 +311,8 @@ module Seriamp
         resp = extract_one_response!
         resp = parse_response(resp)
         if cls
-          unless resp.class == cls
-            logger&.warn("Skipping response: #{resp} while looking for #{cls}")
+          unless classes.include?(resp.class)
+            logger&.warn("Skipping response: #{resp} while looking for #{classes.map(&:name).join('|')}")
             next
           end
           return resp

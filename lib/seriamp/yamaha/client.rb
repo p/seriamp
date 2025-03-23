@@ -158,10 +158,10 @@ module Seriamp
         nil
       end
 
-      def get_command_response
+      def get_command_response(cls: nil)
         # Response should have been to our RS-232 command, verify.
         loop do
-          resp = get_specific_response(cls: Response::CommandResponse)
+          resp = get_specific_response(cls: cls || Response::CommandResponse)
           if resp.control_type != :rs232
             # Receiver can be sending system responses, ignore them.
             #raise UnhandledResponse, "Response was not to our command: #{resp}"
@@ -212,7 +212,7 @@ module Seriamp
             with_device do
               cmd = "#{STX}2#{cmd}#{ETX}"
               resp = dispatch(cmd, read_response: false)
-              get_command_response
+              get_command_response(cls: [Response::CommandResponse, Response::TextResponse])
             end
           end
         end
