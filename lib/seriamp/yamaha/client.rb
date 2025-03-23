@@ -168,6 +168,9 @@ module Seriamp
             #update_current_status(resp)
             next
           end
+          if guard = resp.guard
+            raise NotApplicable, "Command guarded by '#{guard}'"
+          end
           if block_given?
             resp = yield(resp)
             if resp
