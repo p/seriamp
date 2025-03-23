@@ -4,8 +4,11 @@ module Seriamp
   module Backend
     module MockSerialPortBackend
 
-      class EndOfExchanges < StandardError; end
-      class UnexpectedWrite < StandardError; end
+      class Error < StandardError; end
+      class EndOfExchanges < Error; end
+      class UnexpectedWrite < Error; end
+      class UnexpectedExchangeType < Error; end
+      class UnexpectedSituation < Error; end
 
       class Exchanges < Array
         attr_accessor :current_index
@@ -28,7 +31,7 @@ module Seriamp
               if exchanges.index_attempted == exchanges.current_index + 1
                 exchanges.current_index += 1
               else
-                raise "Unexpected situation"
+                raise UnexpectedSituation
               end
             end
           end
@@ -54,14 +57,14 @@ module Seriamp
           end
           exchanges.index_attempted = exchanges.current_index
           if exchange.first == :w || exchange.first == :write
-            raise "Exchange #{exchanges.current_index + 1} is a write, read attempted"
+            raise UnexpectedExchangeType, "Exchange #{exchanges.current_index + 1} is a write, read attempted"
           end
           if exchange.first == :read_timeout
             exchanges.current_index += 1
             raise IO::EWOULDBLOCKWaitReadable
           end
           if exchange.first != :r && exchange.first != :read
-            raise "Exchange #{exchanges.current_index + 1} should be read, is #{exchange.first}"
+            raise UnexpectedExchangeType, "Exchange #{exchanges.current_index + 1} should be read, is #{exchange.first}"
           end
           exchange.last.tap do
             exchanges.current_index += 1
@@ -79,7 +82,7 @@ module Seriamp
           end
 
           if exchange.first != :w && exchange.first != :write
-            raise "Exchange #{exchanges.current_index + 1} should be write, is #{exchange.first}"
+            raise UnexpectedExchangeType "Exchange #{exchanges.current_index + 1} should be write, is #{exchange.first}"
           end
 
           if contents == exchange.last
