@@ -60,7 +60,9 @@ module Seriamp
             raise UnexpectedExchangeType, "Exchange #{exchanges.current_index + 1} is a write, read attempted"
           end
           if exchange.first == :read_timeout
-            exchanges.current_index += 1
+            # Do not increment current_index here, otherwise the timeout
+            # will be retried by the client logic (since a timeout is not
+            # an error, it will always be retried).
             raise IO::EWOULDBLOCKWaitReadable
           end
           if exchange.first != :r && exchange.first != :read
