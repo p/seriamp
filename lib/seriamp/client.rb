@@ -296,7 +296,7 @@ module Seriamp
     # commands would need to be retried.
     def get_specific_response(cls: nil)
       loop do
-        if read_buf.empty?
+        unless response_complete?
           read_response
         end
         resp = extract_one_response!

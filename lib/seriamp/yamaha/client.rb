@@ -161,9 +161,6 @@ module Seriamp
       def get_command_response
         # Response should have been to our RS-232 command, verify.
         loop do
-          with_device do
-            self.read_response
-          end
           resp = get_specific_response(cls: Response::CommandResponse)
           if resp.control_type != :rs232
             # Receiver can be sending system responses, ignore them.
