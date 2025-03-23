@@ -51,11 +51,11 @@ module Seriamp
           raise EndOfExchanges if eof?
 
           exchange = exchanges.current
+          exchanges.index_attempted = exchanges.current_index
           if exchange.nil?
             @eof = true
             return nil
           end
-          exchanges.index_attempted = exchanges.current_index
           if exchange.first == :w || exchange.first == :write
             raise UnexpectedExchangeType, "Exchange #{exchanges.current_index + 1} is a write, read attempted"
           end
