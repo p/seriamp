@@ -5,7 +5,7 @@ describe 'Yamaha replay tests' do
 
   let(:base_options) do
     {
-      backend: :logging_mock_serial_port,
+      backend: :mock_serial_port,
       device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges),
       persistent: true,
     }
