@@ -57,6 +57,7 @@ module Seriamp
             raise "Exchange #{exchanges.current_index + 1} is a write, read attempted"
           end
           if exchange.first == :read_timeout
+            exchanges.current_index += 1
             raise IO::EWOULDBLOCKWaitReadable
           end
           if exchange.first != :r && exchange.first != :read
