@@ -408,11 +408,13 @@ describe Seriamp::Yamaha::Client do
         let(:exchanges) do
           [
             [:w, "\x0226C01\x03"],
-            [:r, "\x02306C01\x03"],
+            # This response is processed but not used for return value
+            [:r, "\x02306C00\x03"],
+            [:r, "\x02006C01\x03"],
           ]
         end
 
-        it 'returns the response class instance' do
+        it 'returns the next response that is not receiver-pushed' do
           client.system_command('6C01').should == {zone_osd: 'Zone2'}
         end
       end
