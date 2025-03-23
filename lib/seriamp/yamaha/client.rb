@@ -45,8 +45,8 @@ module Seriamp
 
       def status_string
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               dispatch(STATUS_REQ)
               # There could potentialy be multiple responses here if
               # receiver is sending status updates to host?
@@ -58,8 +58,8 @@ module Seriamp
 
       def status
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               resp = nil
               dispatch(STATUS_REQ, read_response: false)
               status = get_specific_response(cls: Response::StatusResponse).state
@@ -143,8 +143,8 @@ module Seriamp
         end
 
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
               @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
               @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
@@ -188,8 +188,8 @@ module Seriamp
         end
         cmd = "#{STX}0#{cmd}#{ETX}"
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               dispatch(cmd, read_response: false)
               if read_response
                 get_command_response do |resp|
@@ -208,8 +208,8 @@ module Seriamp
 
       def system_command(cmd)
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               cmd = "#{STX}2#{cmd}#{ETX}"
               resp = dispatch(cmd, read_response: false)
               get_command_response(cls: [Response::CommandResponse, Response::TextResponse])
@@ -221,8 +221,8 @@ module Seriamp
       def extended_command(cmd)
         payload = frame_extended_request(cmd)
         with_lock do
-          with_retry do
-            with_device do
+          with_retry do |is_retry|
+            with_device(is_retry: is_retry) do
               # TODO change to use the reading mechanism used for command responses
               dispatch_and_parse(payload)
             end

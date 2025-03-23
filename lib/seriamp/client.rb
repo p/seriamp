@@ -88,7 +88,7 @@ module Seriamp
       @detect_device
     end
 
-    def with_device(&block)
+    def with_device(is_retry: false, &block)
       if @io
         if @errored || @io.errored?
           logger&.debug("Closing stale device handle due to I/O error")
@@ -99,7 +99,7 @@ module Seriamp
       if @io
         yield @io
       else
-        open_device(&block)
+        open_device(is_retry: is_retry, &block)
       end
     end
 
@@ -146,7 +146,7 @@ module Seriamp
       raise InvalidBackend, "Backend #{backend} is not known: #{exc.class}: #{exc}"
     end
 
-    def open_device
+    def open_device(is_retry: false)
       if detect_device? && device.nil?
         logger&.debug("Detecting device")
         mod = eval(self.class.name.sub(/::\w+\z/, ''))
@@ -165,9 +165,14 @@ module Seriamp
         @io.logged_operations = logged_operations
       end
 
-      @read_buf = Utils.consume_data(@io, logger,
-        "Serial device readable after opening - unread previous response?")
-      report_unread_responses
+      unless is_retry
+        # Report unread data only if we are not retrying.
+        # If we are retrying, the data in the buffer may be the one we are
+        # looking for in response to an already sent command.
+        @read_buf = Utils.consume_data(@io, logger,
+          "Serial device readable after opening - unread previous response?")
+        report_unread_responses
+      end
 
       begin
         yield @io
@@ -361,7 +366,7 @@ module Seriamp
     def with_retry
       try = 1
       begin
-        yield
+        yield try > 1
       rescue NotApplicable
         raise
       rescue Seriamp::UnhandledResponse
