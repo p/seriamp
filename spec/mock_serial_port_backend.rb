@@ -28,10 +28,10 @@ module Seriamp
             # Skip to the next exchange when reinstantiating the Client
             # (presumably after a timeout or an error).
             if exchanges.index_attempted
-              if exchanges.index_attempted == exchanges.current_index + 1
+              if exchanges.index_attempted == exchanges.current_index
                 exchanges.current_index += 1
               else
-                raise UnexpectedSituation
+                raise UnexpectedSituation, "Current index: #{exchanges.current_index}, attempted index: #{exchanges.index_attempted}"
               end
             end
           end
