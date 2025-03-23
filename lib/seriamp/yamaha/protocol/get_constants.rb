@@ -581,6 +581,8 @@ module Seriamp
           '2' => 'Zone2 & Zone3',
         }.freeze
 
+        ZONE_OSD_REPORT_GET = prefix_keys_with_zero(ZONE_OSD_GET)
+
         OSD_SHIFT_GET = make_sequence('%02X', 0, -5, 5)
 
         ON_SCREEN_GET = {
@@ -947,6 +949,7 @@ module Seriamp
           '32' => [:main_volume_memory_load, :memory],
           '33' => [:main_volume_memory_save, :memory],
           '34' => [:headphone, :bool_report],
+          '6C' => [:zone_osd, :zone_osd_report],
           '75' => [:bass_out, :bass_out_report],
           '7E' => [:subwoofer_crossover, :subwoofer_crossover_report],
           # Speaker level test mode
