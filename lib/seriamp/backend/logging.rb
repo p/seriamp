@@ -8,12 +8,18 @@ module Seriamp
         super.tap do |result|
           logger.debug("Read: #{escape(result)}")
         end
+      rescue => exc
+        logger.debug("Read: Exception: #{exc.class}: #{exc}")
+        raise
       end
 
       def read_nonblock(*args)
         super.tap do |result|
           logger.debug("Read: #{escape(result)}")
         end
+      rescue => exc
+        logger.debug("Read: Exception: #{exc.class}: #{exc}")
+        raise
       end
 
       def syswrite(chunk)
@@ -25,6 +31,9 @@ module Seriamp
         super.tap do |result|
           logger.debug("Readline: #{escape(result)}")
         end
+      rescue => exc
+        logger.debug("Readline: Exception: #{exc.class}: #{exc}")
+        raise
       end
 
       private

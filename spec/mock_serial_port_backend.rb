@@ -129,5 +129,12 @@ module Seriamp
         end
       end
     end
+
+    module LoggingMockSerialPortBackend
+
+      class Device < MockSerialPortBackend::Device
+        include Backend::Logging
+      end
+    end
   end
 end
