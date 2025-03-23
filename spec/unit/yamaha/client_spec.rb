@@ -49,6 +49,30 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  describe '#response_complete?' do
+    let(:client) { described_class.new }
+
+    before do
+      expect(client).to receive(:read_buf).and_return(read_buf)
+    end
+
+    [
+      ['null response', "\0", true],
+      ['null response followed by more data', "\00", true],
+      ['incomplete response', '1', false],
+      ['ETX only', Seriamp::AsciiTable::ETX, true],
+      ['ETX with more data', Seriamp::AsciiTable::ETX + '0', true],
+    ].each do |name, read_buf, expected|
+      context name do
+        let(:read_buf) { read_buf }
+
+        it "is #{expected}" do
+          client.send(:response_complete?).should be expected
+        end
+      end
+    end
+  end
+
   describe 'control methods' do
     include_context 'rr mock'
 

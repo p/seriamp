@@ -224,8 +224,12 @@ module Seriamp
 
       ZERO_ORD = '0'.ord
 
+      # Returns if the buffer contains at least one complete response.
+      # Note that the buffer may contain additional bytes after the complete
+      # response (e.g. the beginning of the next response, when the first
+      # or the second response are receiver-pushed).
       def response_complete?
-        read_buf.end_with?(self.class.const_get(:ETX))
+        !!(read_buf =~ /#{self.class.const_get(:ETX)}|\0/)
       end
 
       def extract_one_response
