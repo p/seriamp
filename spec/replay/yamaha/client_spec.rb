@@ -4,7 +4,11 @@ describe 'Yamaha replay tests' do
   fixture_path 'yamaha'
 
   let(:base_options) do
-    {backend: :mock_serial_port, device:Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges), persistent: true}
+    {
+      backend: :logging_mock_serial_port,
+      device: Seriamp::Backend::MockSerialPortBackend::Exchanges.new(exchanges),
+      persistent: true,
+    }
   end
 
   let(:client_options) do
