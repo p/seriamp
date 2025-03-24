@@ -577,4 +577,20 @@ describe Seriamp::Yamaha::Client do
       end
     end
   end
+
+  describe 'text methods' do
+    include_context 'rr mock'
+
+    describe '#get_main_volume_text' do
+      let(:rr) do
+        [
+          ["\x0222001\x03", "\x1101 -13.0dB\x03"],
+        ]
+      end
+
+      it 'works' do
+        client.get_main_volume_text.should == '-13.0dB'
+      end
+    end
+  end
 end
