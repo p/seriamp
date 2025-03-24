@@ -109,22 +109,21 @@ module InstanceMethods
     self.class.fixture_path
   end
 
-  def yaml_fixture(path)
-    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.yaml']
+  def resolve_fixture(basename)
+    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, basename]
     path = File.join(*comps.compact)
-    YAML.load(File.read(path))
+  end
+
+  def yaml_fixture(path)
+    YAML.load(File.read(resolve_fixture(path + '.yaml')))
   end
 
   def eval_fixture(path)
-    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.eval']
-    path = File.join(*comps.compact)
-    eval(File.read(path))
+    eval(File.read(resolve_fixture(path + '.eval')))
   end
 
   def status_fixture(path)
-    comps = [File.dirname(__FILE__), 'fixtures', fixture_path, path + '.status']
-    path = File.join(*comps.compact)
-    eval(File.read(path))
+    eval(File.read(resolve_fixture(path + '.status')))
   end
 
   def integration_device(key)

@@ -121,7 +121,13 @@ module Seriamp
       end
     end
 
-    attr_reader :logged_operations
+    def logged_operations
+      if options[:structured_log]
+        @logged_operations
+      else
+        raise ArgumentError, 'Structured logging not enabled on this client'
+      end
+    end
 
     private
 

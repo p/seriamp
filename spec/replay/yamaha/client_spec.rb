@@ -19,6 +19,37 @@ describe 'Yamaha replay tests' do
     Seriamp::Yamaha::Client.new(**base_options.merge(client_options))
   end
 
+  def self.gen_client_method_test(args, fixture_name)
+    let(:base_options) do
+      {
+        backend: :logging_uart,
+        device: ENV['REPLAY_DEVICE'] || '/dev/ttyYamaha',
+        persistent: true,
+        structured_log: true,
+      }
+    end
+
+    args = args.dup
+    method_name = args.shift
+    describe method_name do
+      it 'generates the fixtures' do
+        value = client.public_send(method_name, *args)
+        File.open(resolve_fixture("#{fixture_name}.eval"), 'w') do |f|
+          f << value.inspect
+        end
+
+        state = client.current_status
+        File.open(resolve_fixture("#{fixture_name}.status"), 'w') do |f|
+          f << state.inspect
+        end
+
+        File.open(resolve_fixture("#{fixture_name}.yaml"), 'w') do |f|
+          f << YAML.dump(client.logged_operations)
+        end
+      end
+    end
+  end
+
   def self.client_method_test(args, fixture_name)
     with_fixture(fixture_name) do
       args = args.dup
