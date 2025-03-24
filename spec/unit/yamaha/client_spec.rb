@@ -7,6 +7,13 @@ describe Seriamp::Yamaha::Client do
   include YamahaHelpers
   include YamahaClientHelpers
 
+  CommandResponse = Seriamp::Yamaha::Response::CommandResponse
+  TextResponse = Seriamp::Yamaha::Response::TextResponse
+
+  def make_command_response(state)
+    CommandResponse.new(control_type: :rs232, guard: nil, state: state)
+  end
+
   include_context 'status request and response'
 
   describe '#initialize' do
@@ -84,7 +91,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_main_input('md/tape').should == {input_name: 'MD/TAPE'}
+        client.set_main_input('md/tape').should == make_command_response(input_name: 'MD/TAPE')
       end
     end
   end
@@ -401,7 +408,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'returns the response class instance' do
-        client.system_command('6C01').should == {zone_osd: 'Zone2'}
+        client.system_command('6C01').should == make_command_response(zone_osd: 'Zone2')
       end
 
       context 'receiver-pushed' do
@@ -417,7 +424,7 @@ describe Seriamp::Yamaha::Client do
         it 'returns the next response that is not receiver-pushed' do
           client.should receive(:update_current_status).with({zone_osd: 'Off'})
           client.should receive(:update_current_status).with({zone_osd: 'Zone2'})
-          client.system_command('6C01').should == {zone_osd: 'Zone2'}
+          client.system_command('6C01').should == make_command_response(zone_osd: 'Zone2')
         end
       end
 
@@ -446,7 +453,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'returns the response class instance' do
-        client.system_command('2001').should == {main_volume_text: '-17.0dB'}
+        client.system_command('2001').should == TextResponse.new(:main_volume_text, '-17.0dB')
       end
     end
   end

@@ -76,7 +76,8 @@ module Seriamp
         def set_main_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
           # TODO verify the received value is the value we requested?
-          system_command("30#{'%02x' % value}").fetch(:main_volume)
+          # TODO hack
+          system_command("30#{'%02x' % value}").value
         end
 
         # Sets zone 2 volume.
@@ -85,7 +86,7 @@ module Seriamp
         def set_zone2_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
           # TODO verify the received value is the value we requested?
-          system_command("31#{'%02x' % value}").fetch(:zone2_volume)
+          system_command("31#{'%02x' % value}").value
         end
 
         def main_volume_up
@@ -123,7 +124,7 @@ module Seriamp
         # @param [ Integer ] volume The raw volume value.
         def set_zone3_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          system_command("34#{'%02x' % value}").fetch(:zone3_volume)
+          system_command("34#{'%02x' % value}").value
         end
 
         def zone3_volume_up
@@ -222,7 +223,7 @@ module Seriamp
         end
 
         def get_main_volume_text
-          extract_text(system_command("2001"))[3...].strip
+          system_command("2001").text
         end
 
         def get_zone2_volume_text

@@ -1,1 +1,5 @@
-{pure_direct:true}
+Seriamp::Yamaha::Response::CommandResponse.new(
+  control_type: :rs232,
+  guard: nil,
+  state: {pure_direct:true},
+)

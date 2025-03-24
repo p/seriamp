@@ -30,6 +30,12 @@ module Seriamp
         def guard
           nil
         end
+
+        def ==(other)
+          other.is_a?(self.class) &&
+          field_name == other.field_name &&
+          text == other.text
+        end
       end
     end
   end

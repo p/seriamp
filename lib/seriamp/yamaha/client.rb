@@ -162,10 +162,10 @@ module Seriamp
           if block_given?
             resp = yield(resp)
             if resp
-              return resp.to_state
+              return resp
             end
           else
-            return resp.to_state
+            return resp
           end
         end
       end

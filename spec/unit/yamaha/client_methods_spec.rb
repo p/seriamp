@@ -7,6 +7,13 @@ describe Seriamp::Yamaha::Client do
   include YamahaHelpers
   include YamahaClientHelpers
 
+  CommandResponse = Seriamp::Yamaha::Response::CommandResponse
+  TextResponse = Seriamp::Yamaha::Response::TextResponse
+
+  def make_command_response(state)
+    CommandResponse.new(control_type: :rs232, guard: nil, state: state)
+  end
+
   describe 'query methods' do
     include_context 'status request and response'
 
@@ -94,7 +101,7 @@ describe Seriamp::Yamaha::Client do
 
       it 'works' do
         # No return value yet
-        client.set_main_mute(true).should == {main_mute: true}
+        client.set_main_mute(true).should == make_command_response(main_mute: true)
       end
     end
 
@@ -107,19 +114,19 @@ describe Seriamp::Yamaha::Client do
 
       context 'canonical name: DVR/VCR2' do
         it 'works' do
-          client.set_main_input('DVR/VCR2').should == {input_name: 'DVR/VCR2'}
+          client.set_main_input('DVR/VCR2').should == make_command_response(input_name: 'DVR/VCR2')
         end
       end
 
       context 'dvr_vcr2' do
         it 'works' do
-          client.set_main_input('dvr_vcr2').should == {input_name: 'DVR/VCR2'}
+          client.set_main_input('dvr_vcr2').should == make_command_response(input_name: 'DVR/VCR2')
         end
       end
 
       context 'DVR alias' do
         it 'works' do
-          client.set_main_input('DVR').should == {input_name: 'DVR/VCR2'}
+          client.set_main_input('DVR').should == make_command_response(input_name: 'DVR/VCR2')
         end
       end
 
@@ -142,7 +149,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_bass_out(:front).should == {bass_out: 'Subwoofer'}
+        client.set_bass_out(:front).should == make_command_response(bass_out: 'Subwoofer')
       end
     end
 
@@ -200,7 +207,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_front_left_level(-4.5).should == {front_left_level: -4.5}
+        client.set_front_left_level(-4.5).should == make_command_response(front_left_level: -4.5)
       end
     end
 
@@ -212,7 +219,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_front_speaker_layout('large').should == {front_speaker_layout: 'Large'}
+        client.set_front_speaker_layout('large').should == make_command_response(front_speaker_layout: 'Large')
       end
     end
 
@@ -453,7 +460,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_program_select('Last').should be == {program_select: 'Last'}
+        client.set_program_select('Last').should be == make_command_response(program_select: 'Last')
       end
     end
 
