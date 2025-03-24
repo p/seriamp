@@ -599,5 +599,29 @@ describe Seriamp::Yamaha::Client do
         client.get_main_volume_text.should == '-13.0dB'
       end
     end
+
+    describe '#get_zone2_volume_text' do
+      let(:rr) do
+        [
+          ["\x0222002\x03", "\x1102 -13.0dB\x03"],
+        ]
+      end
+
+      it 'works' do
+        client.get_zone2_volume_text.should == '-13.0dB'
+      end
+    end
+
+    describe '#get_zone3_volume_text' do
+      let(:rr) do
+        [
+          ["\x0222005\x03", "\x1105 -13.0dB\x03"],
+        ]
+      end
+
+      it 'works' do
+        client.get_zone3_volume_text.should == '-13.0dB'
+      end
+    end
   end
 end

@@ -227,11 +227,11 @@ module Seriamp
         end
 
         def get_zone2_volume_text
-          extract_text(system_command("2002"))[3...].strip
+          system_command("2002").text
         end
 
         def get_zone3_volume_text
-          extract_text(system_command("2005"))[3...].strip
+          system_command("2005").text
         end
 
         # Turns pure direct mode on or off.
