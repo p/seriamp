@@ -93,6 +93,8 @@ describe 'Yamaha replay tests' do
 
   client_method_test %w,reset_parametric_eq,, 'rx-v3800-peq-reset'
 
+  client_method_test %w,main_speaker_tone_bass,, 'rx-v3800-main-speaker-tone-bass'
+
   # Extra response prior to proper command response when there is existing state
   client_method_test ['set_pure_direct', true], 'rx-v3800-command-pre-with-state'
 

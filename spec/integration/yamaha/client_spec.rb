@@ -88,16 +88,4 @@ describe 'Yamaha integration' do
       end
     end
   end
-
-  describe '#main_speaker_tone_bass' do
-    let(:result) { client.main_speaker_tone_bass }
-
-    it 'works' do
-      result.should be_a(Hash)
-      result.should have_key(:frequency)
-      result.should have_key(:gain)
-      result[:frequency].should be_a(Integer)
-      result[:gain].should be_a(Float)
-    end
-  end
 end
