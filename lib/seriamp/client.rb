@@ -344,7 +344,9 @@ module Seriamp
     attr_reader :read_buf
 
     # Reads at least one complete response into the read buffer.
-    def read_response(append: false, timeout: nil)
+    # For yamaha protocol we should be appending by default to handle
+    # receiver-pushed responses correctly.
+    def read_response(append: true, timeout: nil)
       timeout ||= self.timeout
       unless append
         reset_read_buf
