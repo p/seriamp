@@ -95,6 +95,7 @@ describe Seriamp::Yamaha::Client do
     describe '#set_main_mute' do
       let(:rr) do
         [
+          # mute_type: "Full" followed by main_mute: true
           %W(\x0207EA2\x03 \x0200A500\x03 \x02002301\x03),
         ]
       end
