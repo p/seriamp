@@ -368,10 +368,6 @@ describe Seriamp::Yamaha::Client do
         end
 
         context 'when pushed state is split and attached to previous response' do
-          let(:handled_pushed_response) do
-            "4A30\x03"
-          end
-
           let(:exchanges) do
             [
               # set main_mute: true
@@ -411,6 +407,28 @@ describe Seriamp::Yamaha::Client do
               client.set_main_mute(true)
               client.status.should == status_alpha
             end
+          end
+        end
+
+        context 'when pushed state is split and attached to previous response but is incomplete' do
+          let(:exchanges) do
+            [
+              # set main_mute: true
+              [:w, "\x0207EA2\x03"],
+              # main_mute: true
+              # and this contains part of the pushed response
+              [:r, "\x02002301\x03\x0230"],
+              [:w, "001"],
+              # The rest of pushed response is missing - we have the status response.
+              status_alpha_response,
+            ]
+          end
+
+          it 'raises error' do
+            client.set_main_mute(true)
+            lambda do
+              client.status
+            end.should raise_error(Seriamp::UnhandledResponse, /Unhandled STX response/)
           end
         end
       end
