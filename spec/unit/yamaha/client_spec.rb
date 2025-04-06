@@ -393,6 +393,25 @@ describe Seriamp::Yamaha::Client do
             client.set_main_mute(true)
             client.status.should == status_alpha
           end
+
+          context 'when end of pushed state is merged with expected status response' do
+
+            let(:exchanges) do
+              [
+                [:w, "\x0207EA2\x03"],
+                [:r, "\x02002301\x03\x0230"],
+                [:w, "001"],
+                # Unlike the containing test, now the two reads are returned
+                # together from the I/O layer.
+                [:r, "4A30\x03" + status_response],
+              ]
+            end
+
+            it 'returns correct status' do
+              client.set_main_mute(true)
+              client.status.should == status_alpha
+            end
+          end
         end
       end
     end
