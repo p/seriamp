@@ -100,7 +100,6 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        # No return value yet
         client.set_main_mute(true).should == make_command_response(main_mute: true)
       end
     end
@@ -161,7 +160,6 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        # No return value yet
         client.set_main_speaker_tone_bass(frequency: 125, gain: 2).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
       end
 
@@ -184,7 +182,6 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        # No return value yet
         client.set_main_speaker_tone_treble(frequency: 8000, gain: 2).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
       end
 
