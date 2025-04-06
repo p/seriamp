@@ -366,6 +366,34 @@ describe Seriamp::Yamaha::Client do
           client.current_status.should_not == status_alpha
           client.current_status.should == status_alpha.merge(subwoofer_2_level: 4.0)
         end
+
+        context 'when pushed state is split and attached to previous response' do
+          let(:handled_pushed_response) do
+            "4A30\x03"
+          end
+
+          let(:exchanges) do
+            [
+              # set main_mute: true
+              [:w, "\x0207EA2\x03"],
+              # main_mute: true
+              # and this contains part of the pushed response
+              [:r, "\x02002301\x03\x0230"],
+              [:w, "001"],
+              # The rest of pushed response, it should be read to complete
+              # the partial response started above.
+              # Note that the read will only be performed after the write
+              # (i.e. as part of reading the response for status request).
+              [:r, "4A30\x03"],
+              status_alpha_response,
+            ]
+          end
+
+          it 'returns correct status' do
+            client.set_main_mute(true)
+            client.status.should == status_alpha
+          end
+        end
       end
     end
   end
