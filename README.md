@@ -3,7 +3,8 @@
 Seriamp is a Ruby library plus a collection of utilities and daemons to
 control a variety of receivers and amplifiers via serial connection (RS-232)
 or network (Ethernet/IP). The primary targets of Seriamp are Yamaha
-RS-232-capable receivers and Sonance Sonamp 875D SE/Mk2 amplifiers, as
+RS-232-capable receivers (RX-V1000 through RX-V3800)
+and Sonance Sonamp 875D SE/Mk2 amplifiers, as
 those are the models I currently have and use, but some code is written for
 Yamaha YNCA protocol (usable over both RS-232C and Ethernet) and
 Onkyo/Integra/post-2014 Pioneer Elite receivers (which all use the
@@ -202,6 +203,43 @@ the receiver or the amplifier. This is because in practice all A/V
 equipment that is supported by Seriamp only works with a single
 control client (the webapp daemon in case of Seriamp), and direct access
 by multiple clients will produce errors and potentially erroneous behavior.
+
+## Hardware Support
+
+- Sonance Sonamp 875D, 875D MKII: fully supported, regularly used/tested
+- Yamaha RX-V3800: best support among Yamaha RS-232-capable receivers,
+regularly used/tested
+- Yamaha RX-V3900: not supported. This receiver does not use the Yamaha
+RS-232 protocol used by all of the other RX-Vxx00 models, instead using the
+newer YNCA protocol. While I do own one of these receivers, its network
+interface is inoperable, and I was unable to find any documentation on
+how to properly send the YNCA protocol over the serial port (or perhaps
+the serial port on my RX-V3900 is also broken).
+- Yamaha RX-V2700, RX-V1900, RX-V1800, RX-V1700: these should be similar enough to
+RX-V3800 to work almost as well as RX-V3800.
+- Yamaha RX-V2600, RX-V2500, RX-V1600, RX-V1500: there are some behavior
+differences from the newer receivers and I no longer actively use these models,
+though I used them in the past and Seriamp was tested against them at some
+point. Most likely issues would be mislabeling of inputs as Yamaha changed
+input names over the years and they reused the corresponding numeric values
+in the serial protocol.
+- Yamaha RX-V2400, RX-V3300, RX-V2300, RX-V3200, RX-V2200, RX-V3000, RX-V1000:
+I never owned these models and while they should either work or almost work
+for most of the functionality implemented by Seriamp, there may be some
+functionality gaps, most likely having to do with input names which vary over
+the years but use the same numeric identifiers in the serial protocol.
+- Yamaha RX-V1400, RX-V1300, RX-V1200: not supported. These models lack the
+serial interface altogether and cannot be used with Seriamp at all.
+- Onkyo receivers via serial connection: I used to own one but sold it
+relatively long ago. Almost certainly Seriamp code will need to be modified for
+these receivers to work with any recent version of Seriamp.
+- Pioneer receivers via network connection: I was developing Seriamp support
+for this hardware but I never owned one myself and the development time was
+very limited. Most likely significant amount of work would be needed to make
+this hardware work.
+- Denon, Marant, Harman/Kardon receivers: I only "proof of concept" tested
+communication with and control of these receivers over the serial port.
+There is no code in Seriamp at present to communicate with these receivers.
 
 ## License
 
