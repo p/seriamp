@@ -280,6 +280,9 @@ module Seriamp
     end
 
     def get_any_response
+      unless response_complete?
+        read_response
+      end
       # TODO identify which are command responses and which are
       # status updates, handle accordingly.
       resp = extract_one_response!

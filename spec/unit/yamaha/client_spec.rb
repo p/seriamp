@@ -29,13 +29,46 @@ describe Seriamp::Yamaha::Client do
       client.send(:get_any_response)
     end
 
+    before do
+      client.instance_variable_set('@read_buf', read_buf)
+    end
+
     context 'null response' do
-      before do
-        client.instance_variable_set('@read_buf', +"\0")
-      end
+      let(:read_buf) { +"\0" }
 
       it 'returns the null response' do
         response.should eq Seriamp::Yamaha::Response::NullResponse.new
+      end
+    end
+
+    context 'command response' do
+      context 'complete response already in buffer' do
+        let(:read_buf) { +"\x02002301\x03" }
+
+        it 'returns the command response' do
+          response.should eq Seriamp::Yamaha::Response::CommandResponse.new(
+            control_type: :rs232, guard: nil, state: {main_mute: true})
+        end
+      end
+
+      context 'partial response in buffer' do
+        let(:read_buf) { +"\x02002" }
+        let(:read_buf_remainder) { "301\x03" }
+
+        let(:io) do
+          double(IO).tap do |io|
+            expect(io).to receive(:read_nonblock).and_return(read_buf_remainder)
+          end
+        end
+
+        before do
+          client.instance_variable_set('@io', io)
+        end
+
+        it 'returns the command response' do
+          response.should eq Seriamp::Yamaha::Response::CommandResponse.new(
+            control_type: :rs232, guard: nil, state: {main_mute: true})
+        end
       end
     end
   end
