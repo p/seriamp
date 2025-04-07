@@ -22,6 +22,24 @@ describe Seriamp::Yamaha::Client do
     end
   end
 
+  describe '#get_any_response' do
+    let(:client) { described_class.new }
+
+    let(:response) do
+      client.send(:get_any_response)
+    end
+
+    context 'null response' do
+      before do
+        client.instance_variable_set('@read_buf', +"\0")
+      end
+
+      it 'returns the null response' do
+        response.should eq Seriamp::Yamaha::Response::NullResponse.new
+      end
+    end
+  end
+
   describe '#extract_one_response' do
     let(:client) { described_class.new }
 
@@ -34,7 +52,7 @@ describe Seriamp::Yamaha::Client do
         client.instance_variable_set('@read_buf', "\0")
       end
 
-      it 'should work' do
+      it 'returns the null response' do
         response.should eq "\0"
       end
     end
