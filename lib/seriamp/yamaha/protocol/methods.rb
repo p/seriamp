@@ -261,7 +261,8 @@ module Seriamp
         #
         # @param [ true | false ] state Desired state.
         def set_pure_direct(state)
-          remote_command("7E8#{state ? '0' : '2'}")
+          remote_command("7E8#{state ? '0' : '2'}",
+            expect_response_state: :pure_direct)
         end
 
         def set_program(value)
