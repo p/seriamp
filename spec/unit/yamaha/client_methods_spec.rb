@@ -257,7 +257,6 @@ describe Seriamp::Yamaha::Client do
         end
 
         it 'works' do
-          # No response at this time.
           client.set_volume_trim('md/tape', -1.5).should be_a(Seriamp::Yamaha::Response::ExtendedResponse::ResponseWithoutData)
         end
 
@@ -272,6 +271,27 @@ describe Seriamp::Yamaha::Client do
               client.set_volume_trim('md/tape', 7)
             end.should raise_error(ArgumentError)
           end
+        end
+      end
+    end
+
+    [
+      [:main_volume_up, '07A1A', '00263B', -70.0],
+      [:main_volume_down, '07A1B', '00263B', -70.0],
+      [:zone2_volume_up, '07ADA', '00273B', -70.0],
+      [:zone2_volume_down, '07ADB', '00273B', -70.0],
+      [:zone3_volume_up, '07AFD', '00A23B', -70.0],
+      [:zone3_volume_down, '07AFE', '00A23B', -70.0],
+    ].each do |(method, req_payload, resp_payload, expected_rv)|
+      describe "##{method}" do
+        let(:rr) do
+          [
+            %W(\x02#{req_payload}\x03 \x02#{resp_payload}\x03),
+          ]
+        end
+
+        it 'works' do
+          client.public_send(method).should eq expected_rv
         end
       end
     end
