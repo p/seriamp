@@ -171,14 +171,30 @@ module Seriamp
       end
 
       def remote_command(cmd, read_response: true, expect_response_state: nil, include_response_state: nil)
+        # TODO include_response_state is not used? and not tested
         if expect_response_state || include_response_state and !read_response
           raise ArgumentError, "Cannot accept response requirements when asked not to read the response"
         end
         cmd = "#{STX}0#{cmd}#{ETX}"
+        do_command(cmd,
+          read_response: read_response,
+          expect_response_state: expect_response_state)
+      end
+
+      def system_command(cmd, expect_response_cls: nil, expect_response_state: nil)
+        cmd = "#{STX}2#{cmd}#{ETX}"
+        do_command(cmd,
+          read_response: true,
+          expect_response_cls: expect_response_cls || [
+            Response::CommandResponse, Response::TextResponse],
+          expect_response_state: expect_response_state)
+      end
+
+      def do_command(cmd, read_response: true, expect_response_cls: nil, expect_response_state: nil)
         with_device_and_wrappers do
           dispatch(cmd, read_response: false)
           if read_response
-            get_command_response do |resp|
+            get_command_response(cls: expect_response_cls) do |resp|
               if expect_response_state && !resp.state.keys.include?(expect_response_state)
                 logger&.debug("Wanted state: #{expect_response_state}; continuing to read")
                 nil
@@ -187,15 +203,6 @@ module Seriamp
               end
             end
           end
-        end
-      end
-
-      def system_command(cmd, expect_response_cls: nil)
-        with_device_and_wrappers do
-          cmd = "#{STX}2#{cmd}#{ETX}"
-          resp = dispatch(cmd, read_response: false)
-          get_command_response(cls: expect_response_cls || [
-            Response::CommandResponse, Response::TextResponse])
         end
       end
 
