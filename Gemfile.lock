@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    seriamp (0.9.4)
+    seriamp (0.9.5)
       ruby-termios (~> 1.0)
 
 GEM
