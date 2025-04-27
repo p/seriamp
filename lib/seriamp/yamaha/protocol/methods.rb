@@ -15,7 +15,8 @@ module Seriamp
         POWER_ON_TIMEOUT = 5
 
         def advanced_setup(state)
-          system_command("B00#{state ? '1' : '0'}")
+          # TODO is there a response?
+          system_command("B00#{state ? '1' : '0'}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_speaker_impedance(value)
@@ -27,7 +28,8 @@ module Seriamp
           else
             raise ArgumentError, "Invalid value: must be 6 or 8: #{value}"
           end
-          system_command("B30#{value}")
+          # TODO is there a response?
+          system_command("B30#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         # Turns the receiver on or off.
@@ -77,7 +79,7 @@ module Seriamp
           value = Integer((volume + 80) * 2 + 39)
           # TODO verify the received value is the value we requested?
           # TODO hack
-          system_command("30#{'%02x' % value}").value
+          system_command("30#{'%02x' % value}", expect_response_cls: Response::CommandResponse).value
         end
 
         # Sets zone 2 volume.
@@ -86,7 +88,7 @@ module Seriamp
         def set_zone2_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
           # TODO verify the received value is the value we requested?
-          system_command("31#{'%02x' % value}").value
+          system_command("31#{'%02x' % value}", expect_response_cls: Response::CommandResponse).value
         end
 
         def main_volume_up
@@ -124,7 +126,7 @@ module Seriamp
         # @param [ Integer ] volume The raw volume value.
         def set_zone3_volume(volume)
           value = Integer((volume + 80) * 2 + 39)
-          system_command("34#{'%02x' % value}").value
+          system_command("34#{'%02x' % value}", expect_response_cls: Response::CommandResponse).value
         end
 
         def zone3_volume_up
@@ -183,7 +185,7 @@ module Seriamp
           # TODO does this affect headphones?
           define_method("set_#{channel}_level") do |level|
             encoded = encode_sequence(level, '14', -10, 10, 0.5)
-            system_command(prefix + encoded)
+            system_command(prefix + encoded, expect_response_cls: Response::CommandResponse)
           end
 
           define_method(key = "#{channel}_level") do
@@ -223,15 +225,15 @@ module Seriamp
         end
 
         def get_main_volume_text
-          system_command("2001").text
+          system_command("2001", expect_response_cls: Response::TextResponse).text
         end
 
         def get_zone2_volume_text
-          system_command("2002").text
+          system_command("2002", expect_response_cls: Response::TextResponse).text
         end
 
         def get_zone3_volume_text
-          system_command("2005").text
+          system_command("2005", expect_response_cls: Response::TextResponse).text
         end
 
         # Turns pure direct mode on or off.
@@ -268,7 +270,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid center speaker layout: #{layout}; valid layouts: #{CENTER_SPEAKER_LAYOUTS.keys.join(', ')}"
           end
-          system_command("70#{value}")
+          system_command("70#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_front_speaker_layout(layout)
@@ -276,7 +278,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid front speaker layout: #{layout}; valid layouts: #{FRONT_SPEAKER_LAYOUTS.keys.join(', ')}"
           end
-          system_command("71#{value}")
+          system_command("71#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_surround_speaker_layout(layout)
@@ -284,7 +286,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid surround speaker layout: #{layout}; valid layouts: #{SURROUND_SPEAKER_LAYOUTS.keys.join(', ')}"
           end
-          system_command("72#{value}")
+          system_command("72#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_surround_back_speaker_layout(layout)
@@ -292,7 +294,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid surround back speaker layout: #{layout}; valid layouts: #{SURROUND_BACK_SPEAKER_LAYOUTS.keys.join(', ')}"
           end
-          system_command("73#{value}")
+          system_command("73#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_presence_speaker_layout(layout)
@@ -300,7 +302,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid presence speaker layout: #{layout}; valid layouts: #{PRESENCE_SPEAKER_LAYOUTS.keys.join(', ')}"
           end
-          system_command("74#{value}")
+          system_command("74#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_bass_out(v)
@@ -308,7 +310,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid bass out value: #{v}; valid values: #{BASS_OUTS.keys.join(', ')}"
           end
-          system_command("75#{value}")
+          system_command("75#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_subwoofer_phase(v)
@@ -316,7 +318,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid subwoofer phase value: #{v}; valid values: #{SUBWOOFER_PHASES.keys.join(', ')}"
           end
-          system_command("76#{value}")
+          system_command("76#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         def set_subwoofer_crossover(v)
@@ -324,7 +326,7 @@ module Seriamp
           unless value
             raise ArgumentError, "Invalid subwoofer crossover frequency: #{v}; valid freuencies: #{SUBWOOFER_CROSSOVERS.keys.join(', ')}"
           end
-          system_command("7E#{value}")
+          system_command("7E#{value}", expect_response_cls: Response::CommandResponse)
         end
 
         BASS_FREQUENCY_MAP = {
@@ -669,7 +671,7 @@ module Seriamp
 
         def set_program_select(value)
           enc_value = AUTO_LAST_SET.fetch(value.to_s.downcase)
-          system_command("600#{enc_value}")
+          system_command("600#{enc_value}", expect_response_cls: Response::CommandResponse)
         end
 
         private
