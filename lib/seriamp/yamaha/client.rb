@@ -190,11 +190,12 @@ module Seriamp
         end
       end
 
-      def system_command(cmd)
+      def system_command(cmd, expect_response_cls: nil)
         with_device_and_wrappers do
           cmd = "#{STX}2#{cmd}#{ETX}"
           resp = dispatch(cmd, read_response: false)
-          get_command_response(cls: [Response::CommandResponse, Response::TextResponse])
+          get_command_response(cls: expect_response_cls || [
+            Response::CommandResponse, Response::TextResponse])
         end
       end
 
