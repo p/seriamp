@@ -350,6 +350,10 @@ module Seriamp
     # For yamaha protocol we should be appending by default to handle
     # receiver-pushed responses correctly.
     def read_response(append: true, timeout: nil)
+      unless @io
+        raise InternalError, "No device opened when trying to read a response"
+      end
+
       timeout ||= self.timeout
       unless append
         reset_read_buf

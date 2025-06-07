@@ -16,4 +16,6 @@ module Seriamp
   class InvalidBackend < ArgumentError; end
 
   class NoPowerStateAvailable < Error; end
+
+  class InternalError < Error; end
 end
