@@ -30,7 +30,7 @@ module Seriamp
         when DC1
           TextResponseParser.parse(resp[1...-1], logger: logger)
         else
-          raise NotImplementedError, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
+          raise UnhandledResponse, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end
       end
     end
