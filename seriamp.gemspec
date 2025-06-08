@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "seriamp"
-  spec.version       = '0.9.5'
+  spec.version       = '0.9.6'
   spec.authors       = ['Oleg Pudeyev']
   spec.email         = ['code@olegp.name']
   spec.summary       = %q{Serial control for amplifiers & A/V receivers}
