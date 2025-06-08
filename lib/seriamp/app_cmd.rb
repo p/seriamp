@@ -85,7 +85,7 @@ module Seriamp
     attr_reader :options
 
     def run
-      Rackup::Server.start(@rack_options.merge(app: @app_mod))
+      Rackup::Server.start(@rack_options.merge(app: @app_mod, tag: mod_name))
     ensure
       if options[:structured_log]
         puts YAML.dump(@client.logged_operations)
