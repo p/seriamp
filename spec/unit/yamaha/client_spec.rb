@@ -2,16 +2,14 @@
 
 require 'spec_helper'
 require_relative 'client_helpers'
+require_relative 'support/shortcuts'
 
 describe Seriamp::Yamaha::Client do
   include YamahaHelpers
   include YamahaClientHelpers
 
-  CommandResponse = Seriamp::Yamaha::Response::CommandResponse
-  TextResponse = Seriamp::Yamaha::Response::TextResponse
-
   def make_command_response(state)
-    CommandResponse.new(control_type: :rs232, guard: nil, state: state)
+    YamahaShortcuts::CommandResponse.new(control_type: :rs232, guard: nil, state: state)
   end
 
   include_context 'status request and response'
@@ -569,7 +567,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'returns the response class instance' do
-        client.system_command('2001').should == TextResponse.new(:main_volume_text, '-17.0dB')
+        client.system_command('2001').should == YamahaShortcuts::TextResponse.new(:main_volume_text, '-17.0dB')
       end
     end
   end

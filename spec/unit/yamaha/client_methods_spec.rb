@@ -2,16 +2,14 @@
 
 require 'spec_helper'
 require_relative 'client_helpers'
+require_relative 'support/shortcuts'
 
 describe Seriamp::Yamaha::Client do
   include YamahaHelpers
   include YamahaClientHelpers
 
-  CommandResponse = Seriamp::Yamaha::Response::CommandResponse
-  TextResponse = Seriamp::Yamaha::Response::TextResponse
-
   def make_command_response(state)
-    CommandResponse.new(control_type: :rs232, guard: nil, state: state)
+    YamahaShortcuts::CommandResponse.new(control_type: :rs232, guard: nil, state: state)
   end
 
   describe 'query methods' do
