@@ -214,8 +214,34 @@ describe Seriamp::Yamaha::Client do
         ]
       end
 
+      context 'value in lower case' do
+        it 'works' do
+          client.set_front_speaker_setting('large').should == make_command_response(front_speaker_setting: 'Large')
+        end
+      end
+    end
+
+    describe '#set_surround_right_level' do
+      let(:rr) do
+        [
+          %W(\x022431F\x03 \x0200431F\x03),
+        ]
+      end
+
       it 'works' do
-        client.set_front_speaker_setting('large').should == make_command_response(front_speaker_setting: 'Large')
+        client.set_surround_right_level(-4.5).should == make_command_response(surround_right_level: -4.5)
+      end
+    end
+
+    describe '#set_surround_speaker_setting' do
+      let(:rr) do
+        [
+          %W(\x0227200\x03 \x02007200\x03),
+        ]
+      end
+
+      it 'works' do
+        client.set_surround_speaker_setting('large').should == make_command_response(surround_speaker_setting: 'Large')
       end
     end
 
