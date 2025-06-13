@@ -125,11 +125,11 @@ module Seriamp
               raise UnexpectedResponse, "Unexpected payload for 60: #{data}"
             end
             {program_select: AUTO_LAST_GET.fetch(data[1])}
-          when *SPEAKER_LAYOUT_MAP.keys
+          when *SPEAKER_SETTING_MAP.keys
             if data[0] != '0'
               raise NotImplementedError
             end
-            key, hash = SPEAKER_LAYOUT_MAP.fetch(command)
+            key, hash = SPEAKER_SETTING_MAP.fetch(command)
             {key => hash.fetch(data[1])}
           when 'A7'
             {eq_select: EQ_SELECT_GET.fetch(Integer(data).to_s)}

@@ -17,10 +17,10 @@ volume [main|zone2|zone3] value|up|down|./-/mute
 input [main|zone2|zone3] input-name
 program program-name
 pure-direct bool
-center-speaker-layout arg
-surround-speaker-layout arg
-front-speaker-layout arg
-presence-speaker-layout arg
+center-speaker-setting arg
+surround-speaker-setting arg
+front-speaker-setting arg
+presence-speaker-setting arg
 bass-out arg
 subwoofer-phase arg
 subwoofer-crossover arg
@@ -181,16 +181,16 @@ EOT
         when 'pure-direct'
           state = Utils.parse_on_off(args.shift)
           client.set_pure_direct(state)
-        when 'center-speaker-layout'
-          client.set_center_speaker_layout(args.shift)
-        when 'surround-speaker-layout'
-          client.set_surround_speaker_layout(args.shift)
-        when 'surround-back-speaker-layout'
-          client.set_surround_back_speaker_layout(args.shift)
-        when 'front-speaker-layout'
-          client.set_front_speaker_layout(args.shift)
-        when 'presence-speaker-layout'
-          client.set_presence_speaker_layout(args.shift)
+        when 'center-speaker-setting'
+          client.set_center_speaker_setting(args.shift)
+        when 'surround-speaker-setting'
+          client.set_surround_speaker_setting(args.shift)
+        when 'surround-back-speaker-setting'
+          client.set_surround_back_speaker_setting(args.shift)
+        when 'front-speaker-setting'
+          client.set_front_speaker_setting(args.shift)
+        when 'presence-speaker-setting'
+          client.set_presence_speaker_setting(args.shift)
         when 'bass-out'
           client.set_bass_out(args.shift)
         when 'subwoofer-phase'

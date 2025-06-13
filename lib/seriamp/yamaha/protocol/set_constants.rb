@@ -89,20 +89,20 @@ module Seriamp
           'xm' => 'B9',
         }.freeze
 
-        CENTER_SPEAKER_LAYOUTS = {
+        CENTER_SPEAKER_SETTINGS = {
           'large' => '00',
           'small' => '01',
           'none' => '02',
         }.freeze
 
-        FRONT_SPEAKER_LAYOUTS = {
+        FRONT_SPEAKER_SETTINGS = {
           'large' => '00',
           'small' => '01',
         }.freeze
 
-        SURROUND_SPEAKER_LAYOUTS = CENTER_SPEAKER_LAYOUTS
+        SURROUND_SPEAKER_SETTINGS = CENTER_SPEAKER_SETTINGS
 
-        SURROUND_BACK_SPEAKER_LAYOUTS = {
+        SURROUND_BACK_SPEAKER_SETTINGS = {
           'large_x2' => '00',
           'large_x1' => '01',
           'small_x2' => '02',
@@ -110,7 +110,7 @@ module Seriamp
           'none' => '04',
         }.freeze
 
-        PRESENCE_SPEAKER_LAYOUTS = {
+        PRESENCE_SPEAKER_SETTINGS = {
           'yes' => '00',
           'none' => '01',
         }.freeze

@@ -207,7 +207,7 @@ describe Seriamp::Yamaha::Client do
       end
     end
 
-    describe '#set_front_speaker_layout' do
+    describe '#set_front_speaker_setting' do
       let(:rr) do
         [
           %W(\x0227100\x03 \x02007100\x03),
@@ -215,7 +215,7 @@ describe Seriamp::Yamaha::Client do
       end
 
       it 'works' do
-        client.set_front_speaker_layout('large').should == make_command_response(front_speaker_layout: 'Large')
+        client.set_front_speaker_setting('large').should == make_command_response(front_speaker_setting: 'Large')
       end
     end
 

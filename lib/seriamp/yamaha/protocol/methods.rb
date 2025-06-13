@@ -287,50 +287,50 @@ module Seriamp
           remote_command("7A#{source_code}")
         end
 
-        def set_center_speaker_layout(layout)
-          value = CENTER_SPEAKER_LAYOUTS[layout.to_s]
+        def set_center_speaker_setting(setting)
+          value = CENTER_SPEAKER_SETTINGS[setting.to_s]
           unless value
-            raise ArgumentError, "Invalid center speaker layout: #{layout}; valid layouts: #{CENTER_SPEAKER_LAYOUTS.keys.join(', ')}"
+            raise ArgumentError, "Invalid center speaker setting: #{setting}; valid settings: #{CENTER_SPEAKER_SETTINGS.keys.join(', ')}"
           end
           # TODO add response state assertion
           system_command("70#{value}",
             expect_response_cls: Response::CommandResponse)
         end
 
-        def set_front_speaker_layout(layout)
-          value = FRONT_SPEAKER_LAYOUTS[layout.to_s]
+        def set_front_speaker_setting(setting)
+          value = FRONT_SPEAKER_SETTINGS[setting.to_s]
           unless value
-            raise ArgumentError, "Invalid front speaker layout: #{layout}; valid layouts: #{FRONT_SPEAKER_LAYOUTS.keys.join(', ')}"
+            raise ArgumentError, "Invalid front speaker setting: #{setting}; valid settings: #{FRONT_SPEAKER_SETTINGS.keys.join(', ')}"
           end
           # TODO add response state assertion
           system_command("71#{value}",
             expect_response_cls: Response::CommandResponse)
         end
 
-        def set_surround_speaker_layout(layout)
-          value = SURROUND_SPEAKER_LAYOUTS[layout.to_s]
+        def set_surround_speaker_setting(setting)
+          value = SURROUND_SPEAKER_SETTINGS[setting.to_s]
           unless value
-            raise ArgumentError, "Invalid surround speaker layout: #{layout}; valid layouts: #{SURROUND_SPEAKER_LAYOUTS.keys.join(', ')}"
+            raise ArgumentError, "Invalid surround speaker setting: #{setting}; valid settings: #{SURROUND_SPEAKER_SETTINGS.keys.join(', ')}"
           end
           # TODO add response state assertion
           system_command("72#{value}",
             expect_response_cls: Response::CommandResponse)
         end
 
-        def set_surround_back_speaker_layout(layout)
-          value = SURROUND_BACK_SPEAKER_LAYOUTS[layout.to_s]
+        def set_surround_back_speaker_setting(setting)
+          value = SURROUND_BACK_SPEAKER_SETTINGS[setting.to_s]
           unless value
-            raise ArgumentError, "Invalid surround back speaker layout: #{layout}; valid layouts: #{SURROUND_BACK_SPEAKER_LAYOUTS.keys.join(', ')}"
+            raise ArgumentError, "Invalid surround back speaker setting: #{setting}; valid settings: #{SURROUND_BACK_SPEAKER_SETTINGS.keys.join(', ')}"
           end
           # TODO add response state assertion
           system_command("73#{value}",
             expect_response_cls: Response::CommandResponse)
         end
 
-        def set_presence_speaker_layout(layout)
-          value = PRESENCE_SPEAKER_LAYOUTS[layout.to_s]
+        def set_presence_speaker_setting(setting)
+          value = PRESENCE_SPEAKER_SETTINGS[setting.to_s]
           unless value
-            raise ArgumentError, "Invalid presence speaker layout: #{layout}; valid layouts: #{PRESENCE_SPEAKER_LAYOUTS.keys.join(', ')}"
+            raise ArgumentError, "Invalid presence speaker setting: #{setting}; valid settings: #{PRESENCE_SPEAKER_SETTINGS.keys.join(', ')}"
           end
           # TODO add response state assertion
           system_command("74#{value}",

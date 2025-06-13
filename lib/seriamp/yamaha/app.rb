@@ -148,24 +148,24 @@ module Seriamp
         end
       end
 
-      put "/main/center/speaker/layout" do
-        client.set_center_speaker_layout(raw_request_body)
+      put "/speaker/center/setting" do
+        client.set_center_speaker_setting(raw_request_body)
         empty_response
       end
 
-      put "/main/center/speaker/level" do
+      put "/speaker/center/level" do
         client.set_center_level(Float(raw_request_body))
         empty_response
       end
 
       %i(front surround surround_back presence).each do |channel_group|
-        put "/main/#{channel_group}/speaker/layout" do
-          client.public_send("set_#{channel_group}_speaker_layout", raw_request_body)
+        put "/speaker/#{channel_group}/setting" do
+          client.public_send("set_#{channel_group}_speaker_setting", raw_request_body)
           empty_response
         end
 
         %i(left right).each do |side|
-          put "/main/#{channel_group}/#{side}/speaker/level" do
+          put "/speaker/#{channel_group}/#{side}/level" do
             client.public_send("set_#{channel_group}_#{side}_level", Float(raw_request_body))
             empty_response
           end

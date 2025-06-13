@@ -96,24 +96,24 @@ describe Seriamp::Yamaha::App do
     end
   end
 
-  describe 'put /main/front/left/speaker/level' do
+  describe 'put /speaker/front/left/level' do
     it 'works' do
       #client.should receive(:with_device).and_yield
       client.should receive(:set_front_left_level).with(-4.5)
 
-      put '/main/front/left/speaker/level', '-4.5'
+      put '/speaker/front/left/level', '-4.5'
 
       last_response.status.should == 204
       last_response.body.should == ''
     end
   end
 
-  describe 'put /main/front/speaker/layout' do
+  describe 'put /speaker/front/setting' do
     it 'works' do
       #client.should receive(:with_device).and_yield
-      client.should receive(:set_front_speaker_layout).with('large')
+      client.should receive(:set_front_speaker_setting).with('large')
 
-      put '/main/front/speaker/layout', 'large'
+      put '/speaker/front/setting', 'large'
 
       last_response.status.should == 204
       last_response.body.should == ''
