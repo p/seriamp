@@ -109,11 +109,49 @@ describe Seriamp::Yamaha::App do
   end
 
   describe 'put /speaker/front/setting' do
+    context 'with value in lower case' do
+      it 'works and passes the value as is' do
+        #client.should receive(:with_device).and_yield
+        client.should receive(:set_front_speaker_setting).with('large')
+
+        put '/speaker/front/setting', 'large'
+
+        last_response.status.should == 204
+        last_response.body.should == ''
+      end
+    end
+
+    context 'with value in leading cap case' do
+      it 'works' do
+        #client.should receive(:with_device).and_yield
+        client.should receive(:set_front_speaker_setting).with('Small')
+
+        put '/speaker/front/setting', 'Small'
+
+        last_response.status.should == 204
+        last_response.body.should == ''
+      end
+    end
+  end
+
+  describe 'put /speaker/surround/right/level' do
     it 'works' do
       #client.should receive(:with_device).and_yield
-      client.should receive(:set_front_speaker_setting).with('large')
+      client.should receive(:set_surround_right_level).with(-4.5)
 
-      put '/speaker/front/setting', 'large'
+      put '/speaker/surround/right/level', '-4.5'
+
+      last_response.status.should == 204
+      last_response.body.should == ''
+    end
+  end
+
+  describe 'put /speaker/surround/setting' do
+    it 'works' do
+      #client.should receive(:with_device).and_yield
+      client.should receive(:set_surround_speaker_setting).with('large')
+
+      put '/speaker/surround/setting', 'large'
 
       last_response.status.should == 204
       last_response.body.should == ''
