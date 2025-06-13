@@ -298,7 +298,7 @@ module Seriamp
         end
 
         def set_front_speaker_setting(setting)
-          value = FRONT_SPEAKER_SETTINGS[setting.to_s]
+          value = FRONT_SPEAKER_SETTINGS[setting.to_s.downcase]
           unless value
             raise ArgumentError, "Invalid front speaker setting: #{setting}; valid settings: #{FRONT_SPEAKER_SETTINGS.keys.join(', ')}"
           end

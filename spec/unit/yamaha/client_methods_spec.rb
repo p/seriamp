@@ -219,6 +219,12 @@ describe Seriamp::Yamaha::Client do
           client.set_front_speaker_setting('large').should == make_command_response(front_speaker_setting: 'Large')
         end
       end
+
+      context 'value in leading cap case' do
+        it 'works' do
+          client.set_front_speaker_setting('Large').should == make_command_response(front_speaker_setting: 'Large')
+        end
+      end
     end
 
     describe '#set_surround_right_level' do
