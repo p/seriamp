@@ -21,15 +21,30 @@ describe Seriamp::ThreadedClient do
   let(:write_fd) { pipe_wr.fileno }
   let(:read_fd) { pipe_rd.fileno }
 
-  describe '#do_write' do
-    let(:device) { pipe_wr }
+  describe 'lifecycle' do
+    test_timeout 3
 
-    test_timeout 1
+    let(:device) { pipe_rd }
+
+    it 'does not raise exceptions' do
+      client
+      client.close
+    end
+  end
+
+  describe '#do_write' do
+    test_timeout 3
+
+    let(:device) { pipe_wr }
 
     it 'writes' do
       client.do_write('test')
       pipe_wr.close
       pipe_rd.read.should == 'test'
+    end
+
+    after do
+      client.close
     end
   end
 end

@@ -118,11 +118,7 @@ module Seriamp
     end
 
     def close
-      if @io
-        @io.close rescue nil
-        @io = nil
-        @errored = false
-      end
+      close_device
     end
 
     def logged_operations
@@ -188,7 +184,7 @@ module Seriamp
         yield @io
       ensure
         unless persistent?
-          close
+          close_device
         end
       end
     end
@@ -417,6 +413,14 @@ module Seriamp
         @device = nil
       end
       @errored = true
+    end
+
+    def close_device
+      if @io
+        @io.close rescue nil
+        @io = nil
+        @errored = false
+      end
     end
 
     def retry_for_interval(interval)
