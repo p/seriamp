@@ -135,12 +135,13 @@ module Seriamp
         end
 
         with_device_and_wrappers do
-          @io.syswrite("#{STX}21000#{ETX}".encode('ascii'))
-          @io.syswrite("#{STX}3#{msg[0..3]}#{ETX}".encode('ascii'))
-          @io.syswrite("#{STX}3#{msg[4..7]}#{ETX}".encode('ascii'))
-          @io.syswrite("#{STX}3#{msg[8..11]}#{ETX}".encode('ascii'))
-          @io.syswrite("#{STX}3#{msg[12..15]}#{ETX}".encode('ascii'))
-          @io.clear_rts
+          payload =
+            "#{STX}21000#{ETX}" \
+            "#{STX}3#{msg[0..3]}#{ETX}" \
+            "#{STX}3#{msg[4..7]}#{ETX}" \
+            "#{STX}3#{msg[8..11]}#{ETX}" \
+            "#{STX}3#{msg[12..15]}#{ETX}"
+          do_write(payload)
         end
 
         nil
