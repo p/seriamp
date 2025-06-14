@@ -13,7 +13,7 @@ module Seriamp
           unless IO === io
             raise ArgumentError, "First argument must be an IO: #{io}"
           end
-          
+
           @io = io
 
           if block_given?
@@ -23,7 +23,7 @@ module Seriamp
 
         attr_reader :io
 
-        def_delegators :io, :close, :sysread, :read_nonblock, :readline
+        def_delegators :io, :close, :sysread, :read_nonblock, :readline, :syswrite
 
         def readable?(timeout = 0)
           !!IO.select([io], nil, nil, timeout)
@@ -31,6 +31,9 @@ module Seriamp
 
         def errored?
           !!IO.select(nil, nil, [io], 0)
+        end
+
+        def clear_rts
         end
       end
     end

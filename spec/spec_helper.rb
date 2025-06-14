@@ -102,6 +102,14 @@ module ClassMethods
     File.exist?(path)
   end
 
+  def test_timeout(timeout)
+    around do |example|
+      Timeout.timeout(timeout, Timeout::Error, "Test timeout expired: #{timeout}s") do
+        example.run
+      end
+    end
+  end
+
 end
 
 module InstanceMethods

@@ -42,7 +42,11 @@ module Seriamp
         else
           raise ArgumentError, "retries must be an integer, true, false or nil: #{retries}"
         end
-      @timeout = options[:timeout] || self.class.const_get(:DEFAULT_RS232_TIMEOUT)
+      @timeout = options[:timeout] || begin
+        self.class.const_get(:DEFAULT_RS232_TIMEOUT)
+      rescue NameError
+        raise ArgumentError, "Timeout not provided as argument and the class #{self.class} does not define DEFAULT_RS232_TIMEOUT"
+      end
       @thread_safe = !!options[:thread_safe]
       if options.key?(:persistent)
         @persistent = !!options[:persistent]
