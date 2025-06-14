@@ -16,7 +16,7 @@ module Seriamp
         Thread.current.name = "seriamp #{self.class.name} I/O: #{device}"
 
         loop do
-          # Need to break here because with_device may be contains a loop?
+          # Need to break here because with_device maybe contains a loop?
           break if @stop_requested
 
           with_device do
@@ -59,6 +59,8 @@ module Seriamp
         #raise
       end
       @io_thread.kill
+      @notify_read.close rescue nil
+      @notify_write.close rescue nil
     end
 
     # do_write performs encoding to ascii in the calling thread, and
