@@ -175,9 +175,8 @@ module Seriamp
         # Report unread data only if we are not retrying.
         # If we are retrying, the data in the buffer may be the one we are
         # looking for in response to an already sent command.
-        @read_buf = Utils.consume_data(@io, logger,
-          "Serial device readable after opening - unread previous response?")
-        report_unread_responses
+        reset_read_buf
+        consume_unread_responses
       end
 
       begin
@@ -187,6 +186,12 @@ module Seriamp
           close_device
         end
       end
+    end
+
+    def consume_unread_responses
+      @read_buf << Utils.consume_data(@io, logger,
+        "Serial device readable after opening - unread previous response?")
+      report_unread_responses
     end
 
     def dispatch_and_parse(cmd)
@@ -249,10 +254,12 @@ module Seriamp
         if resp.empty?
           raise NoResponse, "Empty response is unacceptable"
         end
-        read_buf.replace(read_buf[resp.length..])
+        @read_buf = read_buf[resp.length..]
       end
     end
 
+    # This method leaves the extracted response in the buffer.
+    # The response is removed from the buffer in extract_one_response!.
     def extract_delimited_response(*delimiters)
       if delimiters.empty?
         raise ArgumentError, 'Must specify at least one delimiter'
@@ -348,6 +355,17 @@ module Seriamp
       @read_buf = +''
     end
 
+    # The base client discards any responses in buffers prior to reading
+    # a response to an issued command, to avoid the desired command response
+    # be attached to a partial previous response and thus rendered invalid.
+    # The threaded client reads responses all the time and should never
+    # get partial or otherwise invalid responses, and so replaces this
+    # method with a no-op.
+    def reset_read_buf_before_reading
+      consume_unread_responses
+      reset_read_buf
+    end
+
     attr_reader :read_buf
 
     # Reads at least one complete response into the read buffer.
@@ -360,7 +378,7 @@ module Seriamp
 
       timeout ||= self.timeout
       unless append
-        reset_read_buf
+        reset_read_buf_before_reading
       end
       started = Utils.monotime
       deadline = [started + timeout, @next_earliest_deadline].max

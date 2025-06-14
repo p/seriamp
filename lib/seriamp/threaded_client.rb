@@ -11,6 +11,7 @@ module Seriamp
       @write_queue = Queue.new
       @notify_read, @notify_write = IO.pipe
       @stop_requested = false
+      @responses = Queue.new
 
       @io_thread = Thread.new do
         Thread.current.name = "seriamp #{self.class.name} I/O: #{device}"
@@ -24,15 +25,35 @@ module Seriamp
               raise InternalError, "@io is nil in threaded client"
             end
 
-            readable = IO.select([@notify_read, @io.io])
+            readable, = IO.select([@notify_read, @io.io])
 
             # This does not break the outermost loop.
             break if @stop_requested
 
-            payload, mutex, cv = @write_queue.pop
-            @io.syswrite(payload)
-            @io.clear_rts
-            mutex.synchronize { cv.signal }
+            readable.each do |readable_io|
+              if readable_io == @io.io
+                read_any = false
+                begin
+                  while chunk = @io.read_nonblock(1024)
+                    #@read_buf ||= +''
+                    @read_buf << chunk
+                    read_any = true
+                  end
+                rescue IO::EAGAINWaitReadable
+                end
+                if read_any
+                  while response_complete?
+                    @responses << extract_one_response!
+                  end
+                end
+              else
+                # @notify_read
+                payload, mutex, cv = @write_queue.pop
+                @io.syswrite(payload)
+                @io.clear_rts
+                mutex.synchronize { cv.signal }
+              end
+            end
           end
         rescue => exc
           #raise
@@ -41,6 +62,8 @@ module Seriamp
         end
       end
     end
+
+    attr_reader :responses
 
     def close
       @stop_requested = true
@@ -78,6 +101,12 @@ module Seriamp
 
     def read_response(append: true, timeout: nil)
 
+    end
+
+    def consume_unread_responses
+    end
+
+    def reset_read_buf_before_reading
     end
   end
 end

@@ -3,18 +3,33 @@
 require 'spec_helper'
 require 'seriamp/threaded_client'
 
-class DummyClient < Seriamp::ThreadedClient
+class DummyThreadedClient < Seriamp::ThreadedClient
   MODEM_PARAMS = {
   }
 
   TIMEOUT = 1
+
+  private
+
+  def response_complete?
+    read_buf.include?("\n")
+  end
+
+  def extract_one_response
+    extract_delimited_response("\n")
+  end
+
+  def parse_response(resp)
+    resp
+  end
 end
 
 describe Seriamp::ThreadedClient do
   subject(:client) do
-    DummyClient.new(timeout: 1, device: device, backend: :io)
+    DummyThreadedClient.new(timeout: 1, device: device, backend: :io, persistent: true, logger: logger)
   end
 
+  let(:logger) { Logger.new(STDERR) }
   let(:pipe) { IO.pipe }
   let(:pipe_rd) { pipe[0] }
   let(:pipe_wr) { pipe[1] }
@@ -41,6 +56,27 @@ describe Seriamp::ThreadedClient do
       client.do_write('test')
       pipe_wr.close
       pipe_rd.read.should == 'test'
+    end
+
+    after do
+      client.close
+    end
+  end
+
+  describe 'reading' do
+    test_timeout 3
+
+    let(:device) { pipe_rd }
+
+    context 'when data is already in device' do
+      it 'retrieves the response' do
+        pipe_wr << "test\n"
+        client
+        sleep 1
+
+        client.responses.length.should == 1
+        client.responses.shift.should == "test\n"
+      end
     end
 
     after do
