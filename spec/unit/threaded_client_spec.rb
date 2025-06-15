@@ -68,19 +68,31 @@ describe Seriamp::ThreadedClient do
 
     let(:device) { pipe_rd }
 
+    after do
+      client.close
+    end
+
     context 'when data is already in device' do
       it 'retrieves the response' do
         pipe_wr << "test\n"
         client
-        sleep 1
+        sleep 0.5
 
         client.responses.length.should == 1
         client.responses.shift.should == "test\n"
       end
     end
 
-    after do
-      client.close
+    context 'when data arrives when device is open' do
+      it 'retrieves the response' do
+        client
+        sleep 0.5
+        pipe_wr << "test\n"
+        sleep 0.5
+
+        client.responses.length.should == 1
+        client.responses.shift.should == "test\n"
+      end
     end
   end
 end
