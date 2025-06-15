@@ -100,7 +100,9 @@ module Seriamp
     alias_method :read_response_impl, :read_response
 
     def read_response(append: true, timeout: nil)
-
+      Timeout.timeout(timeout || 1) do
+        responses.shift
+      end
     end
 
     def consume_unread_responses

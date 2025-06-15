@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'socket'
 require 'spec_helper'
 require 'seriamp/threaded_client'
 
@@ -63,7 +64,7 @@ describe Seriamp::ThreadedClient do
     end
   end
 
-  describe 'reading' do
+  describe 'reading - internal' do
     test_timeout 3
 
     let(:device) { pipe_rd }
@@ -93,6 +94,16 @@ describe Seriamp::ThreadedClient do
         client.responses.length.should == 1
         client.responses.shift.should == "test\n"
       end
+    end
+  end
+
+  describe '#read_response' do
+    let(:pipe) { Socket.pair(:UNIX, :DGRAM, 0) }
+
+    let(:device) { pipe_rd }
+
+    after do
+      client.close
     end
   end
 end
