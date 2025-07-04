@@ -5,6 +5,8 @@ require_relative 'client'
 module Seriamp
 
   class ThreadedClient < Client
+    MAX_RESPONSE_QUEUE_LENGTH = 10
+
     def initialize(**opts)
       # Threaded client requires a persistent connection since the connection
       # is owned by the background thread.
@@ -45,7 +47,18 @@ module Seriamp
                 end
                 if read_any
                   while response_complete?
-                    @responses << extract_one_response!
+                    resp = extract_one_response!
+                    parsed_resp = begin
+                      parse_response(resp)
+                    rescue UnhandledResponse
+                      logger&.warn("Unhandled unread response: #{resp}")
+                      next
+                    end
+                    if @responses.length > MAX_RESPONSE_QUEUE_LENGTH
+                      discarded_resp = @responses.shift
+                      logger&.warn("Response queue at capacity (#{MAX_RESPONSE_QUEUE_LENGTH}), discarding earliest response: #{discarded_resp}")
+                    end
+                    @responses << parsed_resp
                   end
                 end
               else
