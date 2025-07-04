@@ -6,7 +6,9 @@ module Seriamp
 
   class ThreadedClient < Client
     def initialize(**opts)
-      super
+      # Threaded client requires a persistent connection since the connection
+      # is owned by the background thread.
+      super(**opts, persistent: true)
 
       @write_queue = Queue.new
       @notify_read, @notify_write = IO.pipe
