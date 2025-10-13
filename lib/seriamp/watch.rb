@@ -80,6 +80,10 @@ module Seriamp
             while direct_client.send(:response_complete?)
               resp = direct_client.send(:extract_one_response!)
               parsed = direct_client.send(:parse_response, resp)
+              # Known issue:
+              # While we clear the current line here with \r for the
+              # response output, if log output is also written, the logs
+              # don't clear our status messages.
               STDOUT << "\r"
               p parsed
               last_response_received_at = now
