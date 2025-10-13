@@ -18,6 +18,13 @@ module Seriamp
       settings.device || ENV['SERIAMP_DEVICE']
     end
 
+    get '/settings' do
+      _settings = {
+        retries: settings.client ? settings.client.retries : settings.retries,
+      }
+      render_json(_settings)
+    end
+
     private
 
     def raw_request_body

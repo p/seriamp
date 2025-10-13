@@ -64,6 +64,12 @@ module ClassMethods
     end
   end
 
+  def app_get(*args)
+    let(:request) do
+      facade.get(*args)
+    end
+  end
+
   def require_integration_device(key)
     unless %i(integra sonamp yamaha).include?(key)
       raise ArgumentError, "Bad key: #{key}"
@@ -255,6 +261,24 @@ module InstanceMethods
   end
 end
 
+module IntegrationTestHelpers
+  module ClassMethods
+    def expect_good_json_response
+      let(:response) do
+        JSON.parse(request.body)
+      end
+
+      it 'returns a successful JSON response' do
+        request.status.should == 200
+        request.headers['content-type'].should == 'application/json'
+        lambda do
+          response
+        end.should_not raise_error
+      end
+    end
+  end
+end
+
 module YamahaHelpers
   include Seriamp::Yamaha::Helpers
 
@@ -271,4 +295,5 @@ RSpec.configure do |rspec|
 
   rspec.extend ClassMethods
   rspec.include InstanceMethods
+  rspec.extend IntegrationTestHelpers::ClassMethods
 end

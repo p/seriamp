@@ -8,6 +8,18 @@ describe 'Yamaha app integration' do
   context 'when explicitly referencing nonexistent device path' do
     run_app 18990, 'bin/yamaha-web', '-d', '/dev/nonexistent', '--', '-p', '18990'
 
+    context 'settings' do
+      app_get '/settings'
+
+      expect_good_json_response
+
+      it 'enables retries by default' do
+        response.should == {
+          'retries' => 1
+        }
+      end
+    end
+
     context 'plain text' do
       let(:request) { facade.get('/') }
 
