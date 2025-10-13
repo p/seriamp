@@ -10,6 +10,10 @@ module Seriamp
     set :client, nil
     set :retries, true
 
+    # In development environment disable host restrictions.
+    # In other environments all hosts are allowed by default.
+    set :host_authorization, permitted_hosts: []
+
     def configured_device
       settings.device || ENV['SERIAMP_DEVICE']
     end
