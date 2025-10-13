@@ -70,6 +70,10 @@ module Seriamp
       end
     end
 
+    def render_404(error)
+      render_error(404, error)
+    end
+
     def render_422(error)
       render_error(422, error)
     end

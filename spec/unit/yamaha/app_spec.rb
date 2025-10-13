@@ -56,6 +56,12 @@ describe Seriamp::Yamaha::App do
   end
 
   describe 'get /power' do
+    it 'works' do
+      get '/power', 'true'
+
+      last_response.status.should == 404
+      last_response.body.should == 'Error: Use /main/power for main zone power'
+    end
   end
 
   describe 'put /main/power' do

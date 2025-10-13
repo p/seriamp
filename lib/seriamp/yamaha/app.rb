@@ -37,7 +37,9 @@ module Seriamp
       end
 
       get '/power' do
-        render_json(client.status.fetch(:power) > 0)
+        # We could return whether the receiver is not in standby?
+        # But is that actually useful?
+        render_404('Use /main/power for main zone power')
       end
 
       %w(main zone2 zone3).each do |zone|
