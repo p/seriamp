@@ -59,6 +59,7 @@ module Seriamp
       @logger = Utils.logger_from_options(**options)
       @direct_client = mod.const_get(:Client).new(device: options[:device],
         backend: options[:backend],
+        persistent: true,
         logger: @logger, timeout: options[:timeout])
     end
 
@@ -68,19 +69,39 @@ module Seriamp
     attr_reader :options
 
     def run
+      last_response_received_at = nil
+      last_data_received_at = nil
+      started_at = Time.now
       loop do
         direct_client.with_device do
           begin
             direct_client.send(:read_response, append: true, timeout: 5)
+            last_data_received_at = now = Time.now
             while direct_client.send(:response_complete?)
               resp = direct_client.send(:extract_one_response!)
               parsed = direct_client.send(:parse_response, resp)
               STDOUT << "\r"
               p parsed
+              last_response_received_at = now
             end
           rescue CommunicationTimeout
             if STDOUT.tty?
-              STDOUT << "\r#{progress_char}"
+              status_msg = if last_data_received_at == last_response_received_at
+                if last_data_received_at
+                  "[#{human_elapsed_time(last_data_received_at)} since last response]"
+                else
+                  "[#{human_elapsed_time(started_at)} since startup, no data received yet]"
+                end
+              else
+                if last_response_received_at
+                  "[#{human_elapsed_time(last_response_received_time)} since last response, "
+                  "#{human_elapsed_time(last_data_received_at)} since last data]"
+                else
+                  "[#{human_elapsed_time(last_response_received_time)} since last response, "
+                  "no complete response received yet]"
+                end
+              end
+              STDOUT << "\r#{status_msg}"
             end
             retry
           rescue NoResponse
@@ -108,6 +129,10 @@ module Seriamp
       @progress_index ||= 0
       @progress_index = (@progress_index + 1) % 4
       PROGRESS_CHARS[@progress_index]
+    end
+
+    def human_elapsed_time(start)
+      '%d seconds' % (Time.now - start)
     end
   end
 end
