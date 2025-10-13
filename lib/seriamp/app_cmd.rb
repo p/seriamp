@@ -66,7 +66,10 @@ module Seriamp
         logger: @logger,
         log_level: options[:log_level],
         structured_log: options[:structured_log],
-        timeout: options[:timeout], thread_safe: true)
+        timeout: options[:timeout],
+        thread_safe: true,
+        retries: @app_mod.retries,
+      )
 
       @app_mod.set(:client, @client)
 

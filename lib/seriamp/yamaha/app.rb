@@ -219,8 +219,9 @@ module Seriamp
 
       def client
         settings.client || begin
-          @client ||= Yamaha::Client.new(device: configured_device,
-            logger: settings.logger, retries: settings.retries, thread_safe: true)
+          #@client ||= Yamaha::Client.new(device: configured_device,
+          #  logger: settings.logger, retries: settings.retries, thread_safe: true)
+          raise NotImplementedError
         end
       end
 
