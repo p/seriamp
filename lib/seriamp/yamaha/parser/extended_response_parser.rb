@@ -14,11 +14,15 @@ module Seriamp
         unless resp[..1] == '20'
           raise UnexpectedResponse, "Invalid response: expected to start with 20: #{resp} #{resp[0].ord}"
         end
-        length = Integer(resp[2..3], 16)
+        begin
+          length = Integer(resp[2..3], 16)
+        rescue ArgumentError => exc
+          raise UnexpectedResponse, "Invalid response: bogus length: #{exc.class}: #{exc}"
+        end
         received_checksum = resp[-2..]
         calculated_checksum = calculate_checksum(resp[...-2])
         if received_checksum != calculated_checksum
-          raise UnexpectedResponse, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{data}"
+          raise UnexpectedResponse, "Broken status response: calculated checksum #{calculated_checksum}, received checksum #{received_checksum}: #{resp}"
         end
         data = resp[4...-2]
 
