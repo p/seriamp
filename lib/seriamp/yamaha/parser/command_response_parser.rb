@@ -14,7 +14,7 @@ module Seriamp
       extend Yamaha::Helpers
       include Yamaha::Protocol::GetConstants
 
-      def self.parse(resp, logger: nil)
+      def self.parse(resp, logger: nil, model_code: nil)
         control_type = parse_flag(resp[0], {
           '0' => :rs232,
           '1' => :remote,
@@ -51,6 +51,18 @@ module Seriamp
           value
         else
           case command
+          when '11'
+            unless model_code
+              raise ArgumentError, '11 response is ambiguous - model code is required'
+            end
+            # String comparison of model code and approximate boundary
+            # since I don't know what model code HTR-5990 has.
+            value = if model_code < 'R0200'
+              SAMPLE_RATE_2_1500_GET.fetch(data)
+            else
+              SAMPLE_RATE_2_GET.fetch(data)
+            end
+            {sample_rate: value}
           when '15'
             if data.length != 2
               raise NotImplementedError

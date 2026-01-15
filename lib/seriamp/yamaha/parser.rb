@@ -7,7 +7,7 @@ module Seriamp
     module Parser
       include Seriamp::AsciiTable
 
-      def self.parse(resp, logger: nil)
+      def self.parse(resp, logger: nil, model_code: nil)
         if resp[-1] == NUL
           if resp.length == 1
             return Yamaha::Response::NullResponse.new
@@ -22,13 +22,13 @@ module Seriamp
 
         case first_byte = resp[0]
         when DC2
-          StatusResponseParser.parse(resp[1...-1], logger: logger)
+          StatusResponseParser.parse(resp[1...-1], logger: logger, model_code: model_code)
         when STX
-          CommandResponseParser.parse(resp[1...-1], logger: logger)
+          CommandResponseParser.parse(resp[1...-1], logger: logger, model_code: model_code)
         when DC4
-          ExtendedResponseParser.parse(resp[1...-1], logger: logger)
+          ExtendedResponseParser.parse(resp[1...-1], logger: logger, model_code: model_code)
         when DC1
-          TextResponseParser.parse(resp[1...-1], logger: logger)
+          TextResponseParser.parse(resp[1...-1], logger: logger, model_code: model_code)
         else
           raise UnhandledResponse, "\\x#{'%02x' % first_byte.ord} first response byte not handled"
         end

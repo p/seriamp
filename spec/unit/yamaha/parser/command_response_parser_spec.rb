@@ -6,9 +6,9 @@ require 'spec_helper'
 describe Seriamp::Yamaha::Parser::CommandResponseParser do
   describe '.parse' do
     let(:parsed) { described_class.parse(response_str) }
+    let(:response_str) { "0 0 #{response_content}".gsub(' ', '') }
 
     shared_examples 'returns correct result' do
-      let(:response_str) { "0 0 #{response_content}".gsub(' ', '') }
       it 'returns correct result' do
         parsed.should be_a(Seriamp::Yamaha::Response::CommandResponse)
         parsed.control_type.should be :rs232
@@ -29,7 +29,6 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       '08 00' => {net_usb_message: 'Please Wait'},
       '10 01' => {audio_format: 'PCM'},
       '10 FE' => {audio_format: '???'},
-      '11 08' => {sample_rate: '44100'},
       '12 02' => {channel_indicator: '2/0'},
       '13 FF' => {lfe_indicator: nil},
       '14 FF' => {bit_rate: nil},
@@ -102,6 +101,21 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       context response_content do
         let(:response_content) { response_content }
         let(:expected_state) { expected_state }
+
+        include_examples 'returns correct result'
+      end
+    end
+
+    {
+      ['11 02', 'R0177'] => {sample_rate: '44100'},
+      ['11 08', 'R0210'] => {sample_rate: '44100'},
+    }.each do |(response_content, model_code), expected_state|
+
+      context "#{response_content} for #{model_code}" do
+        let(:response_content) { response_content }
+        let(:expected_state) { expected_state }
+
+        let(:parsed) { described_class.parse(response_str, model_code: model_code) }
 
         include_examples 'returns correct result'
       end

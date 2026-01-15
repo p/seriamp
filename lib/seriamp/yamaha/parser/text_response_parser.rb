@@ -10,7 +10,7 @@ module Seriamp
     module Parser::TextResponseParser
       extend Yamaha::ParsingHelpers
 
-      def self.parse(resp, logger: nil)
+      def self.parse(resp, logger: nil, model_code: nil)
         if resp.length != 10
           raise UnexpectedResponse, "Unexpected text response: should be length 10: #{resp}"
         end

@@ -14,7 +14,7 @@ module Seriamp
       extend Yamaha::ParsingHelpers
       include Yamaha::Constants
 
-      def self.parse(resp, logger: nil)
+      def self.parse(resp, logger: nil, model_code: nil)
         if resp.length < 8
           raise HandshakeFailure, "Broken status response: expected at least 8 bytes, got #{resp.length} bytes; concurrent operation on device?"
         end

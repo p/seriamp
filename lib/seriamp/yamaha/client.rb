@@ -215,6 +215,10 @@ module Seriamp
         end
       end
 
+      def model_code_if_known
+        @current_status&.[](:model_code)
+      end
+
       private
 
       include Protocol::GetConstants
@@ -238,7 +242,7 @@ module Seriamp
       end
 
       def parse_response(resp_str)
-        Yamaha::Parser.parse(resp_str, logger: logger).tap do |resp|
+        Yamaha::Parser.parse(resp_str, logger: logger, model_code: model_code_if_known).tap do |resp|
           case resp
           when Yamaha::Response::NullResponse
             # This could be because the receiver is off (in standby)

@@ -371,6 +371,25 @@ module Seriamp
           '7' => 'Unknown',
         }.freeze
 
+        # RX-Vx500, RX-Vx600
+        SAMPLE_RATE_2_1500_GET = {
+          '00' => 'Analog',
+          '01' => '32000',
+          '02' => '44100',
+          '03' => '48000',
+          '04' => '64000',
+          '05' => '88200',
+          '06' => '96000',
+          '07' => 'Unknown',
+          '08' => '128000',
+          '09' => '176400',
+          '0A' => '192000',
+          # Protocol documentation has this note:
+          # DTS 96/24 signal (A/B)
+          '0B' => '48000 (96000)',
+        }.freeze
+
+        # RX-Vx700, RX-V3800
         SAMPLE_RATE_2_GET = {
           '00' => 'Analog',
           '01' => '8000',
@@ -926,7 +945,8 @@ module Seriamp
           '07' => :ipod_message,
           '08' => :net_usb_message,
           '10' => :audio_format,
-          '11' => [:sample_rate, :sample_rate_2],
+          # 11 has different values depending on the model.
+          #'11' => [:sample_rate, :sample_rate_2],
           '12' => [:channel_indicator, :channel_indicator_report],
           '13' => [:lfe_indicator, :lfe_indicator_report],
           '14' => :bit_rate,

@@ -10,7 +10,7 @@ module Seriamp
     module Parser::ExtendedResponseParser
       extend Yamaha::Helpers
 
-      def self.parse(resp, logger: nil)
+      def self.parse(resp, logger: nil, model_code: nil)
         unless resp[..1] == '20'
           raise UnexpectedResponse, "Invalid response: expected to start with 20: #{resp} #{resp[0].ord}"
         end
