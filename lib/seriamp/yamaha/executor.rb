@@ -14,7 +14,7 @@ system-command 4-char-code
 ext-command arg # Extended command
 power [main|zone2|zone3] on/true/yes|off/false/no
 volume [main|zone2|zone3] value|up|down|./-/mute
-input [main|zone2|zone3] input-name
+input [main|zone2|zone3] #{available_inputs.join('|')}
 program program-name
 pure-direct bool
 center-speaker-setting arg
@@ -55,6 +55,10 @@ EOT
 
       def self.available_channels
         %w,front-left front-right center surround-left surround-right surround-back-left surround-back-right subwoofer,
+      end
+
+      def self.available_inputs
+        Protocol::SetConstants::MAIN_INPUTS_SET.keys.sort
       end
 
       def self.command_volume_trim_input_names
