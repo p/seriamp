@@ -27,8 +27,6 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
       '06 00' => {xm_message: 'Check Antenna'},
       '07 00' => {ipod_message: 'Loading'},
       '08 00' => {net_usb_message: 'Please Wait'},
-      '10 01' => {audio_format: 'PCM'},
-      '10 FE' => {audio_format: '???'},
       '12 02' => {channel_indicator: '2/0'},
       '13 FF' => {lfe_indicator: nil},
       '14 FF' => {bit_rate: nil},
@@ -107,6 +105,9 @@ describe Seriamp::Yamaha::Parser::CommandResponseParser do
     end
 
     {
+      ['10 02', 'R0177'] => {audio_format: 'PCM'},
+      ['10 01', 'R0210'] => {audio_format: 'PCM'},
+      ['10 FE', 'R0210'] => {audio_format: '???'},
       ['11 02', 'R0177'] => {sample_rate: '44100'},
       ['11 08', 'R0210'] => {sample_rate: '44100'},
     }.each do |(response_content, model_code), expected_state|

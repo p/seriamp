@@ -51,6 +51,18 @@ module Seriamp
           value
         else
           case command
+          when '10'
+            unless model_code
+              raise ArgumentError, '10 response is ambiguous - model code is required'
+            end
+            # String comparison of model code and approximate boundary
+            # since I don't know what model code HTR-5990 has.
+            value = if model_code < 'R0200'
+              AUDIO_FORMAT_1500_GET.fetch(data)
+            else
+              AUDIO_FORMAT_GET.fetch(data)
+            end
+            {audio_format: value}
           when '11'
             unless model_code
               raise ArgumentError, '11 response is ambiguous - model code is required'

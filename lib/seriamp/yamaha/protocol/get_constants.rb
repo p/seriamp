@@ -335,6 +335,31 @@ module Seriamp
           '80' => 'Straight',
         }.freeze
 
+        # RX-Vx300 through RX-Vx600.
+        # RX-Vx000 and RX-V3200 have still different values.
+        AUDIO_FORMAT_1500_GET = {
+          # "6ch input" on RX-Vx500 and older, on RX-Vx600 the multi-channel
+          # input can have 6 or 8 channels.
+          '00' => 'Multi-Channel Input',
+          '01' => 'Analog',
+          '02' => 'PCM',
+          # "When audio code mode is other than 2.0"
+          '03' => 'Dolby Digital (exc. 2.0)',
+          # "When audio code mode is 2.0"
+          '04' => 'Dolby Digital 2.0',
+          '05' => 'Dolby Digital Karaoke',
+          '06' => 'Dolby Digital EX',
+          '07' => 'DTS',
+          '08' => 'DTS EX',
+          # "When waiting for decoding, etc."
+          '09' => 'Other Digital',
+          '0A' => 'DTS Analog Mute',
+          '0B' => 'DTS Discrete',
+          '0C' => 'Other Than AAC 2.0',
+          '0D' => 'AAC 2.0',
+        }.freeze
+
+        # RX-Vx700 and newer
         AUDIO_FORMAT_GET = {
           '00' => 'Analog',
           '01' => 'PCM',
@@ -944,9 +969,6 @@ module Seriamp
           '06' => :xm_message,
           '07' => :ipod_message,
           '08' => :net_usb_message,
-          '10' => :audio_format,
-          # 11 has different values depending on the model.
-          #'11' => [:sample_rate, :sample_rate_2],
           '12' => [:channel_indicator, :channel_indicator_report],
           '13' => [:lfe_indicator, :lfe_indicator_report],
           '14' => :bit_rate,
