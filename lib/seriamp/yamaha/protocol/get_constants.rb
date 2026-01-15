@@ -949,6 +949,8 @@ module Seriamp
           '32' => [:main_volume_memory_load, :memory],
           '33' => [:main_volume_memory_save, :memory],
           '34' => [:headphone, :bool_report],
+          '36' => [:trigger1, :bool_report],
+          '3C' => [:trigger2, :bool_report],
           '6C' => [:zone_osd, :zone_osd_report],
           '75' => [:bass_out, :bass_out_report],
           '7E' => [:subwoofer_crossover, :subwoofer_crossover_report],
