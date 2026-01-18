@@ -5,6 +5,22 @@ require 'seriamp/ascii_table'
 module Seriamp
   module Yamaha
     module Parser
+      class ModelCodeRequired < ArgumentError
+        def initialize(msg, response_class:, control_type:, guard:, state_key:)
+          super(msg)
+
+          @response_class = response_class
+          @control_type = control_type
+          @guard = guard
+          @state_key = state_key
+        end
+
+        attr_reader :response_class
+        attr_reader :control_type
+        attr_reader :guard
+        attr_reader :state_key
+      end
+
       include Seriamp::AsciiTable
 
       def self.parse(resp, logger: nil, model_code: nil)

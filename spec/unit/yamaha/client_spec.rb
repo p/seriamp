@@ -133,14 +133,28 @@ describe Seriamp::Yamaha::Client do
     include_context 'rr mock'
 
     context 'when receiving a system response before rs232 response' do
+      let(:system_response) do
+        "\x02301201\x03"
+      end
+
       let(:rr) do
         [
-          %W(\x0207A18\x03 \x02301109\x03 \x02002104\x03),
+          %W(\x0207A18\x03 #{system_response} \x02002104\x03),
         ]
       end
 
-      it 'works' do
+      it 'returns the rs232 response' do
         client.set_main_input('md/tape').should == make_command_response(input_name: 'MD/TAPE')
+      end
+
+      context 'when system response requires knowing model code' do
+        let(:system_response) do
+          "\x02301109\x03"
+        end
+
+        it 'ignores error in system response parsing and returns the rs232 response' do
+          client.set_main_input('md/tape').should == make_command_response(input_name: 'MD/TAPE')
+        end
       end
     end
   end

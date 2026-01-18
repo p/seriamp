@@ -53,7 +53,13 @@ module Seriamp
           case command
           when '10'
             unless model_code
-              raise ArgumentError, '10 response is ambiguous - model code is required'
+              raise Parser::ModelCodeRequired.new(
+                "10 response (audio format) is ambiguous - model code is required: #[resp}",
+                response_class: Yamaha::Response::CommandResponse,
+                control_type: control_type,
+                guard: guard,
+                state_key: :audio_format,
+              )
             end
             # String comparison of model code and approximate boundary
             # since I don't know what model code HTR-5990 has.
@@ -65,7 +71,13 @@ module Seriamp
             {audio_format: value}
           when '11'
             unless model_code
-              raise ArgumentError, '11 response is ambiguous - model code is required'
+              raise Parser::ModelCodeRequired.new(
+                "11 response (sample rate) is ambiguous - model code is required: #{resp}",
+                response_class: Yamaha::Response::CommandResponse,
+                control_type: control_type,
+                guard: guard,
+                state_key: :sample_rate,
+              )
             end
             # String comparison of model code and approximate boundary
             # since I don't know what model code HTR-5990 has.

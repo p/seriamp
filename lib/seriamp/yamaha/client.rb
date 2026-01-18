@@ -148,9 +148,10 @@ module Seriamp
       end
 
       def get_command_response(cls: nil)
+        cls ||= Response::CommandResponse
         # Response should have been to our RS-232 command, verify.
         loop do
-          resp = get_specific_response(cls: cls || Response::CommandResponse)
+          resp = get_specific_response(cls: cls)
           if resp.control_type != :rs232
             # Receiver can be sending system responses, ignore them.
             #raise UnhandledResponse, "Response was not to our command: #{resp}"
@@ -167,6 +168,20 @@ module Seriamp
             end
           else
             return resp
+          end
+        # We cannot fully parse some responses without knowing the model code.
+        # However, given that we are looking for a particular response,
+        # we can ignore the responses that don't match our criteria even if
+        # those haven't been fully parsed.
+        #
+        # TODO also constrain by state_key - this isn't always done in
+        # the method implementations currently.
+        rescue Parser::ModelCodeRequired => exc
+          if exc.response_class != cls || exc.control_type != :rs232
+            # Ignore but warn
+            logger&.warn("Failed to fully parse a response: #{exc.class}: #{exc} (but ignoring due to constrained search)")
+          else
+            raise
           end
         end
       end
