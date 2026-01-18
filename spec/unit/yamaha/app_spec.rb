@@ -90,6 +90,20 @@ describe Seriamp::Yamaha::App do
     end
   end
 
+  describe 'put /main/volume' do
+    it 'works' do
+      # Since we are mocking the call entirely (and client here is a mock,
+      # call_original doesn't work at the moment), we can't validate
+      # behavior when the volume requested is out of range.
+      client.should receive(:set_main_volume).with(42).and_return(24)
+
+      put '/main/volume', '42'
+
+      last_response.status.should == 200
+      last_response.body.should == '24'
+    end
+  end
+
   describe 'put /main/speaker/tone/bass' do
     it 'works' do
       #client.should receive(:with_device).and_yield

@@ -66,8 +66,8 @@ module Seriamp
 
         put "/#{zone}/volume" do
           value = Float(raw_request_body)
-          client.public_send("set_#{zone}_volume", value)
-          empty_response
+          value = client.public_send("set_#{zone}_volume", value)
+          return_zone_volume(zone, value)
         end
 
         post "/#{zone}/volume/up" do
