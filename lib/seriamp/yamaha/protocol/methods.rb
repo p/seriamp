@@ -78,25 +78,14 @@ module Seriamp
         #
         # @param [ Float ] volume The volume in decibels.
         def set_main_volume(volume)
-          value = Integer((volume + 80) * 2 + 39)
-          # TODO verify the received value is the value we requested?
-          # TODO hack
-          system_command("30#{'%02x' % value}",
-            expect_response_cls: Response::CommandResponse,
-            expect_response_state: :main_volume,
-          ).value
+          do_set_volume(:main, '30', volume, :main_volume)
         end
 
         # Sets zone 2 volume.
         #
         # @param [ Float ] volume The volume in decibels.
         def set_zone2_volume(volume)
-          value = Integer((volume + 80) * 2 + 39)
-          # TODO verify the received value is the value we requested?
-          system_command("31#{'%02x' % value}",
-            expect_response_cls: Response::CommandResponse,
-            expect_response_state: :zone2_volume,
-          ).value
+          do_set_volume(:zone2, '31', volume, :zone2_volume)
         end
 
         def main_volume_up
@@ -141,11 +130,7 @@ module Seriamp
         #
         # @param [ Integer ] volume The raw volume value.
         def set_zone3_volume(volume)
-          value = Integer((volume + 80) * 2 + 39)
-          system_command("34#{'%02x' % value}",
-            expect_response_cls: Response::CommandResponse,
-            expect_response_state: :zone3_volume,
-          ).value
+          do_set_volume(:zone3, '34', volume, :zone3_volume)
         end
 
         def zone3_volume_up
@@ -711,6 +696,42 @@ module Seriamp
         end
 
         private
+
+        def do_set_volume(zone, command_code, volume, state_key)
+          # What should we do when the volume value is out of range?
+          # For values that are too low, I think it is safe to clamp them
+          # to the minimum possible value, which is "muted".
+          # For values that are too high, I think it is also relatively safe
+          # to clamp them to the maximum allowed value.
+          # The practical case when out-of-range values can happen is when
+          # volume is adjusted in steps (of, say, +/- 10 dB) - returning an
+          # error when the value goes out of range would require the clients
+          # to have logic to deal with the out-of-range values when really
+          # the clients just want the value clamped to the range.
+          #
+          # The only caveat here is if we do modify the volume prior to sending
+          # it on to the hardware, we do need to return the modified value
+          # to the caller so that the UI can be accurately updated.
+          #
+          # TODO zone2/zone3 on RX-V1x00 (the 1000 series) only goes to 0 dB,
+          # not 16.5 dB. We do not handle this case at the moment.
+          if volume < -80
+            volume = -80
+          end
+          if volume > 16.5
+            volume = 16.5
+          end
+
+          value = ((volume + 80) * 2 + 39).round
+          # TODO verify the received value is the value we requested?
+          # There can be concurrent modifications (e.g. via the physical
+          # remote) thus it is possible that the value received from hardware
+          # is not the value we requested to be set.
+          system_command("#{command_code}#{'%02x' % value}",
+            expect_response_cls: Response::CommandResponse,
+            expect_response_state: state_key,
+          ).value
+        end
 
         def fetch_hash(hash, key, value_desc, original_value)
           if hash.key?(key)

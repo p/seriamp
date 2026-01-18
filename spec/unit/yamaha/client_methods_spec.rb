@@ -61,8 +61,56 @@ describe Seriamp::Yamaha::Client do
         ]
       end
 
-      it 'works' do
+      it 'sets the volume to the provided value' do
         client.set_main_volume(-70).should == -70.0
+      end
+
+      context 'when value is lowest possible' do
+        let(:rr) do
+          [
+            %W(\x0223027\x03 \x02002627\x03),
+          ]
+        end
+
+        it 'sets the volume to the provided value' do
+          client.set_main_volume(-80).should == -80.0
+        end
+      end
+
+      context 'when value is highest possible' do
+        let(:rr) do
+          [
+            %W(\x02230e8\x03 \x020026E8\x03),
+          ]
+        end
+
+        it 'sets the volume to the provided value' do
+          client.set_main_volume(16.5).should == 16.5
+        end
+      end
+
+      context 'when value is out of range - too low' do
+        let(:rr) do
+          [
+            %W(\x0223027\x03 \x02002627\x03),
+          ]
+        end
+
+        it 'clamps the value to minimum (-80)' do
+          client.set_main_volume(-1000).should == -80.0
+        end
+      end
+
+      context 'when value is out of range - too high' do
+        let(:rr) do
+          [
+            %W(\x02230e8\x03 \x020026E8\x03),
+          ]
+        end
+
+        it 'clamps the value to maximum (16.5)' do
+          client.set_main_volume(100).should == 16.5
+        end
       end
     end
 
