@@ -1,0 +1,29 @@
+{
+  "name": "yamaha-avr2mqtt",
+  "version": "1.0.0",
+  "description": "Yamaha AVR to MQTT",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:akentner/yamaha-avr2mqtt.git"
+  },
+  "keywords": [
+    "yamaha",
+    "avr",
+    "mqtt"
+  ],
+  "author": "Alexander Kentner <github@akentner.de>",
+  "license": "MIT",
+  "homepage": "https://github.com/akentner/yamaha-avr2mqtt",
+  "dependencies": {
+    "events": "^1.0.2",
+    "moment-timezone": "^0.4.0",
+    "mqtt": "^1.4.0",
+    "net": "^1.0.2",
+    "object-assign": "^4.0.1",
+    "yargs": "^3.31.0"
+  }
+}
